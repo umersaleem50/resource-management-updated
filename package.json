@@ -1,0 +1,26 @@
+{
+  "name": "resource_management_2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "dev:node": "nodemon server.js"
+  },
+  "dependencies": {
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.3",
+    "next": "13.0.5",
+    "nodemon": "^2.0.20",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "validator": "^13.7.0"
+  },
+  "author": "Umar Saleem (umersaleem50@gmail.com)",
+  "description": "Resource Management for constuctors, builders and brokers."
+}
