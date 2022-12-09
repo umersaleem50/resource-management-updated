@@ -3,6 +3,11 @@ const server = require("./Express-api/app");
 const dev = process.env.NODE_ENV || "development";
 const app = next({ dev });
 const mongoose = require("mongoose");
+const { loadEnvConfig } = require("@next/env");
+/*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
+MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
+
+loadEnvConfig("./", process.env.NODE_ENV !== "production");
 const PORT = 3000;
 
 const handler = app.getRequestHandler();
