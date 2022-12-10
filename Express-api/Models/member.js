@@ -2,65 +2,100 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator");
 const permissions = require("../../Dev-Data/permissions");
 const professions = require("../../Dev-Data/professions");
+const bcrypt = require("bcrypt");
 
-const memberSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, "A member must have a first name."],
-  },
-  lastName: {
-    type: String,
-    required: [true, "A member must have a last name."],
-  },
-  email: {
-    type: String,
-    required: [true, "A member must have a valid email."],
-    validate: isEmail,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Please choose a unique password."],
-    min: [8, "Password must have alleast 8 characters or letters."],
-    max: [32, "Password must be less than 32 characters or letters."],
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password."],
-    validate: {
-      validator: function (val) {
-        return val === this.password;
+const memberSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, "A member must have a first name."],
+    },
+    lastName: {
+      type: String,
+      required: [true, "A member must have a last name."],
+    },
+    email: {
+      type: String,
+      required: [true, "A member must have a valid email."],
+      validate: isEmail,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Please choose a unique password."],
+      min: [8, "Password must have at-least 8 characters or letters."],
+      max: [32, "Password must be less than 32 characters or letters."],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password."],
+      min: [8, "Password must have at-least 8 characters or letters."],
+      max: [32, "Password must be less than 32 characters or letters."],
+      validate: {
+        validator: function (val) {
+          return val === this.password;
+        },
+        message: "Please match your password.",
       },
-      message: "Please match your password.",
+      select: false,
     },
-    select: false,
-  },
-  level: {
-    type: Number,
-    default: 1,
-  },
-  profession: {
-    type: [String],
-    required: [true, "Please select professions for account."],
-    enum: {
-      values: professions,
-      message: [`Please choose a valid profession`],
+    level: {
+      type: Number,
+      default: 1,
+    },
+    profession: {
+      type: [String],
+      required: [true, "Please provide professions for account."],
+      enum: {
+        values: professions,
+        message: "Please choose a valid profession",
+      },
+      validate: {
+        validator: function (val) {
+          return val.length > 0;
+        },
+        message: "Please provide professions for account.",
+      },
+    },
+    permissions: {
+      type: [String],
+      required: [true, "Please provide the permissions for the account."],
+      enum: {
+        values: permissions,
+        message: "Please choose a valid permission.",
+      },
+    },
+    team: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "member",
+      default: [],
     },
   },
-  permissions: {
-    type: [String],
-    required: [true, "Please provide the permissions for the account."],
-    enum: {
-      values: permissions,
-      message: "Please choose a valid permission.",
+  {
+    toJSON: { virtuals: true },
+    toObject: {
+      virtuals: true,
     },
-  },
-  subAccounts: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "member",
-    default: [],
-  },
+  }
+);
+
+memberSchema.virtual("fullName", function () {
+  return this.firstName + " " + this.lastName;
+});
+
+memberSchema.methods.correctPassword = async function (
+  inputPassword,
+  encryptedPassword
+) {
+  return await bcrypt.compare(inputPassword, encryptedPassword);
+};
+
+memberSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  this.passwordConfirm = "";
+  next();
 });
 
 const Member = mongoose.model("member", memberSchema);
