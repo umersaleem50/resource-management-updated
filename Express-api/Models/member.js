@@ -22,9 +22,9 @@ const memberSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please choose a unique password."],
       min: [8, "Password must have at-least 8 characters or letters."],
       max: [32, "Password must be less than 32 characters or letters."],
+      required: [true, "Please choose a unique password."],
       select: false,
     },
     passwordConfirm: {
@@ -71,6 +71,10 @@ const memberSchema = new mongoose.Schema(
       ref: "member",
       default: [],
     },
+    profilePicture: {
+      type: String,
+      default: "default-profilePicture.jpg",
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -80,7 +84,7 @@ const memberSchema = new mongoose.Schema(
   }
 );
 
-memberSchema.virtual("fullName", function () {
+memberSchema.virtual("fullName").get(function () {
   return this.firstName + " " + this.lastName;
 });
 

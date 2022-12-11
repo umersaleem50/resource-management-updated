@@ -13,6 +13,7 @@ const handleDublicateValueError = (error) => {
 };
 
 const sendProdError = (err, req, res) => {
+  console.log(err);
   if (err.isOperational) {
     return res
       .status(err.statusCode)

@@ -1,5 +1,5 @@
 const permissions = [
-  "sub-accounts",
+  "have-team",
   "update-own-account",
   "add-same-level",
   "can-post",
