@@ -148,6 +148,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
 const signUp = catchAsync(async (req, res, next) => {
   const bodyData = req.body;
   const { mainId } = req.params;
+  // console.log("bodyData", bodyData);
 
   const user = await Member.create(bodyData);
   if (mainId && user) {

@@ -16,9 +16,7 @@ const {
 const authRouter = new express.Router();
 
 authRouter.post("/login", login);
-// authRouter.get("/login", (req, res) => {
-//   return res.status(200).json({ message: "working 1" });
-// });
+
 authRouter.post("/signup/:mainId", signUp);
 authRouter.post("/update-password/:mainId", protectedRoute, updatePassword);
 
