@@ -1,0 +1,51 @@
+.Account {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background-color: var(--color-grey-lighter);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in;
+  position: relative;
+  //   max-width: 35rem;
+
+  &__profilePicture {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    border: 0.5rem solid var(--color-white);
+    border-radius: 50%;
+    img {
+      //   border-radius: 50%;
+      transform: scale(1.2);
+    }
+  }
+
+  &__details {
+    display: grid;
+    grid-template-columns: 2fr 0.5fr;
+    grid-template-rows: 0.8fr 1fr;
+    grid-row-gap: 1rem;
+  }
+
+  &__image {
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+    filter: brightness(60%);
+
+    img {
+      border-radius: 1rem;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0rem 0rem 2rem rgba(0, 0, 0, 0.25);
+  }
+
+  &:not(:last-of-type) {
+    // margin-right: 5rem;
+  }
+}

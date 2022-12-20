@@ -44,6 +44,7 @@ const memberSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+
     profession: {
       type: [String],
       required: [true, "Please provide professions for account."],
@@ -75,6 +76,33 @@ const memberSchema = new mongoose.Schema(
       type: String,
       default: "default-profilePicture.jpg",
     },
+    coverPicture: {
+      type: String,
+      default: "default-coverPicture.jpg",
+    },
+    passwordChangedAt: {
+      type: Date,
+      select: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpire: {
+      type: Date,
+      select: false,
+    },
+    contactDetails: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Contact",
+    },
+    category: {
+      type: String,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -85,9 +113,14 @@ const memberSchema = new mongoose.Schema(
 );
 
 memberSchema.virtual("fullName").get(function () {
+  if (!this.firstName && !this.lastName) return;
   return this.firstName + " " + this.lastName;
 });
 
+memberSchema.pre("save", function (next) {
+  console.log(this);
+  next();
+});
 memberSchema.methods.correctPassword = async function (
   inputPassword,
   encryptedPassword

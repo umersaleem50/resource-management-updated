@@ -1,0 +1,78 @@
+.TextInputLabel {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+
+  label {
+    font-size: var(--font-size-title-primary);
+    font-weight: 400;
+    color: var(--color-font-grey);
+  }
+
+  input {
+    padding: 1rem 1.5rem;
+    background-color: var(--color-font-light);
+    border: none;
+    outline: none;
+    border-radius: 1rem;
+    font-size: var(--font-size-title-primary);
+    margin-top: 0.5rem;
+    width: 100%;
+    font-family: inherit;
+    border: 2px solid transparent;
+
+    &[type="email"]:invalid {
+      border-bottom: 2px solid var(--color-error);
+    }
+  }
+  min-width: 32rem;
+}
+
+.Checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+
+  label {
+    font-size: var(--font-size-title-primary);
+    font-weight: 600;
+    color: var(--color-font-grey);
+    margin-left: 1rem;
+  }
+
+  input {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-weight: var(--font-size-title-primary);
+  font-family: inherit;
+  color: var(--color-white);
+  background-color: var(--color-blue);
+  border-radius: 1rem;
+  border: none;
+  outline: none;
+  margin: 3rem 0;
+  cursor: pointer;
+
+  &__full {
+    box-shadow: 0rem 0.4rem 2.5rem rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease-in;
+
+    &:hover {
+      box-shadow: 0rem 1rem 2.5rem rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.textButton {
+  font-family: inherit;
+  color: var(--color-font-grey);
+  a {
+    color: var(--color-blue);
+    text-decoration: none;
+  }
+}

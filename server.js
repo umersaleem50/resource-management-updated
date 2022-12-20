@@ -17,9 +17,14 @@ app
     server.get("*", (req, res) => {
       handler(req, res);
     });
+
     server.listen(process.env.PORT, () => {
       console.log(`Express is running at port ${PORT}`);
     });
+
+    // server.get('/',(req,res,next) => {
+    //   return app.render(req,res,'/')
+    // })
   })
   .catch((err) => {
     console.log(err);
