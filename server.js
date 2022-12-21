@@ -1,7 +1,7 @@
 const next = require("next");
 const server = require("./Express-api/app");
 const dev = process.env.NODE_ENV || "development";
-const app = next({ dev });
+const app = next({ dev: true });
 const mongoose = require("mongoose");
 const { loadEnvConfig } = require("@next/env");
 /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,

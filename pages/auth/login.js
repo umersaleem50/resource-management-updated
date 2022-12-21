@@ -37,8 +37,9 @@ const submitRequest = async (url, data) => {
       Router.replace("/team")
     );
   } catch (error) {
+    console.log(error?.response?.data?.message);
     const errMessage =
-      error.response.data.message || "Something went wrong!,Error";
+      error?.response?.data?.message || "Something went wrong!,Error";
     showNofication(errMessage, "error");
   }
 };
