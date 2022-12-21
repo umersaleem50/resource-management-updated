@@ -6,6 +6,18 @@ import { useEffect } from "react";
 import classes from "./Navbar.module.scss";
 
 const Navbar = (props) => {
+  const request = async () => {
+    const profile = await axios({
+      url: "http://localhost:3000/api/profile/",
+      params: {
+        select: "team,email",
+        populate:
+          "coverPicture,profession,firstName,lastName,team,email,category,profilePicture",
+      },
+      data: { token: context.req.cookies.jwt },
+    });
+  };
+
   return (
     <div className={classes.navbar__container}>
       <nav className={classes.navbar}>
