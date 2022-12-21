@@ -6,9 +6,11 @@
     "dev:api": "nodemon server.js",
     "dev": "next dev",
     "build11": "next build",
-    "start": "next start",
+    "start1": "next start",
     "lint": "next lint",
-    "dev:front": "node server.js"
+    "dev:front": "node server.js",
+    "start": "node server.js",
+    "build": "node server.js"
   },
   "dependencies": {
     "axios": "^1.2.1",
