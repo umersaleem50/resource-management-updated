@@ -76,9 +76,13 @@ const Team = (props) => {
 
 export async function getServerSideProps(context) {
   let team;
+  console.log("this is context", context.req.secure);
+  const protocol = context.req.secure ? "https" : "http";
   try {
     team = await axios({
-      url: "http://localhost:3000/api/profile/",
+      //   url: "http://localhost:3000/api/profile/",
+      url: `${protocol}://${context.req.headers.host}/api/profile/`,
+
       params: {
         select: "team,email",
         populate:
@@ -86,6 +90,7 @@ export async function getServerSideProps(context) {
       },
       data: { token: context.req.cookies.jwt },
     });
+    // console.log(team);
   } catch (error) {
     return {
       redirect: {
