@@ -157,7 +157,9 @@ const signUp = catchAsync(async (req, res, next) => {
     });
   }
 
-  sendTokenAndResponse(res, 201, user);
+  // sendTokenAndResponse(res, 201, user);
+  // MAKE A SEPERATE ROUTE FOR THAT.
+  return res.status(201).json({ status: "success", data: user });
 });
 
 // const updatePassword = catchAsync(async (req,res,next) => {

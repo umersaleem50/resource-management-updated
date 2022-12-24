@@ -1,0 +1,56 @@
+.Model {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  padding: 4rem;
+  background-color: var(--color-white);
+  border-radius: 1rem;
+  transform: translate(-50%, -50%);
+  min-width: 40rem;
+
+  &__Cross {
+    width: 2.5rem;
+    height: 3px;
+    background-color: var(--color-error);
+    border-radius: 1rem;
+    position: absolute;
+    top: 2.5rem;
+    right: 1.5rem;
+    transform: rotate(45deg);
+    cursor: pointer;
+
+    &::after {
+      content: " ";
+      width: 2.5rem;
+      height: 3px;
+      background-color: var(--color-error);
+      border-radius: 1rem;
+      position: absolute;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.Overlay {
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  opacity: 0.5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.main {
+  // display: none;
+  visibility: hidden;
+
+  &__show {
+    // display: inline-block;
+    visibility: visible;
+  }
+}

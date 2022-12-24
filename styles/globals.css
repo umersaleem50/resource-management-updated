@@ -15,6 +15,10 @@
   /* FONTS */
 
   --font-size-title-primary: 1.4rem;
+  --font-size-heading-large: 2.4rem;
+
+  /* INPUTs */
+  --max-width-input: 32rem;
 }
 
 *,

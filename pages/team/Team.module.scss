@@ -47,5 +47,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   //   background-color: blue;
+}
+
+.Signup {
+  // &__Container {
+  //   display: grid;
+  //   grid-template-columns: repeat(2, minmax(10rem, var(--max-width-input)));
+  //   grid-template-rows: repeat(4, minmax(3rem, 10rem));
+  //   grid-column-gap: 4rem;
+
+  //   button {
+  //     grid-column: 2/-1;
+  //   }
+  // }
 }

@@ -26,9 +26,13 @@ export const Heading_Secondary = (props) => {
   );
 };
 
-export const Paragraph = forwardRef((props, ref) => {
+export const Paragraph = forwardRef((props, ref = null) => {
   return (
-    <p ref={ref} className={classes.Paragraph} style={handleStyle(props)}>
+    <p
+      ref={ref}
+      className={[classes.Paragraph, props.className].flat().join(" ")}
+      style={handleStyle(props)}
+    >
       {props.text || props.children}
     </p>
   );

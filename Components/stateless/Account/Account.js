@@ -7,9 +7,7 @@ const Account = (props) => {
     <div className={classes.Account}>
       <div className={classes.Account__image}>
         <Image
-          src={`/storage/images/coverPicture/${
-            "test.jpeg" || props.coverImage
-          }`}
+          src={`/storage/images/coverPicture/${props.coverImage}`}
           objectFit="cover"
           height={160}
           width={315}

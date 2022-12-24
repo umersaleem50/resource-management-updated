@@ -1,8 +1,10 @@
+import { useRef, useState } from "react";
 import { forwardRef } from "react";
 import { Paragraph } from "../../Typography/Typography";
 import classes from "./TextInput.module.scss";
+import { MdOutlineKeyboardArrowDown as IconArrowDown } from "react-icons/md";
 
-export const TextInputLabel = forwardRef((props, ref) => {
+export const TextInputLabel = forwardRef((props, ref = null) => {
   return (
     <div className={classes.TextInputLabel}>
       <label htmlFor={props.htmlFor}>{props.label}</label>
@@ -13,25 +15,12 @@ export const TextInputLabel = forwardRef((props, ref) => {
         name={props.htmlFor}
         id={props.htmlFor}
         placeholder={props.placeHolder}
+        minLength={(props.type === "password" && props.minLength) || null}
+        required={props.required}
       />
     </div>
   );
 });
-
-// export const TextInputLabel = (props) => {
-//   return (
-//     <div className={classes.TextInputLabel}>
-//       <label htmlFor={props.htmlFor}>{props.label}</label>
-//       <input
-//         className="input"
-//         type={props.type || "text"}
-//         name={props.htmlFor}
-//         id={props.htmlFor}
-//         placeholder={props.placeHolder}
-//       />
-//     </div>
-//   );
-// };
 
 export const Checkbox = (props) => {
   return (
@@ -42,22 +31,83 @@ export const Checkbox = (props) => {
   );
 };
 
-// export const BtnFull = (props) => {
-//   return (
-//     <button
-//       className={[classes.btn, classes.btn__full].join(" ")}
-//       style={{ width: props.full ? "100%" : "auto" }}
-//       onClick={props.clicked}
-//     >
-//       {props.text || props.children}
-//     </button>
-//   );
-// };
+export const SelectInput = forwardRef((props, ref = null) => {
+  const [category, setCategory] = useState(props.category);
+  const [selected, setSelected] = useState(props.category[0]);
+  const [toggle, setToggle] = useState(false);
+  const [toggleInput, setToggleInput] = useState(false);
+  const inputAddRef = useRef();
+  const generateResult = (items) => {
+    return items.map((el, i) => {
+      return (
+        <div
+          className={classes.SelectInput__Item}
+          key={i}
+          onClick={() => {
+            setSelected(el);
+            setToggleInput(false);
+            setToggle(false);
+          }}
+        >
+          <Paragraph style={{ textTransform: "capitalize" }}>{el}</Paragraph>
+        </div>
+      );
+    });
+  };
 
-// export const TextButton = (props) => {
-//   return (
-//     <div className={classes.textButton}>
-//       <Paragraph>{props.children}</Paragraph>
-//     </div>
-//   );
-// };
+  return (
+    <div className={classes.SelectInput}>
+      <Paragraph className={classes.SelectInput__label}>
+        {props.label}
+      </Paragraph>
+      <div
+        className={classes.SelectInput__Selected}
+        onClick={() => {
+          setToggle(true);
+        }}
+      >
+        <div
+          className={classes.SelectInput__Add}
+          ref={inputAddRef}
+          onClick={(e) => {
+            e.target.classList.toggle(classes.SelectInput__Add__animate);
+            setToggleInput((prev) => !prev);
+          }}
+        ></div>
+        {toggleInput && (
+          <input
+            className={classes.SelectInput__Input}
+            type={"text"}
+            value={selected}
+            placeholder="Type the category"
+            onBlur={(e) => {
+              setToggle(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                inputAddRef.current.classList.remove(
+                  classes.SelectInput__Add__animate
+                );
+                // setSelected(e.target.value);
+                setToggleInput(false);
+                setToggle(false);
+              }
+            }}
+            onChange={(e) => setSelected(e.target.value)}
+          />
+        )}
+        <Paragraph
+          style={{ textTransform: "capitalize" }}
+          color={"var(--color-white)"}
+          ref={ref}
+        >
+          {selected}
+        </Paragraph>
+        <IconArrowDown className={classes.SelectInput__Icon} />
+      </div>
+      <div className={classes.SelectInput__Items}>
+        {toggle && generateResult(category)}
+      </div>
+    </div>
+  );
+});
