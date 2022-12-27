@@ -32,7 +32,7 @@
     }
   }
   width: 100%;
-  min-width: var(--max-width-input);
+  max-width: var(--max-width-input);
 }
 
 .Checkbox {
@@ -170,11 +170,68 @@
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
     overflow: hidden;
     width: 100%;
+    z-index: 300;
     // background-color: aqua;
   }
 
   &__Icon {
     color: var(--color-white);
     font-size: var(--font-size-heading-large);
+  }
+}
+
+.MultiSelect {
+  margin: 2rem 0;
+  width: 100%;
+  max-width: var(--max-width-input);
+  cursor: pointer;
+  position: relative;
+
+  // z-index: 400;
+
+  &__Selected {
+    max-height: 4.5rem;
+    height: 100%;
+    margin-top: 0.5rem;
+    padding: 1rem 2rem;
+    background-color: var(--color-blue);
+    border-radius: 1rem;
+  }
+
+  &__Results {
+    position: absolute;
+    width: 100%;
+    margin-top: 0.5rem;
+    border-radius: 1rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 20rem;
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.25);
+  }
+
+  &__Item {
+    padding: 1rem 2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: var(--color-white);
+    text-transform: capitalize;
+    &:hover {
+      background-color: var(--color-blue);
+      p {
+        color: var(--color-white);
+      }
+    }
+    &:not(:last-of-type) {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+      border-bottom-style: dashed;
+    }
+
+    &__Selected {
+      background-color: var(--color-green);
+
+      p {
+        color: var(--color-white);
+      }
+    }
   }
 }

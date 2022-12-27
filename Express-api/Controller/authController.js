@@ -96,17 +96,9 @@ const protectedRoute = catchAsync(async (req, res, next) => {
 
   // const decode = await verifyToken(token);
 
-  const userData = await Member.findById(decode.id)
-    .select("+passwordChangedAt")
-    .populate({
-      path: "team",
-      // select: "firstName lastName profilePicture profession category",
-      model: "member",
-      populate: {
-        path: "team",
-        model: "member",
-      },
-    });
+  const userData = await Member.findById(decode.id).select(
+    "+passwordChangedAt"
+  );
 
   if (
     userData.passwordChangedAt &&
@@ -121,6 +113,7 @@ const protectedRoute = catchAsync(async (req, res, next) => {
   }
 
   req.user = userData;
+
   next();
 });
 

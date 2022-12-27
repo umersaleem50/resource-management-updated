@@ -17,6 +17,7 @@ export const TextInputLabel = forwardRef((props, ref = null) => {
         placeholder={props.placeHolder}
         minLength={(props.type === "password" && props.minLength) || null}
         required={props.required}
+        style={props.style}
       />
     </div>
   );
@@ -66,15 +67,17 @@ export const SelectInput = forwardRef((props, ref = null) => {
           setToggle(true);
         }}
       >
-        <div
-          className={classes.SelectInput__Add}
-          ref={inputAddRef}
-          onClick={(e) => {
-            e.target.classList.toggle(classes.SelectInput__Add__animate);
-            setToggleInput((prev) => !prev);
-          }}
-        ></div>
-        {toggleInput && (
+        {props.add && (
+          <div
+            className={classes.SelectInput__Add}
+            ref={inputAddRef}
+            onClick={(e) => {
+              e.target.classList.toggle(classes.SelectInput__Add__animate);
+              setToggleInput((prev) => !prev);
+            }}
+          ></div>
+        )}
+        {props.add && toggleInput && (
           <input
             className={classes.SelectInput__Input}
             type={"text"}
@@ -108,6 +111,61 @@ export const SelectInput = forwardRef((props, ref = null) => {
       <div className={classes.SelectInput__Items}>
         {toggle && generateResult(category)}
       </div>
+    </div>
+  );
+});
+
+export const MultiSelect = forwardRef((props, ref = null) => {
+  const [itemSelect, setItemSelected] = useState([]);
+  const [isToggle, setToggle] = useState(false);
+
+  const generateResult = (allItems) => {
+    // console.log("this", selectedItem);
+    return allItems.map((el, i) => {
+      return (
+        <div
+          key={i}
+          className={[
+            classes.MultiSelect__Item,
+            itemSelect.includes(el) && classes.MultiSelect__Item__Selected,
+          ].join(" ")}
+          onClick={(e) => {
+            const newArr = [...itemSelect];
+            if (itemSelect.includes(el)) {
+              newArr.splice(newArr.indexOf(el), 1);
+            } else {
+              newArr.push(el);
+            }
+            setItemSelected(newArr);
+          }}
+        >
+          <Paragraph>{el.split("-").join(" ")}</Paragraph>
+        </div>
+      );
+    });
+  };
+
+  return (
+    <div className={classes.MultiSelect}>
+      <Paragraph>{props.label}</Paragraph>
+      <div
+        className={classes.MultiSelect__Selected}
+        onClick={(e) => setToggle((prev) => !prev)}
+      >
+        <Paragraph color="var(--color-white)">
+          {itemSelect.length} Permissions granted
+        </Paragraph>
+        <Paragraph style={{ display: "none" }} ref={ref}>
+          {itemSelect
+            .map((el) => el.toLowerCase().split(" ").join("-"))
+            .join(",")}
+        </Paragraph>
+      </div>
+      {isToggle && (
+        <div className={classes.MultiSelect__Results}>
+          {generateResult(props.category)}
+        </div>
+      )}
     </div>
   );
 });

@@ -117,6 +117,10 @@ memberSchema.virtual("fullName").get(function () {
   return this.firstName + " " + this.lastName;
 });
 
+memberSchema.virtual("memberQunatity").get(function () {
+  return this.team.length;
+});
+
 memberSchema.pre("save", function (next) {
   console.log(this);
   next();

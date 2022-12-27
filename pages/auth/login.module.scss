@@ -36,6 +36,8 @@
   // transform: translateY(-8%);
 
   &__container {
+    min-width: 30rem;
     margin-top: 3rem;
+    width: 100%;
   }
 }

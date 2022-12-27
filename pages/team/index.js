@@ -6,12 +6,12 @@ import Section from "../../Components/stateless/Section/Section";
 import {
   Heading_Large,
   Heading_Tiny,
-  Paragraph,
 } from "../../Components/Typography/Typography";
 import Account from "../../Components/stateless/Account/Account";
 import { BtnFull } from "../../Components/Input/Buttons/Button";
 import Model from "../../Components/stateless/Model/Model";
 import {
+  MultiSelect,
   SelectInput,
   TextInputLabel,
 } from "../../Components/Input/TextInput/TextInput";
@@ -20,14 +20,13 @@ import Router from "next/router";
 import Notification, {
   showNofication,
 } from "../../Components/stateless/Notification/Notification";
-
-let setShowModel;
+import profession from "../../Dev-Data/professions";
 
 const Branch = (props) => {
   return (
     <div className={classes.Branch}>
       <Heading_Large style={{ textTransform: "capitalize" }}>
-        {`${props.branch}s`}
+        {(props.branch && `${props.branch}s`) || "Higher Authorities"}
       </Heading_Large>
       <div className={classes.Branch__Sub}>
         {props.team &&
@@ -40,6 +39,8 @@ const Branch = (props) => {
                 profession={el.profession}
                 address={el.address}
                 key={i}
+                id={el.id}
+                member={el.team.length}
               ></Account>
             );
           })}
@@ -63,27 +64,12 @@ const createBranches = (team) => {
   return branches;
 };
 
-const sendSignupRequest = async (
-  firstName,
-  lastName,
-  category,
-  email,
-  password,
-  id = null
-) => {
+const sendSignupRequest = async (requestObj, id) => {
   const result = await axios({
     url: `/api/auth/signup/${id}`,
     method: "post",
-    data: {
-      firstName,
-      lastName,
-      category,
-      email,
-      password,
-      passwordConfirm: password,
-      professions: ["can-post"],
-      profession: "painter",
-    },
+
+    data: { ...requestObj, passwordConfirm: requestObj.password },
   });
 
   return result;
@@ -95,23 +81,32 @@ const SignupModel = (props) => {
   const lastNameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
+  const permissionRef = useRef();
+  const professionRef = useRef();
   return (
     <form
       className={classes.Signup}
       onSubmit={async (e) => {
         e.preventDefault();
         let category = categoryRef.current.textContent;
-        let firstname = firstNameRef.current.value;
-        let lastname = lastNameRef.current.value;
+        let firstName = firstNameRef.current.value;
+        let lastName = lastNameRef.current.value;
         let email = emailRef.current.value;
         let password = passwordRef.current.value;
+        let permissions = permissionRef.current.textContent.split(",");
+        let profession = [];
+        profession[0] = professionRef.current.textContent;
         try {
           const result = await sendSignupRequest(
-            firstname,
-            lastname,
-            category,
-            email,
-            password,
+            {
+              firstName,
+              lastName,
+              category,
+              email,
+              password,
+              permissions,
+              profession,
+            },
             props.otherData.id
           );
           if (result) {
@@ -123,6 +118,7 @@ const SignupModel = (props) => {
             );
           }
         } catch (error) {
+          console.log(error.response);
           showNofication(error.response.data.message, "error");
         }
       }}
@@ -133,7 +129,20 @@ const SignupModel = (props) => {
           label="Select a category"
           category={props.category}
           ref={categoryRef}
+          add
         ></SelectInput>
+        <SelectInput
+          category={profession}
+          label="Choose profession"
+          ref={professionRef}
+        ></SelectInput>
+        <MultiSelect
+          category={props.otherData.permissions}
+          label={"Select permissions"}
+          ref={permissionRef}
+          // title={"Choose the permissions"}
+        ></MultiSelect>
+
         <TextInputLabel
           label="First Name"
           type="text"
@@ -167,9 +176,7 @@ const SignupModel = (props) => {
           minLength="8"
         ></TextInputLabel>
 
-        <BtnFull style={{ marginTop: "1rem" }} width="full">
-          Submit
-        </BtnFull>
+        <BtnFull width="full">Submit</BtnFull>
       </div>
     </form>
   );
@@ -192,7 +199,11 @@ const Team = (props) => {
       {showModel && (
         <Model toggleModel={showModelPropsFunction}>
           <SignupModel
-            otherData={{ id: props.data.id, setShowModel }}
+            otherData={{
+              id: props.data.id,
+              setShowModel,
+              permissions: props.data.permissions,
+            }}
             category={branches.map((el) => el.branch)}
             showModel
           ></SignupModel>
@@ -226,12 +237,13 @@ export async function getServerSideProps(context) {
   try {
     team = await axios({
       //   url: "http://localhost:3000/api/profile/",
+      // url: `/api/profile/`,
       url: `${protocol}://${context.req.headers.host}/api/profile/`,
 
       params: {
         select: "team,email,id,permissions",
         populate:
-          "coverPicture,profession,firstName,lastName,team,email,category,profilePicture",
+          "coverPicture,profession,firstName,lastName,team,email,category,profilePicture,id",
       },
       data: { token: context.req.cookies.jwt },
     });

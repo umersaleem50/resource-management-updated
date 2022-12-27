@@ -1,28 +1,49 @@
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import classes from "./Navbar.module.scss";
 
 const Navbar = (props) => {
+  const [profilePicture, setProfilePicture] = useState("");
   const request = async () => {
-    const profile = await axios({
-      url: "http://localhost:3000/api/profile/",
-      params: {
-        select: "team,email",
-        populate:
-          "coverPicture,profession,firstName,lastName,team,email,category,profilePicture",
-      },
-      data: { token: context.req.cookies.jwt },
-    });
+    try {
+      const profile = await axios({
+        url: "/api/profile/",
+        method: "get",
+        params: {
+          select: "team,email,firstName,lastName",
+          // populate:
+          //   "coverPicture,profession,firstName,lastName,team,email,category,profilePicture",
+        },
+        data: { token: context.req.cookies.jwt },
+      });
+      console.log(profile);
+      return profile;
+    } catch (error) {
+      console.log(error.response);
+      return;
+    }
   };
+
+  useEffect(() => {
+    console.log("your are in useefect");
+    let profileData;
+    request()
+      .then((result) => {
+        profileData = result;
+        console.log("navbar:", result);
+        setProfilePicture(result.profilePicture);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div className={classes.navbar__container}>
       <nav className={classes.navbar}>
         <div className={classes.logo}>
-          <Image src={"/assests/logo.png"} height={70} width={70} alt="logo" />
+          <Image src={"/assets/logo.png"} height={70} width={70} alt="logo" />
         </div>
         <ul className={classes.navbar__items}>
           <li>
@@ -49,9 +70,7 @@ const Navbar = (props) => {
 
         <div className={classes.profile}>
           <Image
-            src={
-              "/storage/images/profilePicture/Sadeem-876074.3559991106-1671290417835-profilePicture.jpeg"
-            }
+            src={`/storage/images/profilePicture/${profilePicture}`}
             href="Profile Picture"
             height={40}
             width={40}

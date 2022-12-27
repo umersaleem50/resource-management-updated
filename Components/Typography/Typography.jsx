@@ -18,7 +18,7 @@ const handleStyle = (props) => {
 export const Heading_Secondary = (props) => {
   return (
     <h4
-      className={classes.Heading_Secondary}
+      className={[props.className, classes.Heading_Secondary].flat().join(" ")}
       style={{ ...handleStyle(props), ...props.otherStyle }}
     >
       {props.text || props.children}
@@ -59,5 +59,16 @@ export const Title_Bold = (props) => {
     <h6 className={classes.Title_Bold} style={handleStyle(props)}>
       {props.text || props.children}
     </h6>
+  );
+};
+
+export const Heading_Hero = (props) => {
+  return (
+    <h2
+      className={[props.className, classes.Heading_Hero].flat().join(" ")}
+      style={handleStyle(props)}
+    >
+      {props.text || props.children}
+    </h2>
   );
 };
