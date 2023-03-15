@@ -77,7 +77,7 @@ const protectedRoute = catchAsync(async (req, res, next) => {
     req.header("authorization") &&
     req.header("authorization").startsWith("Bearer")
   ) {
-    token = req.headers("authorization").split(" ")[1];
+    token = req.header("authorization").split(" ")[1];
   } else if (req.body.token) {
     token = req.body.token;
   } else if (req.cookies && req.cookies.jwt) {

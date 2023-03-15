@@ -4,15 +4,15 @@ class customQuery {
   }
 
   splitQuery() {
-    this.query = this.query?.contains(",") && this.query?.split(",")?.join(" ");
+    this.query = this.query?.split(",")?.join(" ");
     return this;
   }
 
   filterQuery(...items) {
-    let customQuery;
+    let myNewQuery;
     if (!this.query) return this;
-    customQuery = this.query.split(",");
-    this.query = customQuery
+    myNewQuery = this.query.split(",");
+    this.query = myNewQuery
       .map((el) => {
         if (!items.includes(el)) return el;
       })
