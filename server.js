@@ -4,11 +4,15 @@ const dev = process.env.NODE_ENV || "development";
 const app = next({ dev: true });
 const mongoose = require("mongoose");
 const { loadEnvConfig } = require("@next/env");
+const { Server } = require("socket.io");
+const http = require("http");
+const socket = require("socket.io");
 /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
 MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
 
 loadEnvConfig("./", process.env.NODE_ENV !== "production");
-const PORT = 3000;
+
+let io;
 
 const handler = app.getRequestHandler();
 app
@@ -19,7 +23,7 @@ app
     });
 
     server.listen(process.env.PORT, () => {
-      console.log(`Express is running at port ${PORT}`);
+      console.log(`Express is running at port ${process.env.PORT}`);
     });
 
     // server.get('/',(req,res,next) => {
@@ -39,3 +43,11 @@ mongoose
     console.log(err);
     console.log("Database not connected, Error💥");
   });
+
+io = new socket.Server();
+io.attach(http.createServer(server));
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
+
+module.exports = { socket };

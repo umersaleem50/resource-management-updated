@@ -7,8 +7,9 @@
   cursor: pointer;
   transition: box-shadow 0.2s ease-in;
   position: relative;
-  //   max-width: 35rem;
-
+  min-width: 35rem;
+  // width: 100%;
+  // background-color: red;
   &__profilePicture {
     position: absolute;
     left: 50%;
@@ -17,9 +18,12 @@
     overflow: hidden;
     border: 0.5rem solid var(--color-white);
     border-radius: 50%;
+    height: 10rem;
+    width: 10rem;
     img {
       //   border-radius: 50%;
-      transform: scale(1.2);
+
+      transform: scale(1.2) translateY(1rem) !important;
     }
   }
 
@@ -46,6 +50,6 @@
   }
 
   &:not(:last-of-type) {
-    // margin-right: 5rem;
+    margin-right: 5rem !important;
   }
 }

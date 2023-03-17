@@ -1,0 +1,12 @@
+.Overlay {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 200;
+}

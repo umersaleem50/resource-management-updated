@@ -4,11 +4,11 @@
   &__Cover {
     cursor: pointer;
     width: 100%;
-    // position: relative;
+    position: relative;
 
     border-radius: 1rem;
     overflow: hidden;
-    height: 100%;
+    height: 27.5rem;
     max-height: 27.5rem;
     overflow: hidden;
 
@@ -22,14 +22,21 @@
     position: absolute;
     max-width: 15vw;
     max-height: 15vw;
+    min-width: 15rem;
+    min-height: 15rem;
     width: 100%;
     height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    bottom: 0;
-    left: 0;
-    transform: translate(5rem, 50%);
+    bottom: -35%;
+    left: 5%;
+
+    // transform: translate(5rem, 50%);
     border: 1rem solid var(--color-grey-lighter);
+
+    &__UnderAdmin {
+      border: 1rem solid var(--color-green) !important;
+    }
   }
 
   &__Heading {
@@ -46,11 +53,122 @@
     justify-content: space-between;
     margin-left: 23vw;
     align-items: center;
+
+    &__Buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 18rem;
+      margin-right: 5rem;
+    }
   }
 
   &__Bio {
     max-width: 50rem;
     margin-left: 5rem;
+    // margin-top: 6rem;
+  }
+
+  &__Contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    p {
+      margin-top: 1rem;
+    }
+
+    a {
+      text-decoration: none;
+      color: currentColor;
+      font-weight: bold;
+    }
+  }
+
+  &__BioAddress {
     margin-top: 6rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.Team {
+  display: flex;
+  margin: 4rem 0;
+  overflow-x: scroll;
+  &:not(:last-child) {
+    margin-right: 1rem;
+  }
+}
+
+.Account {
+  &:not(:last-of-type) {
+    margin-right: 5rem;
+  }
+  margin-bottom: 4rem;
+}
+
+.Services {
+  margin: 4rem 0;
+
+  // background-color: red;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 35rem));
+  // justify-content: space-between;
+
+  grid-row-gap: 6rem;
+
+  &__Top {
+    display: flex;
+
+    justify-content: space-between;
+  }
+}
+
+.Service {
+  &:not(:last-of-type) {
+    margin-right: 6rem;
+  }
+}
+
+.Gallery {
+  height: 72rem;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(5rem, 1fr));
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: 2rem;
+  margin-top: 5rem;
+  &__Image {
+    width: 100%;
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+
+    &:first-of-type {
+      grid-column: 1 / span 5;
+      grid-row: 1 / span 1;
+    }
+
+    &:nth-of-type(2) {
+      grid-column: 6 / -1;
+      grid-row: 1 / span 1;
+    }
+
+    &:nth-of-type(3) {
+      grid-column: 1 / 5;
+      grid-row: 2 / -1;
+    }
+
+    &:nth-of-type(4) {
+      grid-column: 5 / span 2;
+      grid-row: 2 / 3;
+    }
+
+    &:nth-of-type(5) {
+      grid-column: 7 / -1;
+      grid-row: 2 / -1;
+    }
   }
 }

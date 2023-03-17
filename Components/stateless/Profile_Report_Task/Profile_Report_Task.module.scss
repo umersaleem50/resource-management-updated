@@ -1,0 +1,17 @@
+.Profile {
+  display: flex;
+  align-items: center;
+  // justify-content: space-between;
+  max-width: 25rem;
+  img {
+    border-radius: 50%;
+  }
+  &__fullName {
+    font-weight: 600;
+    color: var(--color-font-black);
+    margin-bottom: 0.5rem;
+  }
+  &__Container {
+    margin-left: 2rem;
+  }
+}

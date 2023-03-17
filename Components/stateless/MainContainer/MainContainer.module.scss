@@ -1,4 +1,9 @@
-.container {
+@import "../../../styles/mixin";
+.Container {
   max-width: var(--max-width);
   margin: 0 auto;
+
+  @include respond(phone-l) {
+    margin: 0 2rem;
+  }
 }

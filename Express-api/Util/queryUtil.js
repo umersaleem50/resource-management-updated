@@ -3,10 +3,10 @@ class customQuery {
     this.query = query;
   }
 
-  splitQuery() {
-    this.query = this.query?.split(",")?.join(" ");
-    return this;
-  }
+  // splitQuery() {
+  //   this.query = this.query?.split(",")?.join(" ");
+  //   return this;
+  // }
 
   filterQuery(...items) {
     let myNewQuery;
@@ -16,7 +16,9 @@ class customQuery {
       .map((el) => {
         if (!items.includes(el)) return el;
       })
-      .join(" ");
+      .join(" ")
+      .trim();
+
     return this;
   }
 }

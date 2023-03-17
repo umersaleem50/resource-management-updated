@@ -5,7 +5,7 @@ import classes from "./Notification.module.scss";
 
 let notificationRef;
 let barRef;
-let TIMER_MILISECONDS = 5000;
+let TIMER_MILISECONDS = 3000;
 let messageRef;
 let timerInterval;
 

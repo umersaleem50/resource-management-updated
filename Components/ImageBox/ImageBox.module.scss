@@ -1,0 +1,63 @@
+.FancyBox {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  //   position: relative;
+  &__Image {
+    // background-color: orange;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    height: 90vh;
+    // position: relative;
+    z-index: 300;
+    object-fit: contain;
+  }
+
+  &__Icon {
+    bottom: 5rem;
+    right: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.Icon {
+  color: var(--color-white);
+
+  z-index: 300;
+  font-size: 3rem;
+
+  &--Close {
+    position: fixed;
+    top: 5rem;
+    right: 5rem;
+  }
+
+  &--Edit {
+    position: absolute;
+    bottom: 5%;
+    right: 50%;
+    transform: translateX(50%) translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+  }
+}
+
+.ImageBox:hover ~ label .Icon--Edit,
+.Icon--Edit:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(50%, 0%);
+  cursor: pointer;
+}
+
+.Input {
+  visibility: hidden;
+}

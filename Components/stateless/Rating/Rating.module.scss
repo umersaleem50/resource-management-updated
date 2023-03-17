@@ -1,0 +1,24 @@
+.Star {
+  color: var(--color-yellow);
+  width: 2rem;
+  height: 2rem;
+  &__empty {
+    color: var(--color-primary-light);
+  }
+}
+
+.Rating {
+  display: flex;
+  flex-direction: column;
+
+  &__Stars {
+    margin-right: 1rem;
+  }
+
+  &__Top {
+    display: flex;
+    margin-bottom: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+  }
+}

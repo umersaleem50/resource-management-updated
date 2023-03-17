@@ -1,18 +1,20 @@
 const mongoose = require("mongoose");
+const { models, model } = require("mongoose");
 const { isEmail } = require("validator");
 const permissions = require("../../Dev-Data/permissions");
 const professions = require("../../Dev-Data/professions");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
 const memberSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, "A member must have a first name."],
+      // required: [true, "A member must have a first name."],
     },
     lastName: {
       type: String,
-      required: [true, "A member must have a last name."],
+      // required: [true, "A member must have a last name."],
     },
     email: {
       type: String,
@@ -22,8 +24,8 @@ const memberSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      min: [8, "Password must have at-least 8 characters or letters."],
-      max: [32, "Password must be less than 32 characters or letters."],
+      minLength: [8, "Password must have at-least 8 characters or letters."],
+      maxLength: [32, "Password must be less than 32 characters or letters."],
       required: [true, "Please choose a unique password."],
       select: false,
     },
@@ -47,21 +49,21 @@ const memberSchema = new mongoose.Schema(
 
     profession: {
       type: [String],
-      required: [true, "Please provide professions for account."],
+      // required: [true, "Please provide professions for account."],
       enum: {
         values: professions,
         message: "Please choose a valid profession",
       },
-      validate: {
-        validator: function (val) {
-          return val.length > 0;
-        },
-        message: "Please provide professions for account.",
-      },
+      // validate: {
+      //   validator: function (val) {
+      //     return val.length > 0;
+      //   },
+      // message: "Please provide professions for account.",
+      // },
     },
     permissions: {
       type: [String],
-      required: [true, "Please provide the permissions for the account."],
+      // required: [true, "Please provide the permissions for the account."],
       enum: {
         values: permissions,
         message: "Please choose a valid permission.",
@@ -96,12 +98,17 @@ const memberSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
-    contactDetails: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Contact",
-    },
+    // contactDetails: {
+    //   type: mongoose.Schema.ObjectId,
+    //   ref: "Contact",
+    // },
     category: {
       type: String,
+    },
+    otherDetails: {
+      type: mongoose.Schema.ObjectId,
+      ref: "profileDetails",
+      default: null,
     },
   },
   {
@@ -118,13 +125,18 @@ memberSchema.virtual("fullName").get(function () {
 });
 
 memberSchema.virtual("memberQunatity").get(function () {
-  return this.team.length;
+  if (this.team) return this.team.length;
 });
-
-memberSchema.pre("save", function (next) {
-  console.log(this);
-  next();
-});
+memberSchema.methods.createResetToken = async function () {
+  const randomToken = crypto.randomBytes(32).toString("hex");
+  const resetToken = crypto
+    .createHash("sha256")
+    .update(randomToken)
+    .digest("hex");
+  this.passwordResetToken = resetToken;
+  this.passwordResetExpire = Date.now() + 10 * 60 * 60 * 1000;
+  return randomToken;
+};
 memberSchema.methods.correctPassword = async function (
   inputPassword,
   encryptedPassword
@@ -139,6 +151,8 @@ memberSchema.pre("save", async function (next) {
   next();
 });
 
-const Member = mongoose.model("member", memberSchema);
+let Member;
+
+Member = models.member || model("member", memberSchema);
 
 module.exports = Member;

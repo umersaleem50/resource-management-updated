@@ -1,0 +1,36 @@
+.Tasks {
+  &__Container {
+    padding: 2rem;
+    background-color: var(--color-grey-notes);
+    // max-height: 50rem;
+    // overflow-y: scroll;
+    // overflow: hidden;
+    // height: ;h
+    position: relative;
+    height: 50rem;
+    border-radius: 1rem;
+    z-index: 0;
+  }
+
+  &__Top {
+    margin-bottom: 2rem;
+  }
+
+  &__Titles {
+    padding: 0.5rem 1rem;
+    display: grid;
+    grid-template-columns: 0.8fr 3fr 1.5fr 1.5fr 1fr;
+    grid-column-gap: 2rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.Default-Task {
+  margin-top: 1rem;
+  padding: 2rem;
+  display: flex;
+  box-shadow: 0rem 0rem 1rem rgba(#000, 0.24);
+  background-color: var(--color-white);
+  border-radius: 1rem;
+}

@@ -1,23 +1,21 @@
 const express = require("express");
 const {
   login,
-  signUp,
   protectedRoute,
   updatePassword,
+  createAccount,
+  signup,
+  forgetPassword,
+  resetPassword,
 } = require("../Controller/authController");
-const {
-  uploadSingleImage,
-  resizeSingleImage,
-  resizeProfilePicture,
-  resizeCoverImage,
-  uploadProfileCoverPicture,
-} = require("../Controller/imageController");
 
 const authRouter = new express.Router();
 
 authRouter.post("/login", login);
-
-authRouter.post("/signup/:mainId", signUp);
+authRouter.post("/signup", signup);
+authRouter.post("/signup/:mainId", createAccount);
+authRouter.post("/forget-password", forgetPassword);
+authRouter.post("/reset-password/:token", resetPassword);
 authRouter.post("/update-password/:mainId", protectedRoute, updatePassword);
 
 module.exports = authRouter;

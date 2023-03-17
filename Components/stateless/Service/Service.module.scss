@@ -1,0 +1,33 @@
+.Service {
+  max-height: 46rem;
+  height: 100%;
+  position: relative;
+  display: inline-block;
+  max-width: 32rem;
+
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1rem;
+  transition: all 0.2s ease-in;
+  &:hover {
+    // transform: translateY(-1rem);
+    box-shadow: 0 0 3rem rgba(0, 0, 0, 0.25);
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    justify-content: space-between;
+    bottom: 0%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    align-items: center;
+    text-align: center;
+    // max-height: 20rem;
+    height: 60%;
+    width: 100%;
+    backdrop-filter: blur(0.5rem) brightness(80%);
+    padding: 4rem 0;
+  }
+}

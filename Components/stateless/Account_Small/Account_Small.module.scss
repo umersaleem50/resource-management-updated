@@ -1,0 +1,23 @@
+.Account_Small {
+  //   background-color: blue;
+  display: flex;
+  flex-direction: row !important;
+  align-items: center !important;
+  margin-top: 5rem;
+
+  &__Image {
+    border-radius: 50%;
+    overflow: hidden;
+    width: 8rem;
+    height: 8rem;
+    // background-color: red;
+    position: relative;
+    margin-right: 2rem;
+    border: 0.5rem solid var(--color-grey-lighter);
+  }
+
+  &__Details {
+    display: flex;
+    align-items: flex-start !important;
+  }
+}

@@ -1,0 +1,15 @@
+.Main {
+  &__Container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(10rem, 40rem));
+    grid-template-rows: repeat(4, minmax(3rem, 10rem));
+    grid-column-gap: 4rem;
+
+    button {
+      margin-top: 4.5rem;
+      grid-column: 2/-1;
+      grid-row-start: -2;
+      max-height: 4.5rem;
+    }
+  }
+}

@@ -3,7 +3,8 @@ const Member = require("../Models/member");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const apiError = require("../Util/apiError");
-const { json } = require("express");
+const crypto = require("crypto");
+const { sendMail } = require("../Util/sendMail");
 
 // /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
 // MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
@@ -39,18 +40,17 @@ const login = catchAsync(async (req, res, next) => {
     return next(new apiError("Please provide email and password.", 400));
   }
 
-  const user = await Member.findOne({ email })
-    .select("+password")
-    /* IF YOU WANT TO GET THE NESTED DATA OF THE TEAM USE THE BELOW CODE OF BLOCK */
-    .populate({
-      path: "team",
-      populate: {
-        path: "team",
-        // model: Member,
-        select: "firstName fullName lastName profilePicture profession team",
-      },
-      select: "firstName fullName lastName profilePicture profession team",
-    });
+  const user = await Member.findOne({ email }).select("+password");
+  /* IF YOU WANT TO GET THE NESTED DATA OF THE TEAM USE THE BELOW CODE OF BLOCK */
+  // .populate({
+  //   path: "team",
+  //   populate: {
+  //     path: "team",
+  //     // model: Member,
+  //     select: "firstName fullName lastName profilePicture profession team",
+  //   },
+  //   select: "firstName fullName lastName profilePicture profession team",
+  // });
   /* IF YOU WANT TO GET THE FIRST LEVEL OF TEAM DATA, USE THE BELOW CODE OF BLOCK */
   // .populate("team", "lastName firstName email profession team");
   const checkpassword = await user?.correctPassword(password, user.password);
@@ -63,25 +63,17 @@ const login = catchAsync(async (req, res, next) => {
 });
 
 const protectedRoute = catchAsync(async (req, res, next) => {
-  // if (
-  //   !req.header("authorization") ||
-  //   !req.header("authorization").startsWith("Bearer")
-  // ) {
-  //   return next(
-  //     new apiError("Token is not valid, login again to get one.", 400)
-  //   );
-  // }
   let token;
 
   if (
     req.header("authorization") &&
     req.header("authorization").startsWith("Bearer")
   ) {
-    token = req.header("authorization").split(" ")[1];
-  } else if (req.body.token) {
-    token = req.body.token;
+    token = req.header("authorization")?.split(" ")[1];
   } else if (req.cookies && req.cookies.jwt) {
     token = req.cookies.jwt;
+  } else if (req.body.token) {
+    token = req.body.token;
   }
 
   const decode = token && (await verifyToken(token));
@@ -138,7 +130,13 @@ const updatePassword = catchAsync(async (req, res, next) => {
   res.status(200).json({ data: mainAccount });
 });
 
-const signUp = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res) => {
+  const { body } = req;
+  const user = await Member.create(body);
+  if (user) return sendTokenAndResponse(res, 201, user);
+});
+
+const createAccount = catchAsync(async (req, res) => {
   const bodyData = req.body;
   const { mainId } = req.params;
   // console.log("bodyData", bodyData);
@@ -155,14 +153,80 @@ const signUp = catchAsync(async (req, res, next) => {
   return res.status(201).json({ status: "success", data: user });
 });
 
-// const updatePassword = catchAsync(async (req,res,next) => {
-//   const
-// })
+const forgetPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(new apiError("Please provide a valid email.", 400));
+  }
+  const member = await Member.findOne({ email });
+
+  if (!member)
+    return next(
+      new apiError("No member exist. Or account is deactivated.", 404)
+    );
+
+  const resetToken = await member.createResetToken();
+
+  member.save({ validateBeforeSave: false });
+
+  await sendMail(email, resetToken);
+
+  res.status(200).json({
+    status: "success",
+    message: "Reset link sent to your email. Please check your mail.",
+  });
+});
+
+const resetPassword = catchAsync(async (req, res, next) => {
+  const { token } = req.params;
+  const { password, passwordConfirm } = req.body;
+  if (!token)
+    return next(
+      new apiError(
+        "Please check your mail, you may receive a reset token.",
+        400
+      )
+    );
+  if (!password || !passwordConfirm) {
+    return next(new apiError("Please provide provide a new password.", 401));
+  }
+
+  const decryptToken = crypto.createHash("sha256").update(token).digest("hex");
+  const member = await Member.findOne({
+    passwordResetToken: decryptToken,
+  }).select("+passwordResetToken +passwordResetExpire");
+
+  if (!member) {
+    return next(
+      new apiError("Invalid reset token, Please check your mail again.", 401)
+    );
+  }
+
+  if (
+    !member.passwordResetToken ||
+    (member.passwordResetExpire &&
+      member.passwordResetExpire.getTime() < Date.now())
+  ) {
+    return next(new apiError("Reset token expired.", 401));
+  }
+
+  member.passwordResetToken = "";
+  member.passwordResetExpire = null;
+  member.password = password;
+  member.passwordConfirm = passwordConfirm;
+  await member.save({ validateBeforeSave: true });
+  res
+    .status(200)
+    .json({ status: "success", message: "Password changed successfully." });
+});
 
 module.exports = {
   login,
-  signUp,
+  signup,
+  createAccount,
   protectedRoute,
   verifyToken,
   updatePassword,
+  forgetPassword,
+  resetPassword,
 };

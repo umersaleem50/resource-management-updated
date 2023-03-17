@@ -11,6 +11,8 @@
   --color-font-grey: #797979;
   --color-error: #eb5757;
   --color-green: #219653;
+  --color-yellow: #f2c94c;
+  --color-grey-notes: rgba(217, 217, 217, 0.3);
 
   /* FONTS */
 
@@ -19,6 +21,10 @@
 
   /* INPUTs */
   --max-width-input: 32rem;
+
+  /* OTHER PROPERTIES */
+  --border-radius: 1rem;
+  --drop-shadow: 0 0.5rem 1rem rgba(#000, 0.27);
 }
 
 *,
@@ -34,6 +40,13 @@ html {
   font-family: "Poppins", sans-serif;
 }
 
+@media only screen and (max-width: 37.5em) {
+  html {
+    font-size: 50%;
+    scrollbar-color: red green;
+  }
+}
+
 body {
   font-family: inherit;
 }
@@ -42,3 +55,21 @@ body {
   max-width: var(--max-width);
   margin: 5rem auto;
 }
+
+// ::-webkit-scrollbar {
+//   width: 1rem;
+//   // visibility: hidden;
+// }
+
+// ::-webkit-scrollbar-track {
+//   background-color: var(--color-grey-lighter);
+// }
+
+// ::-webkit-slider-thumb {
+//   background-color: red !important;
+//   // width: 0.8rem;
+// }
+
+// ::-webkit-slider-thumb:hover {
+//   background-color: green;
+// }

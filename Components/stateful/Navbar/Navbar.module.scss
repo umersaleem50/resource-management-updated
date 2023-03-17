@@ -7,7 +7,9 @@
 
   &__container {
     width: 100%;
+    background-color: var(--color-grey-lighter);
     border-bottom: 1px solid var(--color-grey-lighter);
+    box-shadow: var(--drop-shadow);
   }
 
   &__items {
@@ -31,5 +33,16 @@
     &:not(:last-of-type) {
       margin-right: 4rem;
     }
+  }
+}
+
+.profile {
+  position: relative;
+  &__Image {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
   }
 }

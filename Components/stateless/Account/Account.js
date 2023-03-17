@@ -1,7 +1,6 @@
 import classes from "./Account.module.scss";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { Title_Bold, Paragraph } from "../../Typography/Typography";
-import { NextRequest, NextResponse } from "next/server";
 import Router from "next/router";
 const Account = (props) => {
   const reDirectToProfile = (e) => {
@@ -9,11 +8,15 @@ const Account = (props) => {
   };
 
   return (
-    <div className={classes.Account} onClick={reDirectToProfile}>
+    <div
+      className={[classes.Account, props.className].flat().join(" ")}
+      onClick={reDirectToProfile}
+    >
       <div className={classes.Account__image}>
         <Image
           src={`/storage/images/coverPicture/${props.coverImage}`}
-          objectFit="cover"
+          // objectFit="re"
+          layout="responsive"
           height={160}
           width={315}
           alt="Cover Picture"
@@ -24,8 +27,9 @@ const Account = (props) => {
           <Image
             src={`/storage/images/profilePicture/${props.profilePicture}`}
             objectFit="cover"
-            height={75}
-            width={75}
+            layout="fill"
+            // height={75}
+            // width={75}
             alt="Profile Picture"
           />
         </div>

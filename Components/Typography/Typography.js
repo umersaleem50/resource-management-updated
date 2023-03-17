@@ -3,10 +3,10 @@ import classes from "./Typography.module.scss";
 const handleStyle = (props) => {
   const style = { ...props.style };
   if (props.bold) {
-    style.bold = props.bold === "" ? "bold" : props.bold;
+    style.fontWeight = props.bold === "" ? "bold" : props.bold;
   }
   if (props.upperCase) {
-    style.upperCase = props.upperCase === "" ? "uppercase" : props.upperCase;
+    style.textTransform = props.upperCase;
   }
   if (props.color) {
     style.color = props.color;
@@ -15,10 +15,10 @@ const handleStyle = (props) => {
   return style;
 };
 
-export const Heading_Secondary = (props) => {
+export const HEADING_2 = (props) => {
   return (
     <h4
-      className={[props.className, classes.Heading_Secondary].flat().join(" ")}
+      className={[props.className, classes["HEADING_2"]].flat().join(" ")}
       style={{ ...handleStyle(props), ...props.otherStyle }}
     >
       {props.text || props.children}
@@ -40,7 +40,10 @@ export const Paragraph = forwardRef((props, ref = null) => {
 
 export const Heading_Tiny = (props) => {
   return (
-    <h6 className={classes.Heading_Tiny} style={handleStyle(props)}>
+    <h6
+      className={[classes.Heading_Tiny, props.className].flat().join(" ")}
+      style={{ ...handleStyle(props) }}
+    >
       {props.text || props.children}
     </h6>
   );
@@ -48,7 +51,10 @@ export const Heading_Tiny = (props) => {
 
 export const Heading_Large = (props) => {
   return (
-    <h4 className={classes.Heading_Large} style={handleStyle(props)}>
+    <h4
+      className={[classes.Heading_Large, props.className].flat().join(" ")}
+      style={handleStyle(props)}
+    >
       {props.text || props.children}
     </h4>
   );
@@ -56,7 +62,10 @@ export const Heading_Large = (props) => {
 
 export const Title_Bold = (props) => {
   return (
-    <h6 className={classes.Title_Bold} style={handleStyle(props)}>
+    <h6
+      className={[classes.Title_Bold, props.className].flat().join(" ")}
+      style={handleStyle(props)}
+    >
       {props.text || props.children}
     </h6>
   );

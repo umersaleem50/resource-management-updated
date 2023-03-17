@@ -32,7 +32,7 @@ exports.errorHandlerController = (err, req, res, next) => {
     return res
       .status(statusCode)
       .json({ status, message: err.message, error: err });
-  } else if (process.env.NODE_ENV === "production") {
+  } else if (process.env.NODE_ENV === "prod") {
     let error = { ...err };
     error.message = err.message;
     if (err.name === "ValidationError") {

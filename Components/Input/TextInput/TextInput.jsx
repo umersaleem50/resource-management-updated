@@ -18,6 +18,7 @@ export const TextInputLabel = forwardRef((props, ref = null) => {
         minLength={(props.type === "password" && props.minLength) || null}
         required={props.required}
         style={props.style}
+        defaultValue={props.value}
       />
     </div>
   );
@@ -45,6 +46,7 @@ export const SelectInput = forwardRef((props, ref = null) => {
           className={classes.SelectInput__Item}
           key={i}
           onClick={() => {
+            props.onSelect && props.onSelect(el);
             setSelected(el);
             setToggleInput(false);
             setToggle(false);
@@ -169,3 +171,69 @@ export const MultiSelect = forwardRef((props, ref = null) => {
     </div>
   );
 });
+
+export const MultiTextBox = forwardRef((props, ref = undefined) => {
+  return (
+    <div className={classes.MultiTextBox}>
+      <label htmlFor={props.htmlFor}>{props.label || props.children}</label>
+      <textarea
+        style={{ resize: props.resize || "none" }}
+        rows={props.rows || 4}
+        id={props.htmlFor}
+        placeholder={props.placeHolder}
+        required={props.required || false}
+        ref={ref}
+        defaultValue={props.value}
+      />
+    </div>
+  );
+});
+
+export const SmallSelect = (props) => {
+  const [type, setType] = useState("important");
+  const generateOptions = (options) => {
+    return options.map((el, i) => {
+      return (
+        <option
+          style={{
+            backgroundColor: `${
+              el.color === "critical"
+                ? "var(--color-red)"
+                : "var(--color-yellow)"
+            }`,
+          }}
+          className={[
+            classes.SmallSelect__option,
+            // el.color ? classes[`SmallSelect__option--${el.color}`] : null,
+          ].join(" ")}
+          value={el.value || i}
+        >
+          {el.text}
+        </option>
+      );
+    });
+    // .reverse();
+  };
+  return (
+    <select
+      className={[classes.SmallSelect, classes[`SmallSelect__${type}`]]
+        .flat()
+        .join(" ")}
+      onInput={(e) => {
+        props.onChange(e.target.value * 1);
+        setType("critical");
+      }}
+    >
+      {generateOptions(props.options)}
+    </select>
+  );
+};
+
+// export const DateTimeInput = forwardRef((props,ref=undefined) => {
+//   return (
+//     <div className={classes.DateTimeInput}>
+//       <label htmlFor={props.htmlFor}>{props.label || props.children}</label>
+//       <input type={props.type === 'just-date'?}/>
+//     </div>
+//   );
+// })

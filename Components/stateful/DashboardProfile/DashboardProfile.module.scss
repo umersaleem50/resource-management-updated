@@ -1,0 +1,53 @@
+.Dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 2rem;
+
+  &__Container {
+    display: flex;
+    margin-top: 2.2rem;
+  }
+
+  &__Stats {
+    display: flex;
+    flex: 0 1 58%;
+    width: 100%;
+    background-color: var(--color-grey-notes);
+    margin-right: 2rem;
+    justify-content: space-between;
+    padding: 2rem 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(#000, 0.2);
+  }
+
+  &__Profile {
+    padding: 2rem;
+    background-color: var(--color-grey-notes);
+    flex: 1;
+    cursor: pointer;
+    box-shadow: 0 0.5rem 1rem rgba(#000, 0.2);
+
+    &__Top {
+      display: flex;
+      z-index: -20 !important;
+      align-items: flex-end;
+      transform: translateY(-5rem);
+      &__Image {
+        width: 8rem;
+        height: 8rem;
+        border: 0.5rem solid var(--color-blue);
+        display: inline-block;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 1rem;
+      }
+    }
+
+    &__Other {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+  }
+}
