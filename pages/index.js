@@ -34,7 +34,8 @@ export default function Home(props) {
           </div>
           <div className={classes.Main_Container__Right}>
             {/* <DashboardProfile profile={props.data}></DashboardProfile> */}
-            <Tasks setSendModelToggle />
+
+            <Tasks setSendModelToggle userId={props.data.id} />
             <Reports />
           </div>
         </main>

@@ -1,6 +1,6 @@
 const { models, model, Schema, default: mongoose } = require("mongoose");
 
-const taskSchema = new Schema({
+const mainTaskSchema = new Schema({
   deadline: {
     type: Date,
   },
@@ -64,12 +64,12 @@ const TasksSchema = new Schema({
   tasks: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Task",
+      ref: "mainTasks",
     },
   ],
 });
 
-const Task = models.task || model("Task", taskSchema);
+const Task = models.mainTasks || model("mainTasks", mainTaskSchema);
 const Tasks = models.tasks || model("Tasks", TasksSchema);
 
 module.exports = { Task, Tasks };

@@ -4,15 +4,14 @@ const dev = process.env.NODE_ENV || "development";
 const app = next({ dev: true });
 const mongoose = require("mongoose");
 const { loadEnvConfig } = require("@next/env");
-const { Server } = require("socket.io");
 const http = require("http");
-const socket = require("socket.io");
+const socketIo = require("socket.io");
+
 /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
 MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
 
 loadEnvConfig("./", process.env.NODE_ENV !== "production");
-
-let io;
+let custom_socket;
 
 const handler = app.getRequestHandler();
 app
@@ -22,7 +21,41 @@ app
       handler(req, res);
     });
 
-    server.listen(process.env.PORT, () => {
+    // THIS WILL CREATE A SERVER FROM EXPRESS JS SERVER;
+    // AND CAN BE USE BY SOCKET.IO
+    const mainServer = http.createServer(server);
+
+    io = new socketIo.Server(mainServer, {
+      cors: {
+        origin: "http://localhost:3000",
+        credentials: "true",
+      },
+    });
+
+    io.on("connect", (socket) => {
+      console.log("a user is connected");
+
+      socket.on("task-assigned", (data) => {
+        console.log("new task incoming");
+        io.sockets.emit("new-task", data);
+      });
+
+      socket.emit("message", "this is the message");
+
+      // socket.on("message", (data) => {
+      //   console.log("this is the data", data);
+      // });
+    });
+
+    // const customServer = http.createServer(server);
+
+    // const io = new socket.Server(http.createServer(server));
+    // io.attach();
+    // io.on("connection", (socket) => {
+    //   console.log("a user connected");
+    // });
+
+    mainServer.listen(process.env.PORT, () => {
       console.log(`Express is running at port ${process.env.PORT}`);
     });
 
@@ -44,10 +77,4 @@ mongoose
     console.log("Database not connected, Error💥");
   });
 
-io = new socket.Server();
-io.attach(http.createServer(server));
-io.on("connection", (socket) => {
-  console.log("a user connected");
-});
-
-module.exports = { socket };
+module.exports = { custom_socket };

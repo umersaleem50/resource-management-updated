@@ -7,7 +7,7 @@ import Model from "../Model/Model";
 import Note from "../Note/Note";
 import { showNofication } from "../Notification/Notification";
 import classes from "./Notes.module.scss";
-import { Scrollbars } from "react-custom-scrollbars";
+import { Scrollbars } from "react-custom-scrollbars-2";
 const Notes = (props) => {
   const [allnotes, setNotes] = useState([]);
   const [isWannaInsertNote, setWannaInsertNote] = useState(false);

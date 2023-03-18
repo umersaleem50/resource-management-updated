@@ -22,6 +22,7 @@ class Reports extends Component {
     try {
       const reports = await axios({ url: "/api/reports", method: "GET" });
       if (reports) this.setState({ reports: reports.data.data });
+      console.log(reports);
     } catch (error) {
       showNofication(error?.response?.data?.message, "error");
     }

@@ -1,13 +1,12 @@
 const { ApiError } = require("next/dist/server/api-utils");
-const { socket } = require("../../server");
-const Member = require("../Models/member");
+
+// const { socket } = require("../../server");
 const { Task, Tasks } = require("../Models/task");
 const apiError = require("../Util/apiError");
 const catchAsync = require("../Util/catchAsync");
 const { getOne, updateOne, deleteOne, getAll } = require("./handlerFactory");
 
 exports.getOneTask = getOne(Tasks, "tasks");
-
 exports.updateOneTask = updateOne(Task);
 exports.reassignTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
@@ -72,7 +71,7 @@ exports.createOneTask = catchAsync(async (req, res, next) => {
     givenTask.tasks.push(singleTask);
     await givenTask.save();
   }
-  socket.emit("task-assigned", id);
+
   res.status(201).json({ status: "success", data: givenTask });
 });
 

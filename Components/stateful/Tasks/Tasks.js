@@ -8,53 +8,85 @@ import { showNofication } from "../../stateless/Notification/Notification";
 import Notification from "../../stateless/Notification/Notification";
 import { useEffect, useState, useRef } from "react";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import PerfectScrollbar from "perfect-scrollbar";
-const Tasks = (props) => {
-  const [fetchTask, setFetchTask] = useState([]);
-  const [isToggleReportModel, setToggleReportModel] = useState(false);
-  const [seletedTaskId, setTaskId] = useState("");
-  const [seletedTaskAdminId, setTaskAdminId] = useState("");
-  const reportDescriptionRef = useRef();
-  const requestTasks = async () => {};
+import { io } from "socket.io-client";
+import { Component } from "react";
+import { createRef } from "react";
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const tasks = await axios({ url: "/api/task", method: "GET" });
+class Tasks extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fetchTask: [],
+      isToggleReportModel: false,
+      selectedTaskId: "",
+      selectedTaskAdminId: "",
+      updatedTask: "",
+    };
+    this.socket = io("http://localhost:3000");
 
-        setFetchTask(tasks.data.data);
-      } catch (error) {
-        // showNofication("Something went wrong in getting tasks.", "error");
-        console.log(error);
+    this.reportDescriptionRef = createRef();
+
+    this.socket.on("new-task", async (data) => {
+      console.log(
+        this.props.userId === data.userId,
+        this.props.userId,
+        data.userId
+      );
+      if (props.userId === data.userId) {
+        showNofication("Your admin assigned a new task for you", "success");
+        this.fetchLatestTasks();
       }
-    })();
+    });
+  }
 
-    // ps.update();
-  }, []);
+  async fetchLatestTasks() {
+    try {
+      const tasks = await axios({ url: "/api/task", method: "GET" });
+      const fetchedTaskArr = tasks.data.data;
 
-  const sendReportRequest = async (description) => {
+      if (tasks) this.setState({ fetchTask: fetchedTaskArr.reverse() });
+    } catch (error) {
+      showNofication(
+        error?.response?.data?.message ||
+          "Something went wrong while fetching tasks.",
+        "error"
+      );
+      console.log(error);
+    }
+  }
+
+  async componentDidMount() {
+    await this.fetchLatestTasks();
+  }
+
+  sendReportRequest = async (description) => {
     // console.log(
     //   "tasks.js line 32. ",
     //   seletedTaskAdminId,
     //   seletedTaskId,
     //   description
     // );
-    if (seletedTaskAdminId === "" || seletedTaskId === "") return;
+    console.log(this.state, this);
+    if (
+      this.state.selectedTaskAdminId === "" ||
+      this.state.selectedTaskId === ""
+    )
+      return;
     try {
-      const sendReportRequest = await axios({
-        url: `/api/reports/${seletedTaskAdminId}/${seletedTaskId}`,
+      const reportResult = await axios({
+        url: `/api/reports/${this.state.selectedTaskAdminId}/${this.state.selectedTaskId}`,
         method: "POST",
         data: {
           description: description,
         },
       });
-      if (sendReportRequest) {
-        showNofication("Report sent successfully.", "success", () =>
-          setToggleReportModel(false)
-        );
+      if (reportResult) {
+        this.setState({
+          isToggleReportModel: false,
+        });
+        showNofication("Report sent successfully.", "success");
       }
     } catch (error) {
-      // console.log("this is error", error);
       showNofication(
         error?.response?.data?.message || "Something went wrong.",
         "error"
@@ -62,7 +94,7 @@ const Tasks = (props) => {
     }
   };
 
-  const generateTasks = (tasks) => {
+  generateTasks(tasks, taskId) {
     if (!tasks || !tasks.length) {
       return (
         <div className={classes["Default-Task"]}>
@@ -80,45 +112,51 @@ const Tasks = (props) => {
               profilePicture={el?.assignBy?.profilePicture}
               tasks={el.tasks}
               assignBy={el.assignBy}
-              sendReport={setToggleReportModel}
-              setTaskAdminId={setTaskAdminId}
-              setTaskId={() => setTaskId(el._id)}
+              sendReport={() => this.setState({ isToggleReportModel: true })}
+              setTaskAdminId={(id) =>
+                this.setState({ selectedTaskAdminId: id })
+              }
+              setTaskId={() => this.setState({ selectedTaskId: el._id })}
             ></Task>
           );
         })}
       </Scrollbars>
     );
-  };
+  }
 
-  return (
-    <div className={classes.Tasks}>
-      {isToggleReportModel && (
-        <Model toggleModel={setToggleReportModel}>
-          <SendReportModel
-            sendReportRequest={sendReportRequest}
-            ref={reportDescriptionRef}
-          ></SendReportModel>
-        </Model>
-      )}
-      <div className={classes.Tasks__Top}>
-        <Heading_Tiny bold="600">Your Tasks</Heading_Tiny>
-      </div>
-
-      <div className={classes.Tasks__Container}>
-        <div className={classes.Tasks__Titles}>
-          <Paragraph>Admin</Paragraph>
-          <Paragraph>Description</Paragraph>
-          <Paragraph>Assigned On</Paragraph>
-          <Paragraph>Deadline</Paragraph>
-          <Paragraph>Level</Paragraph>
+  render() {
+    return (
+      <div className={classes.Tasks}>
+        {this.state.isToggleReportModel && (
+          <Model
+            toggleModel={() => this.setState({ isToggleReportModel: false })}
+          >
+            <SendReportModel
+              sendReportRequest={this.sendReportRequest}
+              ref={this.reportDescriptionRef}
+            ></SendReportModel>
+          </Model>
+        )}
+        <div className={classes.Tasks__Top}>
+          <Heading_Tiny bold="600">Your Tasks</Heading_Tiny>
         </div>
-        {/* <Scrollbars autoHeight autoHeightMin={400}> */}
-        {generateTasks(fetchTask)}
-        {/* </Scrollbars> */}
-        {/* <div className={classes.Tasks__tasks}></div> */}
+
+        <div className={classes.Tasks__Container}>
+          <div className={classes.Tasks__Titles}>
+            <Paragraph>Admin</Paragraph>
+            <Paragraph>Description</Paragraph>
+            <Paragraph>Assigned On</Paragraph>
+            <Paragraph>Deadline</Paragraph>
+            <Paragraph>Level</Paragraph>
+          </div>
+
+          {this.generateTasks(this.state.fetchTask, this.state.updatedTask)}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
+
+// ------------------------
 
 export default Tasks;

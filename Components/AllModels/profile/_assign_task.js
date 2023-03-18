@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { showNofication } from "../../stateless/Notification/Notification";
+import { io } from "socket.io-client";
 const { BtnFull } = require("../../Input/Buttons/Button");
 const {
   SelectInput,
@@ -14,6 +15,7 @@ const AssignTaskModel = (props) => {
   const headingRef = useRef();
   const descriptionRef = useRef();
   const taskTypeRef = useRef();
+  const socket = io("http://localhost:3000");
 
   useEffect(() => {
     (async () => {
@@ -28,13 +30,13 @@ const AssignTaskModel = (props) => {
 
   const submitTask = async (e) => {
     e.preventDefault();
-    console.log("working task assigning at _assign_task.js :8");
-    console.log(deadlineRef.current.value);
-    console.log({
-      heading: headingRef.current.value,
-      description: descriptionRef.current.value,
-      deadline: new Date(deadlineRef.current.value),
-    });
+    // console.log("working task assigning at _assign_task.js :8");
+    // console.log(deadlineRef.current.value);
+    // console.log({
+    //   heading: headingRef.current.value,
+    //   description: descriptionRef.current.value,
+    //   deadline: new Date(deadlineRef.current.value),
+    // });
 
     try {
       const task = await axios({
@@ -47,18 +49,27 @@ const AssignTaskModel = (props) => {
           taskType: taskTypeRef.current.textContent,
         },
       });
-      if (task)
-        showNofication("Task assigned Successfully!", "success", () =>
-          props.toggleModel(false)
-        );
+      if (task) {
+        props.toggleModel(false);
+        showNofication("Task assigned Successfully!", "success", () => {
+          // THIS WILL EMIT THE EVENT WITH THE USER ID TO WHOM THE TASK IS ASSIGNED
+          console.log(task);
+          socket.emit("task-assigned", {
+            userId: task.data.data.assignTo,
+          });
+        });
+      }
     } catch (error) {
+      console.log(error);
       showNofication(
-        error.response.data.message ||
+        error?.response?.data?.message ||
           "Something went wrong, Please try agiain later",
         "error"
       );
       console.log(error);
     }
+    // socket.emit("task-assigned", { userId: "jfdjkfdjkfjdklj" });
+    // showNofication("working button, event emitted", "success");
   };
   return (
     <form onSubmit={submitTask}>
