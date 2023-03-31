@@ -6,53 +6,58 @@ const catchAsync = require("../Util/catchAsync");
 const { deleteOne, updateOne, getOne } = require("./handlerFactory");
 
 exports.createOneReport = catchAsync(async (req, res, next) => {
-  const adminId = req.params.id;
-  const taskId = req.params.taskId;
-  const reportSender = req.user.id;
+  // const adminId = req.params.id;
+  const adminId = req.user.admin;
+  const { taskId } = req.params;
+  const senderId = req.user.id;
 
-  const admin = await Member.findById(adminId);
+  // const admin = await Member.findById(adminId);
 
-  if (!admin || !admin.team || !admin.team.includes(reportSender)) {
-    return next(new apiError(`You can't send the report to this admin.`));
+  // if (!admin || !admin.team || !admin.team.includes(reportSender)) {
+  //   return next(new apiError(`You can't send the report to this admin.`));
+  // }
+
+  //FOR SECURITY REASONS, SO OTHER CAN'T SEND REPORT TO OTHER USERS TASKS
+  const task = await Tasks.findOne({ _id: taskId, assignTo: senderId });
+
+  // console.log(task, "reportcontroller.js 26");
+
+  if (!task) {
+    return next(new apiError(`You can't send report to this task.`, 400));
   }
 
-  const mainTask = await Tasks.findOne({ _id: taskId, assignTo: reportSender });
-
-  console.log(mainTask, "reportcontroller.js 26");
-
-  if (!mainTask) {
-    return next(new apiError(`You can't send report to this task.`));
-  }
-
-  const singleReport = await Report.create({
+  // CREATE A REPORT
+  const report = await Report.create({
     ...req.body,
   });
 
-  //CHECK IF THE REPORT IS ALREADY CREATED
-  const checkReport = await Reports.findOne({
+  //CHECK IF THE DOC OF MAIN-REPORT IS ALREADY EXIST
+  const existingReports = await Reports.findOne({
     reportTo: adminId,
     task: taskId,
   });
 
-  if (checkReport) {
-    checkReport.reports.unshift(singleReport.id);
-    checkReport.save();
-    return res.status(201).json({ status: "success", data: checkReport });
+  if (existingReports) {
+    existingReports.reports.unshift(report.id);
+    existingReports.save();
+    return res.status(201).json({ status: "success", data: existingReports });
   }
 
-  const mainReport = await Reports.create({
-    reportBy: reportSender,
+  // IF MAIN-REPORTS DOC NOT EXISTED OR IS NEW
+  const newReports = await Reports.create({
+    reportBy: senderId,
     reportTo: adminId,
     task: taskId,
   });
 
-  if (mainReport) {
-    mainReport.reports.push(singleReport);
-    await mainReport.save();
+  if (newReports) {
+    newReports.reports.push(report.id);
+    await newReports.save();
   }
 
   res.status(201).json({ status: "success", data: mainReport });
 });
+
 exports.getAllReports = catchAsync(async (req, res, next) => {
   const userId = req.user && req.user.id;
   if (!userId)

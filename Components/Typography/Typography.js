@@ -2,11 +2,11 @@ import { forwardRef } from "react";
 import classes from "./Typography.module.scss";
 const handleStyle = (props) => {
   const style = { ...props.style };
-  if (props.bold) {
-    style.fontWeight = props.bold === "" ? "bold" : props.bold;
+  if (props.weight) {
+    style.fontWeight = props.weight;
   }
-  if (props.upperCase) {
-    style.textTransform = props.upperCase;
+  if (props.textTransform) {
+    style.textTransform = props.textTransform;
   }
   if (props.color) {
     style.color = props.color;

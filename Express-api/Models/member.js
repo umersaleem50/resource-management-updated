@@ -42,12 +42,7 @@ const memberSchema = new mongoose.Schema(
       },
       select: false,
     },
-    level: {
-      type: Number,
-      default: 1,
-    },
-
-    profession: {
+    professions: {
       type: [String],
       // required: [true, "Please provide professions for account."],
       enum: {
@@ -58,7 +53,7 @@ const memberSchema = new mongoose.Schema(
       //   validator: function (val) {
       //     return val.length > 0;
       //   },
-      // message: "Please provide professions for account.",
+      //   message: "Please provide professions for account.",
       // },
     },
     permissions: {
@@ -105,11 +100,54 @@ const memberSchema = new mongoose.Schema(
     category: {
       type: String,
     },
-    otherDetails: {
-      type: mongoose.Schema.ObjectId,
-      ref: "profileDetails",
-      default: null,
+    bio: {
+      type: String,
+      max: [200, "A bio must be of maximum 60 words."],
+      min: [50, "A bio must be of atleast 10 words."],
     },
+    phone: {
+      type: String,
+      //   validate: isMobilePhoneLocales,
+    },
+
+    postalCode: {
+      type: String,
+      //   validate: isPostalCode,
+    },
+    city: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    street: {
+      type: String,
+    },
+    location: {
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+    },
+    service: {
+      type: [mongoose.Schema.ObjectId],
+      ref: "serviceProduct",
+    },
+    gallery: {
+      type: [String],
+      default: () => new Array(5).fill("default-gallery.jpg"),
+    },
+    admin: {
+      type: mongoose.Schema.ObjectId,
+      ref: "member",
+    },
+    //        otherDetails: {
+    //            type: mongoose.Schema.ObjectId,
+    //            ref: "profileDetails",
+    //            default: null,
+    //        },
   },
   {
     toJSON: { virtuals: true },
@@ -119,6 +157,16 @@ const memberSchema = new mongoose.Schema(
   }
 );
 
+memberSchema.pre("/^find/", function (next) {
+  this.find({ isActive: { $ne: false } });
+  next();
+});
+
+memberSchema.pre("findOne", function (next) {
+  this.find({ isActive: { $ne: false } });
+  next();
+});
+
 memberSchema.virtual("fullName").get(function () {
   if (!this.firstName && !this.lastName) return;
   return this.firstName + " " + this.lastName;
@@ -127,6 +175,7 @@ memberSchema.virtual("fullName").get(function () {
 memberSchema.virtual("memberQunatity").get(function () {
   if (this.team) return this.team.length;
 });
+
 memberSchema.methods.createResetToken = async function () {
   const randomToken = crypto.randomBytes(32).toString("hex");
   const resetToken = crypto
@@ -137,6 +186,12 @@ memberSchema.methods.createResetToken = async function () {
   this.passwordResetExpire = Date.now() + 10 * 60 * 60 * 1000;
   return randomToken;
 };
+/**
+ *
+ * @param {String} inputPassword Password typed by the user
+ * @param {String} encryptedPassword EncryptedPassword, by which the typed one will be compare
+ * @returns Return true if both passwords match, otherwise return false
+ */
 memberSchema.methods.correctPassword = async function (
   inputPassword,
   encryptedPassword

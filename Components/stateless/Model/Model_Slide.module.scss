@@ -1,0 +1,37 @@
+.Model {
+  z-index: 105;
+  height: 100vh;
+  width: 50vw;
+  background-color: var(--color-white);
+  border-radius: 2rem 0 0 2rem;
+  top: 0;
+  right: 0;
+  position: fixed;
+  animation: slideModelAnimation 0.8s cubic-bezier(0.89, 0, 0.54, 1.01);
+  &__topRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0 3rem;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  &__Container {
+  }
+}
+
+.Icon__Close {
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+@keyframes slideModelAnimation {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}

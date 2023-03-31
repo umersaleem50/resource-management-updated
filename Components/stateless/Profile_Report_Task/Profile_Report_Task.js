@@ -20,8 +20,17 @@ const Profile_Report_Task = (props) => {
         </Paragraph>
         <div className={classes["Profile__Container__Deadline"]}>
           {props.assignedOn && props.deadline && (
-            <Paragraph>
-              {generateDateFromString(props.assignedOn)} -{" "}
+            <Paragraph>{generateDateFromString(props.assignedOn)} - </Paragraph>
+          )}
+          {props.deadline && (
+            <Paragraph
+              color={
+                Date.now() > new Date(props.deadline).getTime()
+                  ? "var(--color-error)"
+                  : "var(--color-green)"
+              }
+              style={{ fontWeight: "600" }}
+            >
               {generateDateFromString(props.deadline)}
             </Paragraph>
           )}

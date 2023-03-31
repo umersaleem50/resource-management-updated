@@ -12,10 +12,13 @@ const OptionModel = (props) => {
             props.closeToggle(false);
           }}
           key={i}
+          style={{ backgroundColor: el.backgroundColor }}
         >
           <Paragraph
             upperCase="capitalize"
-            color={el?.color === "red" && "var(--color-error)"}
+            color={
+              el?.color === "red" ? "var(--color-error)" : "var(--color-white)"
+            }
           >
             {el.title}
           </Paragraph>

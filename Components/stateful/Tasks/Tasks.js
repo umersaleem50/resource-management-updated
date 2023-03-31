@@ -66,7 +66,7 @@ class Tasks extends Component {
     //   seletedTaskId,
     //   description
     // );
-    console.log(this.state, this);
+
     if (
       this.state.selectedTaskAdminId === "" ||
       this.state.selectedTaskId === ""

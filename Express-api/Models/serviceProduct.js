@@ -10,13 +10,21 @@ const serviceProductSchema = new Schema({
     required: [true, "You must need to provide a type."],
     toLowerCase: true,
   },
-  name: {
+  price: {
+    type: Number,
+    min: [1, "Please a provide a postive number."],
+  },
+  service: {
     type: String,
     max: [
       128,
       "Please use a shorter name of maximum 128 letters for you product or service.",
     ],
     required: [true, "Please provide the name of product or service."],
+  },
+  description: {
+    type: String,
+    required: [true, "Please provide a description for the service."],
   },
   title: {
     type: String,
@@ -38,15 +46,10 @@ const serviceProductSchema = new Schema({
     default: 0,
   },
 
-  member: {
+  serviceBy: {
     type: mongoose.Schema.ObjectId,
     ref: "member",
     required: [true, "A product or service must belong to a member."],
-  },
-
-  description: {
-    type: String,
-    required: [true, "A product of service must have a brief description"],
   },
 
   gallery: {

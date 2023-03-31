@@ -8,6 +8,7 @@ const { getOne, updateOne, deleteOne, getAll } = require("./handlerFactory");
 
 exports.getOneTask = getOne(Tasks, "tasks");
 exports.updateOneTask = updateOne(Task);
+
 exports.reassignTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
   const task = await Tasks.findById(taskId).populate("tasks");

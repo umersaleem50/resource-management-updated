@@ -1,0 +1,129 @@
+.ProfileAssigning {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 15rem));
+  grid-gap: 1rem;
+}
+
+.ProfileSearcher {
+  position: relative;
+  height: 4rem;
+  min-width: 20rem;
+  &__Results {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 5px);
+    background-color: var(--color-white);
+    box-shadow: var(--drop-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    width: 100%;
+  }
+  &__Input {
+    height: 100%;
+    width: 0;
+    border: none;
+    background-color: var(--color-grey-lighter);
+    border-radius: 2rem;
+    max-width: 20rem;
+    // margin-left: 1rem;
+    transition: width 0.5s ease-in, padding 0.2s 0.4s ease;
+
+    // visibility: collapse;
+    &--active {
+      padding: 0 2rem;
+      width: 100%;
+
+      // animation: animateInput 1s ease;
+    }
+  }
+
+  &__Top {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+
+  &__Button {
+    height: 100%;
+    padding: 0 1.3rem;
+    background-color: var(--color-grey-lighter);
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    margin-left: 1rem;
+    &:hover {
+      background-color: var(--color-blue);
+    }
+    transition: transform 1s ease;
+    &--active {
+      transform: rotateZ(45deg);
+      background-color: var(--color-error);
+      &:hover {
+        background-color: var(--color-error);
+      }
+    }
+  }
+
+  &__Icon {
+    font-size: 1.4rem;
+    background-color: var(--color-font);
+  }
+}
+
+.Profile {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  background-color: var(--color-grey-lighter);
+  position: relative;
+
+  &:hover &__Icon {
+    visibility: visible;
+  }
+
+  &__Image {
+    margin-right: 1rem;
+    border-radius: 50%;
+  }
+
+  &__Icon {
+    visibility: hidden;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    transform: translateY(-50%);
+  }
+}
+
+.Result__Item {
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--color-blue);
+    p {
+      color: var(--color-white);
+    }
+  }
+}
+
+@keyframes animateInput {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}

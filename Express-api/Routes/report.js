@@ -17,6 +17,6 @@ reportRouter
   .patch("/:id", updateOneReport)
   .delete("/:id", deleteOneReport);
 
-reportRouter.post("/:id/:taskId", createOneReport);
+reportRouter.post("/:taskId", createOneReport);
 
 module.exports = reportRouter;

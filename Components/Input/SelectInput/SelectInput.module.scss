@@ -1,0 +1,51 @@
+.SelectInput {
+  display: flex;
+  flex-direction: column;
+  max-width: 15rem;
+  position: relative;
+  &__Selected {
+    max-height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-white);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    &:hover {
+      box-shadow: var(--drop-shadow);
+    }
+  }
+
+  &__Options {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    top: calc(100% + 0.5rem);
+    max-width: 15rem;
+    width: 100%;
+    list-style: none;
+    overflow: hidden;
+    box-shadow: var(--drop-shadow);
+    background-color: var(--color-white);
+    z-index: 20;
+  }
+
+  &__Option {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    &:hover {
+      background-color: var(--color-blue);
+      color: var(--color-white);
+    }
+  }
+}
+
+.Icon__ArrowDown {
+  color: var(--color-white);
+  font-size: 1.4rem;
+}

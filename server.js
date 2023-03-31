@@ -9,9 +9,13 @@ const socketIo = require("socket.io");
 
 /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
 MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
+process.on("uncaughtException", function (error) {
+  console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
+  console.log(error.name, error.message);
+  process.exit(1);
+});
 
 loadEnvConfig("./", process.env.NODE_ENV !== "production");
-let custom_socket;
 
 const handler = app.getRequestHandler();
 app
@@ -41,27 +45,11 @@ app
       });
 
       socket.emit("message", "this is the message");
-
-      // socket.on("message", (data) => {
-      //   console.log("this is the data", data);
-      // });
     });
-
-    // const customServer = http.createServer(server);
-
-    // const io = new socket.Server(http.createServer(server));
-    // io.attach();
-    // io.on("connection", (socket) => {
-    //   console.log("a user connected");
-    // });
 
     mainServer.listen(process.env.PORT, () => {
       console.log(`Express is running at port ${process.env.PORT}`);
     });
-
-    // server.get('/',(req,res,next) => {
-    //   return app.render(req,res,'/')
-    // })
   })
   .catch((err) => {
     console.log(err);
@@ -77,4 +65,8 @@ mongoose
     console.log("Database not connected, Error💥");
   });
 
-module.exports = { custom_socket };
+process.on("unhandledRejection", function (error) {
+  console.log("UNHANDLED REJECTION! 💥 Shutting down...");
+  console.log(error.name, error.message);
+  process.exit(1);
+});

@@ -29,14 +29,15 @@ class Reports extends Component {
   }
 
   generateReports(reports) {
+    console.log(reports);
     return reports.map((el, i) => {
       return (
         <Report
-          task={el.task.tasks}
+          task={el?.task?.tasks}
           reportBy={el.reportBy}
           reports={el.reports}
           key={i}
-          taskId={el.task._id}
+          taskId={el?.task?._id}
           toggleModel={(id) =>
             this.setState({ toggleAssignTaskModel: true, currentTaskId: id })
           }

@@ -7,12 +7,12 @@ const noteRouter = require("./Routes/note");
 const reportRouter = require("./Routes/report");
 const mainRouter = require("express").Router();
 
-mainRouter.use("/api/auth", authRouter);
-mainRouter.use("/api/profile", profileRouter);
-mainRouter.use("/api/user", userRouter);
-mainRouter.use("/api/service", serviceProductRouter);
-mainRouter.use("/api/task", taskRouter);
-mainRouter.use("/api/note", noteRouter);
-mainRouter.use("/api/reports", reportRouter);
+mainRouter.use("/auth", authRouter);
+mainRouter.use("/profile", profileRouter);
+// mainRouter.use("/user", userRouter);
+mainRouter.use("/service", serviceProductRouter);
+mainRouter.use("/task", taskRouter);
+mainRouter.use("/note", noteRouter);
+mainRouter.use("/reports", reportRouter);
 
 module.exports = mainRouter;

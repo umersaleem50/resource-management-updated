@@ -84,3 +84,19 @@ export async function getServerSideProps(context) {
     };
   }
 }
+
+// SAVE IT FOR THE LATER
+// export async function getServerSideProps({ req }) {
+//   const protocol = req.headers['x-forwarded-proto'] || 'http';
+//   const host = req.headers['x-forwarded-host'] || req.headers.host;
+//   const baseUrl = `${protocol}://${host}`;
+
+//   const res = await fetch(`${baseUrl}/api/data`);
+//   const data = await res.json();
+
+//   return {
+//     props: {
+//       data,
+//     },
+//   };
+// }

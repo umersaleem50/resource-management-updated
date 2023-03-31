@@ -1,209 +1,133 @@
 const Member = require("../Models/member");
 const apiError = require("../Util/apiError");
 const catchAsync = require("../Util/catchAsync");
-const { verifyToken } = require("./authController");
-const customQuery = require("../Util/queryUtil");
-const ProfileDetailModel = require("../Models/profileDetail");
 
-// const getProfile = catchAsync(async (req, res, next) => {
-//   const profileQuery = Member.findById(req.user.id);
+const { filterFields, filterReq } = require("../Util/filterQuery");
 
-//   if (req.query.fields) {
-//     const fieldsQuery = new customQuery(req.query.fields).filterQuery(
-//       "password",
-//       "passwordConfirm",
-//       "passwordChangedAt"
-//     ).query;
+/**
+ * Provides the data of currently logged in account
+ @return Object [req] Response with user data
+ */
 
-//     // const fieldsQuery = req.query.fields.split(",").join(" ");
-
-//     profileQuery.select(fieldsQuery);
-//   }
-
-//   if (req.query.teamFields) {
-//     const teamFields = new customQuery(req.query.teamFields).filterQuery(
-//       "password",
-//       "passwordConfirm",
-//       "passwordChangedAt"
-//     ).query;
-
-//     profileQuery.populate({
-//       path: "team",
-//       model: "member",
-//       select: teamFields,
-//     });
-//   }
-
-//   const profile = await profileQuery;
-
-//   return res.json({ message: "working", data: profile });
-// });
-
-const getProfile = catchAsync(async (req, res, next) => {
-  // const { id } = req.user;
-  // const restrictedFields = ["password", "passwordConfirm", "passwordChangedAt"];
-  // let fieldsQuery;
-  // let teamQuery;
-  // let profile = Member;
-  // // if (req.query.fields) {
-  // //   fieldsQuery = new customQuery(req.query.fields).filterQuery(
-  // //     ...restrictedFields
-  // //   ).query;
-  // //   profile.select(fieldsQuery);
-  // // }
-  // if (req.query.teamFields) {
-  //   teamQuery = new customQuery(req.query.teamFields).filterQuery(
-  //     ...restrictedFields
-  //   ).query;
-  //   profile.populate({ path: "team", model: "member", select: teamQuery });
-  // }
-
-  // const profileData = await profile.findById(id);
-  // // console.log(await profile);
-
-  res.status(200).json({ status: "success", data: req.user });
+exports.getProfile = catchAsync(async (req, res, next) => {
+  return res.status(200).json({ status: "success", data: req.user });
 });
 
-const logoutProfile = catchAsync(async (req, res, next) => {
-  res.cookie("jwt", "").status(200).json({ status: "success", data: null });
-});
+/**
+ * Provide the data of team of a user
+ @return [res] Response with team data
+ */
 
-const getTeam = catchAsync(async (req, res, next) => {
-  const myquery = new customQuery(req.query.fields).filterQuery(
-    "password",
-    "passwordConfirm",
-    "passwordChangedAt"
-  );
-
-  const profileQuery = Member.findById(req.user.id).select(mainIdQuery.query);
+exports.getTeam = catchAsync(async (req, res, next) => {
+  let fields;
+  if (req.query.fields) {
+    fields = filterFields(
+      req.query.fields,
+      "password",
+      "passwordConfirm",
+      "passwordChangedAt"
+    );
+  }
 
   const profile = await Member.findById(req.user.id)
-    .select(mainIdQuery.query)
-    .populate({ path: "team", select: populateSelect.query });
+    .select("team")
+    .populate({ path: "team", select: fields });
 
-  return res.json({ message: "working", data: profile });
+  return res.json({ data: profile });
 });
 
-// const getTeam = catchAsync(async (req, res, next) => {
-//   // let token;
-
-//   // if (
-//   //   req.header("authorization") &&
-//   //   req.header("authorization").startsWith("Bearer")
-//   // ) {
-//   //   token = req.headers("authorization").split(" ")[1];
-//   // } else if (req.body.token) {
-//   //   token = req.body.token;
-//   // } else if (req.cookies && req.cookies.jwt) {
-//   //   token = req.cookies.jwt;
-//   // }
-
-//   // const decode = token && (await verifyToken(token));
-
-//   // if (!token || !decode.id) {
-//   //   return next(
-//   //     new apiError("Token invalid, Please login again to get one!112", 400)
-//   //   );
-//   // }
-
-//   const team = await Member.findById(req.user.id)
-//     .select("firstName lastName team")
-//     .populate({
-//       path: "team",
-//       select: myquery.query,
-//       model: "member",
-//     });
-
-//   return res.status(200).json({ message: "success", data: team });
-// });
-
-const completeProfile = catchAsync(async (req, res, next) => {
+exports.editSubAccount = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-
-  const profileDetails = await ProfileDetailModel.create({
-    ...req.body,
-    member: id,
-  });
-
-  const profile = await Member.findByIdAndUpdate(
-    id,
-    { otherDetails: profileDetails },
-    { new: true, runValidators: true }
-  ).populate("otherDetails");
-
-  res.status(201).json({ status: "success", data: profile });
-});
-
-const editSubAccount = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-
-  const user = await Member.findById(id).select("otherDetails");
-  const profileDetailsId = user.otherDetails;
-
-  const profileDetail = await ProfileDetailModel.findByIdAndUpdate(
-    profileDetailsId,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
-
-  res.status(200).json({ message: "success", data: profileDetail });
-});
-
-const editProfile = catchAsync(async (req, res, next) => {
-  // const subId = req.params.id;
-  // const { id } = req.user;
-  const { id } = (req.params.id && req.params) || req.user;
-  console.log(id);
-
-  const profileData = await Member.findByIdAndUpdate(id, req.body, {
+  const user = await Member.findByIdAndUpdate(id, req.body, {
     runValidators: true,
     new: true,
-    // console.log(profileData);
   });
-
-  res.status(200).json({ message: "success", data: profileData });
+  res.status(200).json({ message: "success", data: user });
 });
 
-const editProfileGallery = catchAsync(async (req, res, next) => {
-  const { id } = req.params || req.user;
-  const { order } = req.params;
-  let galleryArr;
-  if (!id || !order)
-    return next(
-      new apiError(
-        "Please provide the order of image between 0 - 5 and id of profile",
-        400
-      )
-    );
-  const profileData = await Member.findById(id);
-
-  const otherDetails = await ProfileDetailModel.findById(
-    profileData.otherDetails
-  );
-
-  galleryArr = [...otherDetails.gallery];
-  galleryArr[order] = req.body.gallery;
-  otherDetails.gallery = galleryArr;
-  const updatedDetails = await otherDetails.save({
-    runValidtors: true,
+exports.editProfile = catchAsync(async (req, res, next) => {
+  const { id } = req.user;
+  const ALLOWED_FIELDS = [
+    "firstName",
+    "lastName",
+    "email",
+    "profession",
+    "profilePicture",
+    "coverPicture",
+    "bio",
+    "phone",
+    "postalCode",
+    "city",
+    "country",
+    "street",
+    "location",
+    "gallery",
+  ];
+  const filteredReq = filterReq(req.body, ...ALLOWED_FIELDS);
+  const user = await Member.findByIdAndUpdate(id, filteredReq, {
+    runValidators: true,
     new: true,
   });
 
-  res.status(200).json({
-    status: "success",
-    data: updatedDetails,
-  });
+  res.status(200).json({ message: "success", data: user });
 });
 
-module.exports = {
-  getTeam,
-  getProfile,
-  completeProfile,
-  editProfile,
-  editSubAccount,
-  editProfileGallery,
-  logoutProfile,
+/**
+ * Checks if the given user is a team member of logged in user
+ * @params :id param of the request
+ * @default 'member'
+ * @return Returns next() middleware if part of team
+ */
+
+exports.checkIfPartOfTeam = catchAsync(async (req, res, next) => {
+  const { id } = req.params; // ID OF TEST USER, COULD BE OF ADMIN OR USER
+  const userId = req.user.id; // CURRENTLY LOGGED IN USER
+  const user = await Member.findOne({ _id: userId, team: id });
+
+  if (!user)
+    return next(
+      new apiError(
+        `You're not allow to perform the action. User is not part of your team`,
+        401
+      )
+    );
+
+  next();
+});
+
+/**
+ * Create Sub Accounts, if the logged-in user have permissions
+ * It creates a user first & then append it in the logged-in user's team
+ @params [String] :adminId unique :id of the an account
+ @return Return response with valid data
+ */
+
+exports.createSubAccounts = catchAsync(async (req, res) => {
+  const { body } = req;
+  const { id } = req.user; //ID OF CURRENTLY LOGGED IN USER IE. ADMIN ID
+
+  const user = await Member.create({ ...body, admin: id });
+  await Member.findByIdAndUpdate(id, {
+    $push: { team: user.id },
+  });
+
+  return res.status(201).json({ status: "success", data: user });
+});
+
+/**
+ *  Tests if the user have permission before performing the certain task
+ * @param {String} requiredPermission required permission, which a user should have before performing certain action
+ * @returns return next middleware if the user have permission, otherwise return error
+ */
+
+exports.checkIfHavePermission = (requiredPermission) => {
+  return catchAsync(async (req, res, next) => {
+    const userPermissions = req.user.permissions;
+    if (!userPermissions.includes(requiredPermission))
+      return next(
+        new apiError(`You don't have permission to perform the action.`, 401)
+      );
+
+    return next();
+  });
 };

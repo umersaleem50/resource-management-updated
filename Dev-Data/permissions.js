@@ -1,11 +1,3 @@
-const permissions = [
-  "have-team",
-  "update-own-account",
-  "add-same-level",
-  "can-post",
-  "explore-market",
-  "sell-product",
-  "join-meeting",
-];
+const permissions = ["have-team", "update-account", "can-post", "market-place"];
 
 module.exports = permissions;

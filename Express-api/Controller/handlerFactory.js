@@ -2,6 +2,12 @@ const apiError = require("../Util/apiError");
 const ApiFeature = require("../Util/apiFeature");
 const catchAsync = require("../Util/catchAsync");
 
+/**
+* Create a document for a given Model
+@param Object [Model] Model
+@return Return a response with valid data
+*/
+
 exports.createOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const body = req.body;
@@ -12,6 +18,13 @@ exports.createOne = (Model) => {
     res.status(201).json({ status: "success", data: doc });
   });
 };
+
+/**
+* Update a document from given model with id
+@param Object [Model] Model
+@param Object [populateOptions] Object or string, to populate the document
+@return Return a response with valid data
+*/
 
 exports.updateOne = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
@@ -28,6 +41,11 @@ exports.updateOne = (Model, populateOptions) => {
   });
 };
 
+/**
+* Delete a document from given model with an id
+@param Object [Model] Model
+@return Return a response with valid data
+*/
 exports.deleteOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
@@ -35,6 +53,13 @@ exports.deleteOne = (Model) => {
     res.status(204).json({ status: "success", data: null });
   });
 };
+
+/**
+* Get a document for given model with a give id
+@param Object [Model] Model
+@param Object [populateOptions] Object or string, to populate the document
+@return Return a response with valid data
+*/
 
 exports.getOne = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
@@ -49,16 +74,20 @@ exports.getOne = (Model, populateOptions) => {
   });
 };
 
+/**
+* Get all document for given model
+@param Object [Model] Model
+@param Object [populateOptions] Object or string, to populate the document
+@return Return a response with valid data
+*/
+
 exports.getAll = (Model) => {
   return catchAsync(async (req, res, next) => {
-    //    let filter = {};
-    //    if(req.params.id) filter = {}
     const feature = new ApiFeature(Model.find(), req.query)
       .filter()
       .sort()
       .limit()
       .pagination();
-    // .populate();
     const doc = await feature.query;
     res.status(200).json({
       status: "success",

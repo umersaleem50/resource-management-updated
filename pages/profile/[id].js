@@ -24,12 +24,15 @@ import Selective_Image from "../../Components/stateless/Selective_Image/Selectiv
 import permissions from "../../Dev-Data/permissions";
 import AssignTaskModel from "../../Components/AllModels/profile/_assign_task";
 import ImageBox from "../../Components/ImageBox/ImageBox";
+import Model_Slide from "../../Components/stateless/Model/Model";
+import Assign_New_Task from "../../Components/AllModels/General/_assign_new_task";
 
 // COMPONENT JSX
 const Profile = (props) => {
   const [isEditProfileModel, setEditProfileModel] = useState(false);
   const [isWannaAddServiceModel, setWannaAddServiceModel] = useState(false);
   const [isWannaAssignTask, setWannaAssignTask] = useState(false);
+  const [toggleAssignTask, setToggleAssignTask] = useState(false);
   const default_gallery = new Array(5).fill("default-gallery.jpg");
   const admin_option = [
     {
@@ -81,6 +84,14 @@ const Profile = (props) => {
   return (
     <MainContainer navbar>
       <Notification type="success" />
+      {toggleAssignTask && (
+        <Model_Slide
+          modelTitle={"Assign a new task"}
+          closeModel={setToggleAssignTask}
+        >
+          <Assign_New_Task />
+        </Model_Slide>
+      )}
       {isWannaAssignTask && (
         <Model toggleModel={setWannaAssignTask}>
           <AssignTaskModel
@@ -163,7 +174,8 @@ const Profile = (props) => {
           {props.isUnderAdmin && (
             <BtnFull
               text="Assign Task"
-              clicked={() => setWannaAssignTask(true)}
+              clicked={() => setToggleAssignTask(true)}
+              // clicked={() => setWannaAssignTask(true)}
             />
           )}
           {props.updateOwnAccount && (

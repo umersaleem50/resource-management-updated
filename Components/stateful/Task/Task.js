@@ -44,7 +44,19 @@ const Task = (props) => {
           <Paragraph>
             {generateDateFromString(currentTask.assignedOn)}
           </Paragraph>
-          <Paragraph>{generateDateFromString(currentTask.deadline)}</Paragraph>
+          <Paragraph
+            color={
+              Date.now() > new Date(currentTask.deadline).getTime()
+                ? "var(--color-error)"
+                : "var(--color-green)"
+            }
+            style={{
+              fontWeight:
+                Date.now() > new Date(currentTask.deadline).getTime() && "600",
+            }}
+          >
+            {generateDateFromString(currentTask.deadline)}
+          </Paragraph>
           <SmallSelect onChange={setLevel} options={options}></SmallSelect>
         </div>
       )}

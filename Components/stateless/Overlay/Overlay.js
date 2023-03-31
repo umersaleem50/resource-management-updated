@@ -3,11 +3,13 @@ import classes from "./Overlay.module.scss";
 const Overlay = (props) => {
   return (
     <div
-      className={classes.Overlay}
+      className={[
+        classes.Overlay,
+        props.transparent ? classes["Overlay__transparent"] : "",
+      ].join(" ")}
       //   onClick={() => props.toggleModel(false)}
-      onClick={() => {
-        props.onClick();
-      }}
+      style={{ zIndex: props.zIndex }}
+      onClick={props.onClick}
     ></div>
   );
 };

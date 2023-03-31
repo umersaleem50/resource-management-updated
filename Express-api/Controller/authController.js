@@ -5,12 +5,15 @@ const { promisify } = require("util");
 const apiError = require("../Util/apiError");
 const crypto = require("crypto");
 const { sendMail } = require("../Util/sendMail");
+const DEV_PERMISSIONS = require("../../Dev-Data/permissions");
 
-// /*THIS HOOK WILL LOAD THE ENV VARIABLES BEFORE THE NEXT() EVEN START,
-// MEAN YOU CAN GET THE EVN VARIABLES IN THE FILE.*/
+/**
+* Verify the given jwt token and return the valid data stored in the token
+@param String [token] JWT Token
+@return Object
+*/
 
-// loadEnvConfig("./", process.env.NODE_ENV !== "production");
-const verifyToken = async (token, req) => {
+const verifyToken = async (token) => {
   const { id, iat } = await promisify(jwt.verify)(
     token,
     process.env.JWT_SECERT_KEY
@@ -18,11 +21,25 @@ const verifyToken = async (token, req) => {
   return { id, iat };
 };
 
+/**
+* Create a valid token, valid for limit timestamp
+@param String [id] ID of the user to store in token
+@return String [] Returns a valid token
+*/
+
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECERT_KEY, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+/**
+* Create & Send valid JWT & document Data in response
+@param res [Object] Response to be sent with token
+@param status [Number] Reponse status of the response
+@param data [Object] Object of data to be sent
+@return Number [] Reponse status of the response
+*/
 
 const sendTokenAndResponse = (res, status, data) => {
   const token = createToken(data.id);
@@ -41,18 +58,7 @@ const login = catchAsync(async (req, res, next) => {
   }
 
   const user = await Member.findOne({ email }).select("+password");
-  /* IF YOU WANT TO GET THE NESTED DATA OF THE TEAM USE THE BELOW CODE OF BLOCK */
-  // .populate({
-  //   path: "team",
-  //   populate: {
-  //     path: "team",
-  //     // model: Member,
-  //     select: "firstName fullName lastName profilePicture profession team",
-  //   },
-  //   select: "firstName fullName lastName profilePicture profession team",
-  // });
-  /* IF YOU WANT TO GET THE FIRST LEVEL OF TEAM DATA, USE THE BELOW CODE OF BLOCK */
-  // .populate("team", "lastName firstName email profession team");
+
   const checkpassword = await user?.correctPassword(password, user.password);
 
   if (!user || !checkpassword) {
@@ -62,31 +68,32 @@ const login = catchAsync(async (req, res, next) => {
   sendTokenAndResponse(res, 200, user);
 });
 
+/**
+* Checks if the user is logged in before accessing the route
+* Use this route if you want to protect the route
+@return Object [next] Retrun next obj to call the next middleware
+*/
+
 const protectedRoute = catchAsync(async (req, res, next) => {
   let token;
 
   if (
     req.header("authorization") &&
     req.header("authorization").startsWith("Bearer")
-  ) {
+  )
     token = req.header("authorization")?.split(" ")[1];
-  } else if (req.cookies && req.cookies.jwt) {
-    token = req.cookies.jwt;
-  } else if (req.body.token) {
-    token = req.body.token;
-  }
+
+  if (req.cookies && req.cookies.jwt) token = req.cookies.jwt;
+
+  if (req.body.token) token = req.body.token;
 
   const decode = token && (await verifyToken(token));
 
   if (!token || !decode.id) {
     return next(
-      new apiError("Token invalid, Please login again to get one!112", 400)
+      new apiError("Token invalid, Please login again to get one!", 400)
     );
   }
-
-  // const token = req.headers.authorization?.split(" ")[1];
-
-  // const decode = await verifyToken(token);
 
   const userData = await Member.findById(decode.id).select(
     "+passwordChangedAt"
@@ -109,49 +116,64 @@ const protectedRoute = catchAsync(async (req, res, next) => {
   next();
 });
 
+/**
+* Update the Password of the account
+@params id [String] id will be in params, otherwise it will the id of logged-in user
+@return Object [res] Retrun response with valid data
+*/
+
 const updatePassword = catchAsync(async (req, res, next) => {
-  const mainId = req.params.mainId;
-  const mainAccount = await Member.findById(mainId)
-    .select("team firstName lastName")
-    .populate({
-      path: "team",
-      populate: {
-        path: "team",
-        // model: Member,
-        select: "team firstName lastName",
-      },
-      select: "team",
-    });
+  const { oldPassword, password, passwordConfirm } = req.body;
+  const { id } = req.params || req.user;
+  if (!oldPassword || !password || !passwordConfirm)
+    return next(
+      new apiError(
+        "Please provide old-password, password & password-confirm",
+        400
+      )
+    );
 
-  if (!mainId) {
-    return next(new apiError("You don't have permissions to update password."));
-  }
+  const user = await Member.findById(id).select("+password");
+  if (!(await user.correctPassword(oldPassword, user.password)))
+    return next(new apiError("Your current password is invalid.", 401));
 
-  res.status(200).json({ data: mainAccount });
+  if (password !== passwordConfirm)
+    return next(new apiError("password & passwordConfirm not matched.", 400));
+
+  user.password = password;
+  user.passwordConfirm = "";
+  await user.save();
+
+  sendTokenAndResponse(res, 200, user);
 });
 
-const signup = catchAsync(async (req, res) => {
-  const { body } = req;
-  const user = await Member.create(body);
+/**
+* Signup a new account
+@params mainId [String] Id of the admin user
+@return Object [res] Retrun response with valid data
+*/
+
+const signup = catchAsync(async (req, res, next) => {
+  const { email, password, passwordConfirm, firstName, lastName } = req.body;
+  let { permissions } = req.body;
+  if (!permissions) permissions = DEV_PERMISSIONS;
+  const user = await Member.create({
+    email,
+    password,
+    passwordConfirm,
+    firstName,
+    lastName,
+    permissions,
+  });
   if (user) return sendTokenAndResponse(res, 201, user);
 });
 
-const createAccount = catchAsync(async (req, res) => {
-  const bodyData = req.body;
-  const { mainId } = req.params;
-  // console.log("bodyData", bodyData);
-
-  const user = await Member.create(bodyData);
-  if (mainId && user) {
-    await Member.findByIdAndUpdate(mainId, {
-      $push: { team: user.id },
-    });
-  }
-
-  // sendTokenAndResponse(res, 201, user);
-  // MAKE A SEPERATE ROUTE FOR THAT.
-  return res.status(201).json({ status: "success", data: user });
-});
+/**
+* Request the forget password of the account
+* This will send a reset token to your given email address
+@query email [String] email address of the account
+@return Object [res] Retrun response with a message
+*/
 
 const forgetPassword = catchAsync(async (req, res, next) => {
   const { email } = req.body;
@@ -161,9 +183,7 @@ const forgetPassword = catchAsync(async (req, res, next) => {
   const member = await Member.findOne({ email });
 
   if (!member)
-    return next(
-      new apiError("No member exist. Or account is deactivated.", 404)
-    );
+    return next(new apiError("No user found. Or account is deactivated.", 404));
 
   const resetToken = await member.createResetToken();
 
@@ -176,6 +196,13 @@ const forgetPassword = catchAsync(async (req, res, next) => {
     message: "Reset link sent to your email. Please check your mail.",
   });
 });
+
+/**
+* Update your password if the given reset token is valid
+* You will get the reset token in your mail
+@params token [String] reset token for updating password
+@return Object [res] Retrun response with valid data
+*/
 
 const resetPassword = catchAsync(async (req, res, next) => {
   const { token } = req.params;
@@ -220,13 +247,38 @@ const resetPassword = catchAsync(async (req, res, next) => {
     .json({ status: "success", message: "Password changed successfully." });
 });
 
+/**
+* Logout the profile
+@return Object [res] return the response will no data
+*/
+
+const logoutProfile = catchAsync(async (req, res, next) => {
+  res.cookie("jwt", "").status(200).json({ status: "success", data: null });
+});
+
+/**
+ * Deactive the currently logged-in account
+ @return return response with a message of success
+ */
+
+const deactiveAccount = catchAsync(async (req, res, next) => {
+  const id = (req.params && req.params.id) || req.user.id;
+  await Member.findByIdAndUpdate(id, { isActive: false });
+
+  res.cookie("jwt", "").status(200).json({
+    status: "success",
+    message: "Account deactivated successfully!",
+  });
+});
+
 module.exports = {
   login,
   signup,
-  createAccount,
   protectedRoute,
   verifyToken,
   updatePassword,
   forgetPassword,
   resetPassword,
+  logoutProfile,
+  deactiveAccount,
 };
