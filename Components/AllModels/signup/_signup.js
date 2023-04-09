@@ -40,7 +40,7 @@ const Signup_Form = (props) => {
       className={classes["Form"]}
       onSubmit={async (e) => {
         e.preventDefault();
-        await submitRequest("/api/auth/signup");
+        await submitRequest("/api/v1/auth/signup");
       }}
     >
       <HEADING_2>Sign up</HEADING_2>

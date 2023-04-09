@@ -11,7 +11,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import { io } from "socket.io-client";
 import { Component } from "react";
 import { createRef } from "react";
-
+import { showSnackBar } from "../../../next-utils/helper_functions";
 class Tasks extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +22,7 @@ class Tasks extends Component {
       selectedTaskAdminId: "",
       updatedTask: "",
     };
+
     this.socket = io("http://localhost:3000");
 
     this.reportDescriptionRef = createRef();
@@ -46,12 +47,13 @@ class Tasks extends Component {
 
       if (tasks) this.setState({ fetchTask: fetchedTaskArr.reverse() });
     } catch (error) {
-      showNofication(
-        error?.response?.data?.message ||
-          "Something went wrong while fetching tasks.",
-        "error"
-      );
-      console.log(error);
+      // showSnackBar(this.snackbar.enqueueSnackbar, error.message, "error");
+      // showNofication(
+      //   error?.response?.data?.message ||
+      //     "Something went wrong while fetching tasks.",
+      //   "error"
+      // );
+      // console.log(error);
     }
   }
 

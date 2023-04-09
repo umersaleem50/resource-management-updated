@@ -7,48 +7,23 @@ const Router = require("express").Router();
 
 Router.use(protectedRoute);
 
-Router.get("/", profileController.getProfile);
+Router.get("/", profileController.getProfile).get(
+  "/:id",
+  profileController.checkIfPartOfTeam,
+  profileController.getSubAccountProfile
+);
 Router.get("/team", profileController.getTeam);
-// Router.get(
-//   "/check/:id",
-//   profileController.checkIfPartOfTeam('member'),
-//   profileController.getTeam
-// );
-Router.post("/deactivate", authController.deactiveAccount);
+Router.patch(
+  "/",
+  profileController.checkIfHavePermission("update-account"),
+  profileController.updateProfile
+).patch(
+  "/:id",
+  profileController.checkIfPartOfTeam,
+  profileController.checkIfHavePermission("update-account"),
+  profileController.updateSubAccount
+);
+
 Router.post("/logout", authController.logoutProfile);
-
-// Router.patch(
-//   "/update-profile-picture",
-//   imageHandler.uploadProfileImage,
-//   imageHandler.resizeProfilePicture,
-//   imageHandler.deletePreviousImage("profilePicture", "profilePicture"),
-//   editProfile
-// );
-
-// Router.patch(
-//   "/update-profile-picture/:id",
-//   imageHandler.uploadProfileImage,
-//   imageHandler.resizeProfilePicture,
-//   imageHandler.deletePreviousImage("profilePicture", "profilePicture"),
-//   editProfile
-// );
-
-// Router.patch(
-//   "/update-cover-picture/:id",
-//   uploadCoverImage,
-//   resizeCoverImage,
-//   editProfile
-// );
-
-// Router.patch(
-//   "/update-gallery/:id/:order",
-//   uploadGalleryImage,
-//   resizeGalleryImage,
-//   editProfileGallery
-// );
-// Router.patch("/", uploadProfileCoverPicture, resizeProfilePicture, editProfile);
-// TRY TO MAKE SEPERATE FILE FOR THE SUB ACCOUNTS
-// Router.post("/complete/:id", completeProfile);
-// Router.patch("/complete/:id", editSubAccount);
 
 module.exports = Router;

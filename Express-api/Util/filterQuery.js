@@ -33,3 +33,17 @@ exports.filterReq = (objToFilter, ...fields) => {
   });
   return copyOfObjToFilter;
 };
+
+/**
+ * Filter the permissions given in the body, and return only permissions that an admin had
+ * @param {Array} givenPermissions Permissions given in the body
+ * @param {Array} adminPermissions Permissions of the account creator, ie. Permissions of admin
+ * @returns return the filtered permissions, set of the permissions only exist in admin's account
+ */
+
+exports.filterPermissions = (givenPermissions, adminPermissions) => {
+  const filteredPermissions = givenPermissions.filter((el, i) => {
+    return adminPermissions.includes(el);
+  });
+  return filteredPermissions;
+};

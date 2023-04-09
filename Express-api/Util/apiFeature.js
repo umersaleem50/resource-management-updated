@@ -4,6 +4,11 @@ class ApiFeature {
     this.queryString = queryString;
   }
 
+  /**
+   * This method will query the documents based on given set of options
+   * @returns return current Object
+   */
+
   filter() {
     const queryObj = { ...this.queryString };
     const excludeEl = ["sort", "limit", "page", "fields", "populate"];
@@ -18,6 +23,11 @@ class ApiFeature {
     return this;
   }
 
+  /**
+   * This method will sort the results
+   * @returns return current Object
+   */
+
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
@@ -26,6 +36,11 @@ class ApiFeature {
 
     return this;
   }
+
+  /**
+   * This method will return only required fields
+   * @returns return current Object
+   */
 
   limit() {
     if (this.queryString.fields) {
@@ -37,6 +52,10 @@ class ApiFeature {
     return this;
   }
 
+  /**
+   * This method will help you have pagination if there is greater number of documents
+   * @returns return current Object
+   */
   pagination() {
     const page = this.queryString.page || 1;
     const limit = +this.queryString.limit || 100;

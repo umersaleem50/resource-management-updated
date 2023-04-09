@@ -1,3 +1,5 @@
+const { Typography } = require("@mui/material");
+
 export const generateDateFromString = (date) => {
   const custom_date = new Intl.DateTimeFormat(navigator.language, {
     dateStyle: "medium",
@@ -7,4 +9,8 @@ export const generateDateFromString = (date) => {
   // return new Date(date).toLocaleString();
 };
 
-
+export const showSnackBar = (enqueueSnackbar, message, variant = "success") => {
+  return enqueueSnackbar(<Typography>{message}</Typography>, {
+    variant,
+  });
+};

@@ -35,11 +35,17 @@
   "author": "Umar Saleem (umersaleem50@gmail.com)",
   "description": "Resource Management for constuctors, builders and brokers.",
   "devDependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/lab": "^5.0.0-alpha.125",
+    "@mui/material": "^5.11.16",
     "bcrypt": "^5.1.0",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^6.7.0",
     "helmet": "^6.0.1",
     "nodemailer": "^6.9.1",
+    "notistack": "^3.0.1",
     "sharp": "^0.31.3",
     "socket.io": "^4.6.1",
     "xss-clean": "^0.1.1"

@@ -57,19 +57,26 @@ exports.deleteOne = (Model) => {
 /**
 * Get a document for given model with a give id
 @param Object [Model] Model
-@param Object [populateOptions] Object or string, to populate the document
+@param Object [populateOptions] Array of populate Options or string, to populate the document
 @return Return a response with valid data
 */
 
 exports.getOne = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
     let query = Model.findById(req.params.id);
-    if (populateOptions && populateOptions.length)
+    // if (populateOptions && populateOptions.length)
+    //   populateOptions.forEach((el, i) => {
+    //     query.populate(el);
+    //   });
+    if (populateOptions && Array.isArray(populateOptions)) {
       populateOptions.forEach((el, i) => {
         query.populate(el);
       });
+    } else {
+      query.populate(populateOptions);
+    }
     const doc = await query;
-    if (!doc) return next(new apiError("No document found with this id!", 404));
+    if (!doc) return next(new apiError("No document found with :id!", 404));
     res.status(200).json({ status: "success", data: doc });
   });
 };

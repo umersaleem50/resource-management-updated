@@ -1,25 +1,29 @@
 const { protectedRoute } = require("../Controller/authController");
-const { getAll } = require("../Controller/handlerFactory");
-const {
-  getAllTask,
-  getOneTask,
-  createOneTask,
-  updateOneTask,
-  deleteOneTask,
-  reassignTask,
-  getTaskStats,
-} = require("../Controller/taskController");
+const profileController = require("../Controller/profileController");
+const taskController = require("../Controller/taskController");
 
 const taskRouter = require("express").Router();
 
 taskRouter.use(protectedRoute);
 
-taskRouter.get("/", getAllTask);
-taskRouter.get("/get-stats", getTaskStats);
-taskRouter.get("/:id", getOneTask);
-taskRouter.post("/:id", createOneTask);
-taskRouter.patch("/:id", updateOneTask);
-taskRouter.delete("/:id", deleteOneTask);
-taskRouter.patch("/reassign/:taskId", reassignTask);
+taskRouter
+  .get("/", taskController.getAllTask)
+  // GET ALL THE TASK OF TEAM MEMBER OF CURRENTLY LOGGED-IN USER
+  .get(
+    "/sub-account/:id",
+    profileController.checkIfPartOfTeam,
+    taskController.getAllTask
+  );
+
+taskRouter.get("/:id", taskController.getOneTask);
+taskRouter.post(
+  "/:id",
+  profileController.checkIfPartOfTeam,
+  taskController.assignATask
+);
+
+taskRouter.patch("/:id", taskController.updateOneTask);
+taskRouter.delete("/:id", taskController.deleteOneTask);
+taskRouter.patch("/reassign/:taskId", taskController.reassignTask);
 
 module.exports = taskRouter;

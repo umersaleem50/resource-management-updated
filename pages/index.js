@@ -1,18 +1,19 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-const Member = require("../Express-api/Models/member");
+// const Member = require("../Express-api/Models/member");
 import classes from "./index.module.scss";
 import MainContainer from "../Components/stateless/MainContainer/MainContainer";
-import Notification from "../Components/stateless/Notification/Notification";
 import Notes from "../Components/stateless/Notes/Notes";
-import { login_validation } from "../next-utils/login_validation";
-import DashboardProfile from "../Components/stateful/DashboardProfile/DashboardProfile";
+// import { login_validation } from "../next-utils/login_validation";
 import Tasks from "../Components/stateful/Tasks/Tasks";
 import Reports from "../Components/stateful/Reports/Reports";
+import { protected_route_next } from "../next-utils/login_validation";
+import {
+  get_note_request,
+  get_profile_request,
+} from "../services/index_requests";
 
 export default function Home(props) {
-  // const [isSendModelToggle, setSendModelToggle] = useState(false);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -22,19 +23,11 @@ export default function Home(props) {
       </Head>
 
       <MainContainer navbar>
-        <Notification type="success" />
-        {/* {isSendModelToggle && (
-          <Model toggleModel={setSendModelToggle}>
-            <SendReportModel />
-          </Model>
-        )} */}
         <main className={classes.Main_Container}>
           <div className={classes.Main_Container__Left}>
             <Notes />
           </div>
           <div className={classes.Main_Container__Right}>
-            {/* <DashboardProfile profile={props.data}></DashboardProfile> */}
-
             <Tasks setSendModelToggle userId={props.data.id} />
             <Reports />
           </div>
@@ -47,42 +40,63 @@ export default function Home(props) {
 }
 
 export async function getServerSideProps(context) {
-  const isLoggedIn = login_validation(context.req);
-
-  if (!isLoggedIn.isLogged) {
-    return isLoggedIn.redirect;
-  }
-
+  // const isLoggedIn = login_validation(context.req);
+  const token = context.req && context.req?.cookies?.jwt;
   try {
-    const id = isLoggedIn.isLogged;
+    const id = await protected_route_next(context);
 
-    const profileData = await Member.findById(id).populate({
-      path: "otherDetails",
-    });
-    // .select(
-    //   "otherDetails firstName lastName fullName profilePicture profession"
-    // );
-    // if (!profileData)
-    //   return {
-    //     redirect: {
-    //       permanent: false,
-    //       destination: "/404",
-    //     },
-    //   };
-
+    const user_data = await get_profile_request(token);
+    const notes = await get_note_request(token);
+    // console.log("this is data of index:56", user_data, id);
+    console.log("notes", notes, user_data);
     return {
       props: {
-        data: JSON.parse(JSON.stringify(profileData)),
+        data: user_data,
       },
     };
   } catch (error) {
     return {
       redirect: {
+        destination: "/auth/login",
         permanent: false,
-        destination: "/404",
       },
     };
   }
+
+  // if (!isLoggedIn.isLogged) {
+  //   return isLoggedIn.redirect;
+  // }
+
+  // try {
+  //   const id = isLoggedIn.isLogged;
+
+  //   const profileData = await Member.findById(id).populate({
+  //     path: "otherDetails",
+  //   });
+  // .select(
+  //   "otherDetails firstName lastName fullName profilePicture profession"
+  // );
+  // if (!profileData)
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: "/404",
+  //     },
+  //   };
+
+  //   return {
+  //     props: {
+  //       data: JSON.parse(JSON.stringify(profileData)),
+  //     },
+  //   };
+  // } catch (error) {
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: "/404",
+  //     },
+  //   };
+  // }
 }
 
 // SAVE IT FOR THE LATER

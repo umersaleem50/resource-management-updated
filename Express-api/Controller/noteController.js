@@ -22,8 +22,8 @@ exports.getOneNote = getOne(Note);
 exports.updateOneNote = updateOne(Note);
 
 exports.getAllNotes = catchAsync(async (req, res, next) => {
-  const userId = req.user && req.user.id;
-  const noteQuery = new ApiFeature(Note.find({ member: userId }), req.query)
+  const {id} = req.user
+  const noteQuery = new ApiFeature(Note.find({ member: id }), req.query)
     .filter()
     .sort()
     .limit()

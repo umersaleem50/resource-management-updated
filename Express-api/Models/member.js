@@ -10,17 +10,18 @@ const memberSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      // required: [true, "A member must have a first name."],
+      // required: [true, "A user must have a first name."],
     },
     lastName: {
       type: String,
-      // required: [true, "A member must have a last name."],
+      // required: [true, "A user must have a last name."],
     },
     email: {
       type: String,
-      required: [true, "A member must have a valid email."],
+      required: [true, "A user must have a valid email."],
       validate: isEmail,
       unique: true,
+      select: true,
     },
     password: {
       type: String,
@@ -32,8 +33,8 @@ const memberSchema = new mongoose.Schema(
     passwordConfirm: {
       type: String,
       required: [true, "Please confirm your password."],
-      min: [8, "Password must have at-least 8 characters or letters."],
-      max: [32, "Password must be less than 32 characters or letters."],
+      minLength: [8, "Password must have at-least 8 characters or letters."],
+      maxLength: [32, "Password must be less than 32 characters or letters."],
       validate: {
         validator: function (val) {
           return val === this.password;

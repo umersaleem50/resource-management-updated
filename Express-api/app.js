@@ -9,13 +9,30 @@ const express = require("express");
 const mainRouter = require("./mainRouter");
 const limiter = rateLimiter({
   windowMs: 60 * 60 * 1000,
-  max: 100,
+  max: 500,
   message: "To many request from this IP, please try again in a hour!.",
 });
 const app = express();
 
 // MIDDLEWARE FOR THE PROTECTION OF API
+
 app.use(helmet());
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "fonts.googleapis.com",
+      ],
+      imgSrc: ["'self'"],
+    },
+  })
+);
 app.use(mongoSanitizer());
 app.use(xss());
 

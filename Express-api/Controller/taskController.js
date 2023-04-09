@@ -6,9 +6,27 @@ const apiError = require("../Util/apiError");
 const catchAsync = require("../Util/catchAsync");
 const { getOne, updateOne, deleteOne, getAll } = require("./handlerFactory");
 
-exports.getOneTask = getOne(Tasks, "tasks");
+/**
+ * Get a task with :id
+ * @return returns response with valid data
+ */
+exports.getOneTask = getOne(Tasks, [
+  { path: "tasks" },
+  { path: "assignBy", select: "firstName lastName profilePicture" },
+  { path: "assignTo", select: "firstName lastName profilePicture" },
+]);
+
+/**
+ * update a task with :id
+ * @return returns response with valid data
+ */
 exports.updateOneTask = updateOne(Task);
 
+/**
+ * Reassign the task to a user
+ * This will create a task and will push in the tasks
+ * @return returns response with valid data
+ */
 exports.reassignTask = catchAsync(async (req, res, next) => {
   const { taskId } = req.params;
   const task = await Tasks.findById(taskId).populate("tasks");
@@ -24,70 +42,52 @@ exports.reassignTask = catchAsync(async (req, res, next) => {
 
   res.status(201).json({ status: "success", data: task });
 });
-
+/**
+ * delete a task with :id
+ * @return returns response with valid data
+ */
 exports.deleteOneTask = deleteOne(Task);
 
+/**
+ * Get all the task of the currently logged-in user.
+ * @return returns response with valid data
+ */
 exports.getAllTask = catchAsync(async (req, res, next) => {
-  const userId = req.user && req.user.id;
-  if (!userId)
-    return next(new apiError(400, "Please provide id of the account."));
+  const { id } = req.params || req.user;
 
-  const tasks = await Tasks.find({ assignTo: userId })
-    // .populate({
-    //   path: "assignBy",
-    //   select: "profilePicture firstName lastName",
-    // });
-    .populate("tasks")
-    .populate({
-      path: "assignBy",
-      select: "profilePicture firstName lastName",
-    });
+  const tasks = await Tasks.find({ assignTo: id }).populate("tasks").populate({
+    path: "assignBy",
+    select: "profilePicture firstName lastName",
+  });
 
   res
     .status(200)
     .json({ status: "success", results: tasks.length, data: tasks });
 });
 
-// exports.getAllTask = getAll(Task);
-
-exports.createOneTask = catchAsync(async (req, res, next) => {
+/**
+ * Assign a task to team member of the currenly logged-in user
+ * Create a mainTask and push it in the tasks
+ * @return returns response with valid data
+ */
+exports.assignATask = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const adminId = req.user && req.user.id;
-  const adminTeam = req.user && req.user.team;
+  const { id: userId } = req.user;
 
-  if (!adminId || !adminTeam.includes(id)) {
-    return next(new ApiError(400, "You can't assign task to this member."));
-  }
-
-  const singleTask = await Task.create({
+  const task = await Task.create({
     ...req.body,
   });
 
-  const givenTask = await Tasks.create({
+  const mainTasks = await Tasks.create({
     assignTo: id,
-    assignBy: adminId,
+    assignBy: userId,
   });
+  if (!mainTasks) await Task.findByIdAndDelete(task.id);
 
-  if (givenTask) {
-    givenTask.tasks.push(singleTask);
-    await givenTask.save();
+  if (mainTasks) {
+    mainTasks.tasks.push(task.id);
+    await mainTasks.save();
   }
 
-  res.status(201).json({ status: "success", data: givenTask });
-});
-
-exports.getTaskStats = catchAsync(async (req, res, next) => {
-  const stats = await Tasks.aggregate([
-    {
-      $match: { assignTo: req.user._id, status: "incomplete" },
-    },
-    {
-      $group: {
-        _id: { status: "$status" },
-        total: { $sum: 1 },
-        // tasks: "$tasks",
-      },
-    },
-  ]);
-  res.status(200).json({ message: "success", data: stats });
+  res.status(201).json({ status: "success", data: mainTasks });
 });

@@ -43,11 +43,11 @@ const createToken = (id) => {
 
 const sendTokenAndResponse = (res, status, data) => {
   const token = createToken(data.id);
-
+  if (data.password) data.password = undefined;
   return res
     .cookie("jwt", token, { maxAge: 24 * 60 * 60 * 1000 * 10, httpOnly: true })
     .status(status)
-    .json({ status: "sucess", token, data });
+    .json({ status: "success", token, data });
 };
 
 const login = catchAsync(async (req, res, next) => {
@@ -123,8 +123,9 @@ const protectedRoute = catchAsync(async (req, res, next) => {
 */
 
 const updatePassword = catchAsync(async (req, res, next) => {
+  // const { id } = req.params || req.user
+  const id = (req.params && req.params.id) || req.user.id;
   const { oldPassword, password, passwordConfirm } = req.body;
-  const { id } = req.params || req.user;
   if (!oldPassword || !password || !passwordConfirm)
     return next(
       new apiError(
@@ -132,8 +133,14 @@ const updatePassword = catchAsync(async (req, res, next) => {
         400
       )
     );
-
+  console.log(id, passwordConfirm, password);
   const user = await Member.findById(id).select("+password");
+  // const user = await Member.findById(id);
+  if (!user)
+    return next(
+      new apiError("No user found with :id or account is un-active.", 404)
+    );
+
   if (!(await user.correctPassword(oldPassword, user.password)))
     return next(new apiError("Your current password is invalid.", 401));
 
@@ -141,7 +148,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
     return next(new apiError("password & passwordConfirm not matched.", 400));
 
   user.password = password;
-  user.passwordConfirm = "";
+  user.passwordConfirm = passwordConfirm;
   await user.save();
 
   sendTokenAndResponse(res, 200, user);

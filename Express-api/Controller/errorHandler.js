@@ -37,7 +37,7 @@ const handleCastErrorDB = (error) => {
 
 const handleValidationError = (error) => {
   const errorMessage = Object.values(error.errors).map((el, i) => el.message);
-  return new apiError(errorMessage.join(" "), 400);
+  return new apiError(errorMessage.join(" ,"), 400);
 };
 
 /**

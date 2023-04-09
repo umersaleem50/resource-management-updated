@@ -1,41 +1,212 @@
-import Notification, {
-  showNofication,
-} from "../../../Components/stateless/Notification/Notification";
-import Head from "next/head";
-import Image from "next/image";
 import classes from "./Signup.module.scss";
+import Image from "next/image";
+import Head from "next/head";
+import { Button, TextField, Typography } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useSnackbar } from "notistack";
+import { useState } from "react";
+import Router from "next/router";
+import { signup_callback } from "../../../services/request_function";
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
+// import { IconButton } from "@mui/icons-material";
 
-import MainContainer from "../../../Components/stateless/MainContainer/MainContainer";
-import Signup_Form from "../../../Components/AllModels/signup/_signup";
-import { verify_already_login } from "../../../next-utils/login_validation";
 const Signup = (props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [isLoading, setLoading] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const showSnackBar = (message, variant = "success") => {
+    const messageArr =
+      (message.includes(",") && message?.split(",")) || message;
+    if (typeof messageArr === Array && messageArr.length)
+      messageArr.map((msg, _) => {
+        if (msg === "") return;
+        return enqueueSnackbar(<Typography>{msg.trim()}</Typography>, {
+          variant,
+        });
+      });
+    else {
+      enqueueSnackbar(<Typography>{message}</Typography>, {
+        variant,
+      });
+    }
+  };
+
+  const onSubmit = async (e) => {
+    setLoading(true);
+    const results = await signup_callback({ email, password, passwordConfirm });
+    if (results.status === "success") {
+      closeSnackbar();
+      showSnackBar("You account have been successfully created.", "success");
+      return;
+    }
+    if (results.status === "failed" || "error") {
+      showSnackBar(results.message, "error");
+      setLoading(false);
+      return;
+    }
+  };
+
   return (
-    <MainContainer navbar title="Resource Management - Login">
+    <>
       <Head>
-        <title>Signup | register a new account.</title>
+        <title>Signup now!</title>
         <meta
-          name="Login"
-          content="Login with your account to continue using the application."
+          name="Create an account"
+          content="Create an account free & discover the world of resources."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Notification type="success" />
-      <div className={classes["container"]}>
-        <Signup_Form />
-      </div>
-      <div className={classes["container__image"]}>
-        <Image
-          fill="cover"
-          src="/assets/login-background.jpg"
-          objectFit="cover"
-        />
-      </div>
-    </MainContainer>
+      <main className={classes["Container"]}>
+        <div className={classes["Container__Left"]}>
+          <Image
+            src="/assets/signup-background.jpg"
+            alt="Illustration of team work"
+            fill
+          />
+        </div>
+        <div className={classes["Container__Right"]}>
+          <form className={classes["Form"]}>
+            <Typography
+              variant="h3"
+              component={"h4"}
+              style={{ color: "var(--color-font-black)" }}
+              className={classes["Form__Heading"]}
+            >
+              Signup for free
+            </Typography>
+            <Typography
+              variant="body1"
+              component={"body1"}
+              style={{ color: "var(--color-font-grey)" }}
+              className={classes["Form__SubHeading"]}
+            >
+              Signup for free to continue using the application, and manage your
+              project with your team mates
+            </Typography>
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              size="small"
+              type="email"
+              required
+              placeholder="Enter a valid email"
+              fullWidth
+              className={classes["Form__TextBox"]}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              id="password"
+              label="Password"
+              variant="outlined"
+              placeholder="Choose a strong password"
+              fullWidth
+              size="small"
+              type="password"
+              className={classes["Form__TextBox"]}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              id="password"
+              label="Confirm Password"
+              variant="outlined"
+              placeholder="Type your password again"
+              fullWidth
+              size="small"
+              type="password"
+              className={classes["Form__TextBox"]}
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+            />
+            <LoadingButton
+              variant="contained"
+              fullWidth
+              size="large"
+              className={classes["Form__Button"]}
+              onClick={onSubmit}
+              loading={isLoading}
+              loadingPosition="start"
+            >
+              <Typography
+                // variant="button"
+                style={{ color: "var(--color-white)" }}
+              >
+                Create an account
+              </Typography>
+            </LoadingButton>
+
+            <Typography
+              variant="body1"
+              component={"body1"}
+              style={{ color: "var(--color-font-grey)" }}
+              className={classes["Form__otherText"]}
+            >
+              Alread have an account?
+            </Typography>
+
+            <Button
+              variant="outlined"
+              fullWidth
+              size="large"
+              className={[
+                classes["Form__Button"],
+                classes["Form__Button--signup"],
+              ]}
+              onClick={() => Router.push("/auth/login")}
+            >
+              <Typography
+                // variant="button"
+                style={{ color: "var(--color-blue)" }}
+              >
+                Login
+              </Typography>
+            </Button>
+            <Typography
+              color={"var(--color-font-grey)"}
+              className={classes["Form__forgetPassword"]}
+            >
+              Forget your password:{" "}
+              <span
+                onClick={() => {
+                  enqueueSnackbar("Forget", { variant: "warning" });
+                }}
+              >
+                Click here!
+              </span>
+            </Typography>
+          </form>
+        </div>
+      </main>
+    </>
   );
 };
 
 export async function getServerSideProps(context) {
-  return verify_already_login(context);
+  const cookie = context && context?.req?.cookies?.jwt;
+  if (!cookie) {
+    return { props: {} };
+  }
+  const validId = await promisify(jwt.verify)(
+    cookie,
+    process.env.JWT_SECERT_KEY
+  );
+  if (!validId.id)
+    return {
+      props: {},
+    };
+
+  return {
+    redirect: {
+      permanent: true,
+      destination: "/",
+    },
+  };
 }
 
 export default Signup;

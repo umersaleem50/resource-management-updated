@@ -5,10 +5,13 @@ import { BtnFull, BtnOptions } from "../../Input/Buttons/Button";
 import { Heading_Tiny, Paragraph } from "../../Typography/Typography";
 import Model from "../Model/Model";
 import Note from "../Note/Note";
+import { useSnackbar } from "notistack";
 import { showNofication } from "../Notification/Notification";
 import classes from "./Notes.module.scss";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { showSnackBar } from "../../../next-utils/helper_functions";
 const Notes = (props) => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allnotes, setNotes] = useState([]);
   const [isWannaInsertNote, setWannaInsertNote] = useState(false);
   const note_options = [
@@ -32,7 +35,7 @@ const Notes = (props) => {
     (async () => {
       try {
         const notes = await axios({
-          url: "/api/note",
+          url: "/api/v1/note",
           method: "get",
           params: {
             sort: "-createdOn",
@@ -43,17 +46,12 @@ const Notes = (props) => {
             if (prev.length !== notes.data.data.length) return notes.data.data;
             return prev;
           });
-          console.log(notes);
         }
       } catch (error) {
-        // console.log(error);
-        showNofication(
-          "Something went wrong, while loading the notes.",
-          "error"
-        );
+        showSnackBar(enqueueSnackbar, error.message, "error");
       }
     })();
-  }, []);
+  }, [allnotes]);
 
   const generateAllNotes = (notes) => {
     if (notes.length <= 0) {

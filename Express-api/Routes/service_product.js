@@ -12,7 +12,7 @@ const {
   getOneService,
   deleteOneService,
   updateService,
-  editServiceGallery,
+  // editServiceGallery,
 } = require("../Controller/serviceController");
 
 const service_product_router = express.Router();
@@ -33,8 +33,8 @@ service_product_router.patch(
 service_product_router.patch(
   "/update-gallery/:id/:order",
   uploadGalleryImage,
-  resizeServiceGalleryImage,
-  editServiceGallery
+  resizeServiceGalleryImage
+  // editServiceGallery
 );
 
 module.exports = service_product_router;
