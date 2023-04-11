@@ -12,6 +12,12 @@ import { io } from "socket.io-client";
 import { Component } from "react";
 import { createRef } from "react";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+import { Input, Typography } from "@mui/material";
+import { blue, grey } from "@mui/material/colors";
+
+import TextField from "@mui/material/TextField";
+import { Search } from "@mui/icons-material";
+import InputAdornment from "@mui/material/InputAdornment";
 class Tasks extends Component {
   constructor(props) {
     super(props);
@@ -28,11 +34,6 @@ class Tasks extends Component {
     this.reportDescriptionRef = createRef();
 
     this.socket.on("new-task", async (data) => {
-      console.log(
-        this.props.userId === data.userId,
-        this.props.userId,
-        data.userId
-      );
       if (props.userId === data.userId) {
         showNofication("Your admin assigned a new task for you", "success");
         this.fetchLatestTasks();
@@ -40,20 +41,38 @@ class Tasks extends Component {
     });
   }
 
+  /**
+   * this method will return only the task that have value in the heading
+    * it will only filter those tasks, whose task [] will include the value in their heading
+    @argument value [String] value of the search input
+    @returns Return filtered tasks
+  */
+
+  searchTaskHandler(value) {
+    if (value === "") this.fetchLatestTasks();
+
+    const searchedTask = this.state.fetchTask.filter((mainTask, i) => {
+      return (
+        mainTask.tasks &&
+        mainTask.tasks.filter((task, i) => {
+          return task.heading.toLowerCase().includes(value);
+        }).length
+      );
+    });
+    this.setState({ fetchTask: searchedTask });
+  }
+
   async fetchLatestTasks() {
     try {
-      const tasks = await axios({ url: "/api/task", method: "GET" });
+      const tasks = await axios({ url: "/api/v1/task", method: "GET" });
       const fetchedTaskArr = tasks.data.data;
-
-      if (tasks) this.setState({ fetchTask: fetchedTaskArr.reverse() });
+      if (tasks) {
+        this.setState({
+          fetchTask: fetchedTaskArr.reverse(),
+        });
+      }
     } catch (error) {
-      // showSnackBar(this.snackbar.enqueueSnackbar, error.message, "error");
-      // showNofication(
-      //   error?.response?.data?.message ||
-      //     "Something went wrong while fetching tasks.",
-      //   "error"
-      // );
-      // console.log(error);
+      showSnackBar(this.props.snackBar, error.message, "error");
     }
   }
 
@@ -62,13 +81,6 @@ class Tasks extends Component {
   }
 
   sendReportRequest = async (description) => {
-    // console.log(
-    //   "tasks.js line 32. ",
-    //   seletedTaskAdminId,
-    //   seletedTaskId,
-    //   description
-    // );
-
     if (
       this.state.selectedTaskAdminId === "" ||
       this.state.selectedTaskId === ""
@@ -76,7 +88,7 @@ class Tasks extends Component {
       return;
     try {
       const reportResult = await axios({
-        url: `/api/reports/${this.state.selectedTaskAdminId}/${this.state.selectedTaskId}`,
+        url: `/api/v1/reports/${this.state.selectedTaskAdminId}/${this.state.selectedTaskId}`,
         method: "POST",
         data: {
           description: description,
@@ -100,8 +112,7 @@ class Tasks extends Component {
     if (!tasks || !tasks.length) {
       return (
         <div className={classes["Default-Task"]}>
-          {" "}
-          <Paragraph>You currently no task.</Paragraph>
+          <Paragraph>You have currently no task.</Paragraph>
         </div>
       );
     }
@@ -140,16 +151,46 @@ class Tasks extends Component {
           </Model>
         )}
         <div className={classes.Tasks__Top}>
-          <Heading_Tiny bold="600">Your Tasks</Heading_Tiny>
+          <Typography
+            variant="h6"
+            component={"h6"}
+            color={grey[700]}
+            style={{ textTransform: "uppercase" }}
+          >
+            Your Tasks
+          </Typography>
+
+          <TextField
+            id="input-with-icon-textfield"
+            placeholder="Search task"
+            sx={{ width: 250 }}
+            onChange={(e) => {
+              if (e.target.value === "") this.fetchLatestTasks();
+            }}
+            onKeyDown={(e) => {
+              if (e.code === "Enter") this.searchTaskHandler(e.target.value);
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+            variant="standard"
+          />
         </div>
 
-        <div className={classes.Tasks__Container}>
+        <div
+          className={classes.Tasks__Container}
+          // style={{ backgroundColor: blue[50] }}
+        >
           <div className={classes.Tasks__Titles}>
-            <Paragraph>Admin</Paragraph>
-            <Paragraph>Description</Paragraph>
-            <Paragraph>Assigned On</Paragraph>
-            <Paragraph>Deadline</Paragraph>
-            <Paragraph>Level</Paragraph>
+            <Typography color={grey[500]}>Admin</Typography>
+            <Typography color={grey[500]}>Description</Typography>
+            <Typography color={grey[500]}>Assigned On</Typography>
+            <Typography color={grey[500]}>Deadline</Typography>
+            <Typography color={grey[500]}>Level</Typography>
           </div>
 
           {this.generateTasks(this.state.fetchTask, this.state.updatedTask)}

@@ -10,7 +10,6 @@ const HOSTNAME = `http://localhost:${3000}/api/v1`;
  */
 
 const request_function = async ({ url, method, data, token = null }) => {
-  console.log(data);
   try {
     const results = await axios({
       url: HOSTNAME + url,
@@ -23,7 +22,7 @@ const request_function = async ({ url, method, data, token = null }) => {
     // RETURN API ERROR
     if (error.response) return error.response.data;
     // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
-    console.log(error);
+
     return error;
   }
 };

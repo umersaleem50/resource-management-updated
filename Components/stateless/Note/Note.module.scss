@@ -2,9 +2,10 @@
   width: 90%;
   border-radius: 1rem;
   background-color: var(--color-white);
-  box-shadow: 0 0.5rem 1rem rgba(#000, 0.25);
+  box-shadow: 0 0.2rem 0.5rem rgba(#000, 0.2);
   padding: 1.5rem 2rem;
   margin: 1rem auto;
+
   // margin: 0 1rem;
   cursor: pointer;
   &__Top {
@@ -18,12 +19,14 @@
   &__Actions {
     display: flex;
     // justify-content: space-between;
-    justify-content: flex-end;
+    align-items: center;
+    height: 4rem;
+    justify-content: space-between;
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
 
   &:not(:last-child) {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 }

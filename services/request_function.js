@@ -10,7 +10,6 @@ const HOSTNAME = `http://localhost:${3000}/api/v1`;
  */
 
 const request_function = async ({ url, method, data }) => {
-  console.log(data);
   try {
     const results = await axios({ url: HOSTNAME + url, method, data });
     if (results) return results.data;
@@ -18,7 +17,6 @@ const request_function = async ({ url, method, data }) => {
     // RETURN API ERROR
     if (error.response) return error.response.data;
     // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
-    console.log(error);
     return error;
   }
 };
@@ -42,3 +40,9 @@ export const forget_password = async (data) =>
     method: "POST",
     data,
   });
+
+export const logout_callback = async () =>
+  request_function({ url: "/profile/logout", method: "POST" });
+
+export const all_reports_callback = async () =>
+  request_function({ url: "/reports", method: "GET" });

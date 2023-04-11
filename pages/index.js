@@ -1,19 +1,23 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-// const Member = require("../Express-api/Models/member");
+
 import classes from "./index.module.scss";
 import MainContainer from "../Components/stateless/MainContainer/MainContainer";
 import Notes from "../Components/stateless/Notes/Notes";
-// import { login_validation } from "../next-utils/login_validation";
+
 import Tasks from "../Components/stateful/Tasks/Tasks";
 import Reports from "../Components/stateful/Reports/Reports";
 import { protected_route_next } from "../next-utils/login_validation";
+import Navbar from "../Components/stateful/Navbar/Navbar";
+import { useSnackbar } from "notistack";
 import {
   get_note_request,
   get_profile_request,
 } from "../services/index_requests";
+import Welcome_Screen from "../Components/stateless/Welcome_Screen/Welcome_Screen";
 
 export default function Home(props) {
+  const { enqueueSnackbar } = useSnackbar();
   return (
     <div className={styles.container}>
       <Head>
@@ -22,14 +26,25 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <MainContainer navbar>
+      <Navbar
+        data={{
+          profilePicture:
+            "/storage/profilePicture/Sadeem 2-972393.1975688296-1671391613915-profilePicture.jpeg",
+        }}
+      />
+      <MainContainer>
         <main className={classes.Main_Container}>
           <div className={classes.Main_Container__Left}>
             <Notes />
           </div>
           <div className={classes.Main_Container__Right}>
-            <Tasks setSendModelToggle userId={props.data.id} />
-            <Reports />
+            <Welcome_Screen firstName="Samar" taskQunatity={10} />
+            <Tasks
+              setSendModelToggle
+              userId={props.data.id}
+              snackBar={enqueueSnackbar}
+            />
+            <Reports snackBar={enqueueSnackbar} />
           </div>
         </main>
       </MainContainer>
@@ -44,11 +59,9 @@ export async function getServerSideProps(context) {
   const token = context.req && context.req?.cookies?.jwt;
   try {
     const id = await protected_route_next(context);
-
     const user_data = await get_profile_request(token);
     const notes = await get_note_request(token);
-    // console.log("this is data of index:56", user_data, id);
-    console.log("notes", notes, user_data);
+
     return {
       props: {
         data: user_data,
@@ -62,55 +75,4 @@ export async function getServerSideProps(context) {
       },
     };
   }
-
-  // if (!isLoggedIn.isLogged) {
-  //   return isLoggedIn.redirect;
-  // }
-
-  // try {
-  //   const id = isLoggedIn.isLogged;
-
-  //   const profileData = await Member.findById(id).populate({
-  //     path: "otherDetails",
-  //   });
-  // .select(
-  //   "otherDetails firstName lastName fullName profilePicture profession"
-  // );
-  // if (!profileData)
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: "/404",
-  //     },
-  //   };
-
-  //   return {
-  //     props: {
-  //       data: JSON.parse(JSON.stringify(profileData)),
-  //     },
-  //   };
-  // } catch (error) {
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: "/404",
-  //     },
-  //   };
-  // }
 }
-
-// SAVE IT FOR THE LATER
-// export async function getServerSideProps({ req }) {
-//   const protocol = req.headers['x-forwarded-proto'] || 'http';
-//   const host = req.headers['x-forwarded-host'] || req.headers.host;
-//   const baseUrl = `${protocol}://${host}`;
-
-//   const res = await fetch(`${baseUrl}/api/data`);
-//   const data = await res.json();
-
-//   return {
-//     props: {
-//       data,
-//     },
-//   };
-// }

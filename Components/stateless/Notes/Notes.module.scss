@@ -8,6 +8,7 @@
     align-items: center;
     // margin: 2rem 0;
     margin-bottom: 2rem;
+    padding: 0 2rem;
     &__Right {
       display: flex;
       align-items: center;
@@ -28,5 +29,5 @@
   align-items: center;
   justify-content: center;
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem rgba(#000000, 0.25);
+  box-shadow: 0 0.5rem 0.5rem rgba(#000000, 0.15);
 }

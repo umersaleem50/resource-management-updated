@@ -1,3 +1,4 @@
+@import "../styles/mixin";
 .Main_Container {
   min-height: 100vh;
   height: 100%;
@@ -6,6 +7,12 @@
   flex-direction: row;
   margin-top: 3rem;
   width: 100%;
+
+  @include respond(tablet-land) {
+    margin-top: 0;
+    height: 100%;
+    flex-direction: column-reverse;
+  }
 
   &__Left {
     display: flex;
@@ -16,6 +23,12 @@
     // top: 5rem;
     top: 0;
     max-height: 100vh;
+    @include respond(tablet-land) {
+      margin-top: 3rem;
+      flex: 1;
+      position: relative;
+      margin-right: 0;
+    }
   }
 
   &__Right {
@@ -26,5 +39,9 @@
     // grid-template-columns: 3fr 2fr;
     grid-gap: 2rem;
     flex: 1;
+
+    @include respond(tablet-land) {
+      margin-top: 2rem;
+    }
   }
 }

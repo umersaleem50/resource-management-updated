@@ -1,0 +1,12 @@
+.MenuOption {
+  display: inline-block;
+
+  &__Menu {
+    align-items: center;
+    display: flex;
+    position: relative;
+    max-width: 10rem;
+    display: flex;
+    cursor: pointer;
+  }
+}

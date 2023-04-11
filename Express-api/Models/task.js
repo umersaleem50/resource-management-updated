@@ -14,7 +14,7 @@ const mainTaskSchema = new Schema({
   },
   priority: {
     type: String,
-    required: [true, "Please select the type for a task."],
+    required: [true, "Please select the priority for a task."],
     enum: {
       values: ["important", "critical", "un-important"],
       message:

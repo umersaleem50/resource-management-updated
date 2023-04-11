@@ -4,7 +4,10 @@ import Head from "next/head";
 import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import { login_callback } from "../../../services/request_function";
+import {
+  login_callback,
+  reset_password,
+} from "../../../services/request_function";
 import { useEffect, useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
@@ -18,11 +21,28 @@ const ResetPassword = (props) => {
   const [isLoading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const onSubmit = (e) => {};
+  const onSubmit = async (e) => {
+    setLoading(true);
+    closeSnackbar();
+    const results = await reset_password(
+      { password, passwordConfirm },
+      props.token
+    );
+    console.log(results);
+    if (results.status === "success")
+      showSnackBar(enqueueSnackbar, results.message, "success");
+    setLoading(false);
+    if (results.status === "failed") {
+      showSnackBar(enqueueSnackbar, results.message, "error");
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (props.error) showSnackBar(enqueueSnackbar, props.error, "error");
-    setLoading(true);
+    if (props.error) {
+      showSnackBar(enqueueSnackbar, props.error, "error");
+      setLoading(true);
+    }
   }, []);
 
   return (
@@ -106,6 +126,7 @@ const ResetPassword = (props) => {
               className={classes["Form__Button"]}
               onClick={onSubmit}
               loading={isLoading}
+              type="submit"
               loadingPosition="start"
             >
               <Typography
@@ -179,7 +200,7 @@ export async function getServerSideProps(context) {
   }
   //--------------
   const { token } = context.params;
-  console.log("this is token", token);
+
   if (!token)
     return {
       props: {

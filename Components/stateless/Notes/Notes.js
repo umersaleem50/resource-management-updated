@@ -9,7 +9,10 @@ import { useSnackbar } from "notistack";
 import { showNofication } from "../Notification/Notification";
 import classes from "./Notes.module.scss";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { Button, Typography } from "@mui/material";
+import AddTask from "@mui/icons-material/AddTask";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+import { blue, grey } from "@mui/material/colors";
 const Notes = (props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allnotes, setNotes] = useState([]);
@@ -57,7 +60,9 @@ const Notes = (props) => {
     if (notes.length <= 0) {
       return (
         <div className={classes.EmptyNote}>
-          <Paragraph>You currently have no note.</Paragraph>
+          <Typography variant="body1" color={grey[600]}>
+            You currently have no note.
+          </Typography>
         </div>
       );
     }
@@ -92,9 +97,25 @@ const Notes = (props) => {
         </Model>
       )}
       <div className={classes.Notes__Top}>
-        <Heading_Tiny style={{ fontWeight: "600" }}>My Notes</Heading_Tiny>
+        {/* <Heading_Tiny style={{ fontWeight: "600" }}>My Notes</Heading_Tiny> */}
+        <Typography
+          variant="h6"
+          component={"h6"}
+          color={grey[700]}
+          style={{ textTransform: "uppercase" }}
+        >
+          My Notes
+        </Typography>
         <div className={classes.Notes__Top__Right}>
-          <BtnFull
+          <Button
+            startIcon={<AddTask />}
+            onClick={() => setWannaInsertNote(true)}
+            color="primary"
+            variant="contained"
+          >
+            New
+          </Button>
+          {/* <BtnFull
             style={{
               height: "3rem",
               display: "flex",
@@ -104,7 +125,7 @@ const Notes = (props) => {
             clicked={() => setWannaInsertNote(true)}
           >
             New +
-          </BtnFull>
+          </BtnFull> */}
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import Image from "next/legacy/image";
 import { useState } from "react";
 import { SmallSelect } from "../../Input/TextInput/TextInput";
+import React from "react";
 import {
   Heading_Large,
   Heading_Tiny,
@@ -11,11 +12,28 @@ import classes from "./Task.module.scss";
 import { BtnFull } from "../../Input/Buttons/Button";
 import { generateDateFromString } from "../../../next-utils/helper_functions";
 import Profile_Report_Task from "../../stateless/Profile_Report_Task/Profile_Report_Task";
+import { Avatar, Button, Typography } from "@mui/material";
+import { green, grey, red, teal, yellow } from "@mui/material/colors";
+import { SendOutlined } from "@mui/icons-material";
+import { Select, MenuItem } from "@mui/material";
 const Task = (props) => {
   const [currentLevel, setLevel] = useState(0);
   const currentTask = props.tasks[currentLevel];
 
   const [isToggle, setToggle] = useState(false);
+
+  const [age, setAge] = React.useState("");
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+
+  const getPriorityColor = (priority) => {
+    if (priority === "important") return yellow[700];
+    if (priority === "un-important") return green[700];
+    if (priority === "critical") return red[700];
+  };
+
   const options = new Array(props.tasks.length).fill("level").map((el, i) => {
     return {
       text: el + " " + (props.tasks.length - i),
@@ -31,54 +49,58 @@ const Task = (props) => {
       {!isToggle && (
         <div className={classes.Task__Small}>
           <div className={classes.Task__Small__Image}>
-            <Image
+            <Avatar
               src={`/storage/images/profilePicture/${props.profilePicture}`}
-              width={40}
-              height={40}
               alt={props.profilePicture}
             />
           </div>
-          <Heading_Tiny className={[classes.Task__Title]}>
+          <Typography
+            className={[classes.Task__Title]}
+            variant="body1"
+            component={"h6"}
+            color={grey[900]}
+          >
             {currentTask.heading}
-          </Heading_Tiny>
-          <Paragraph>
+          </Typography>
+          <Typography variant="body1" component={"body1"} color={grey[700]}>
             {generateDateFromString(currentTask.assignedOn)}
-          </Paragraph>
-          <Paragraph
+          </Typography>
+          <Typography
+            variant="body1"
+            component={"body1"}
             color={
               Date.now() > new Date(currentTask.deadline).getTime()
-                ? "var(--color-error)"
-                : "var(--color-green)"
+                ? red[500]
+                : green[500]
             }
-            style={{
-              fontWeight:
-                Date.now() > new Date(currentTask.deadline).getTime() && "600",
-            }}
           >
             {generateDateFromString(currentTask.deadline)}
-          </Paragraph>
-          <SmallSelect onChange={setLevel} options={options}></SmallSelect>
+          </Typography>
+          <Typography
+            style={{ textTransform: "capitalize" }}
+            fontWeight={600}
+            color={getPriorityColor(currentTask.priority)}
+          >
+            {currentTask.priority}
+          </Typography>
+          {/* <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            size="small"
+            value={age}
+            label="Age"
+            onChange={handleChange}
+          >
+            <MenuItem value={10} color={green[900]}>
+              Ten
+            </MenuItem>
+          </Select> */}
         </div>
       )}
       {isToggle && (
         <div className={classes.Task__Large}>
           <div className={classes.Task__Large__Top}>
             <div className={classes.Task__Large__Profile}>
-              {/* <Image
-                src={`/storage/images/profilePicture/${props.profilePicture}`}
-                width={50}
-                height={50}
-                alt={props.profilePicture}
-              />
-              <div className={classes.Task__Large__deadlinebox}>
-                <Paragraph>{props.assignBy.fullName}</Paragraph>
-                <div className={classes.Task__Large__Deadline}>
-                  <Paragraph>
-                    {generateDate(currentTask.assignedOn)} -{" "}
-                    {generateDate(currentTask.deadline)}
-                  </Paragraph>
-                </div>
-              </div> */}
               <Profile_Report_Task
                 src={props.profilePicture}
                 fullName={props.assignBy.fullName}
@@ -88,27 +110,42 @@ const Task = (props) => {
             </div>
             <SmallSelect onChange={setLevel} options={options}></SmallSelect>
           </div>
-          <Heading_Large className={[classes.Task__Large__Heading]}>
+
+          <Typography
+            className={[classes.Task__Large__Heading]}
+            variant="h5"
+            fontWeight={"600"}
+            component={"h5"}
+            color={grey[900]}
+          >
             {currentTask.heading}
-          </Heading_Large>
-          <Paragraph className={[classes.Task__Large__Description]}>
+          </Typography>
+
+          <Typography
+            className={[classes.Task__Large__Description]}
+            variant="body1"
+            component={"p"}
+            color={grey[700]}
+          >
             {currentTask.description}
-          </Paragraph>
+          </Typography>
         </div>
       )}
 
       {isToggle && (
         <div className={classes.Task__Bottom}>
-          <BtnFull
-            clicked={() => {
+          <Button
+            variant="contained"
+            startIcon={<SendOutlined />}
+            onClick={() => {
               props.sendReport(true);
-              console.log(props);
+
               props.setTaskAdminId(props.assignBy.id);
               props.setTaskId(props.id);
             }}
           >
             Send Report
-          </BtnFull>
+          </Button>
         </div>
       )}
       {isToggle && (

@@ -1,0 +1,33 @@
+@import "../../../styles/mixin";
+.Welcome {
+  width: 100%;
+  //   background-color: rebeccapurple;
+  //   padding: 0 3rem;
+  max-height: 15rem;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  &__left {
+    margin-left: 4rem;
+    display: flex;
+    // align-items: center;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+
+    @include respond(tablet-land) {
+      margin-left: 1rem;
+    }
+  }
+
+  &__right {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.Heading {
+  margin-bottom: 1rem;
+}

@@ -105,6 +105,7 @@ const Login = (props) => {
               onClick={onSubmit}
               loading={isLoading}
               loadingPosition="start"
+              type="submit"
             >
               <Typography
                 // variant="button"

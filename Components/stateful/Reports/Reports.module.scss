@@ -2,11 +2,10 @@
   &__Container {
     padding: 2rem;
     margin-top: 2rem;
-    background-color: var(--color-grey-notes);
+    // background-color: var(--color-grey-notes);
     max-height: 50rem;
     overflow-y: scroll;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
     grid-column-gap: 2rem;
     grid-row-gap: 2rem;
   }
