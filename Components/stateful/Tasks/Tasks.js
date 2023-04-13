@@ -13,6 +13,7 @@ import { grey } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { Search } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
+import { all_tasks_callback } from "../../../services/pages/index_requests";
 
 class Tasks extends Component {
   constructor(props) {
@@ -60,8 +61,8 @@ class Tasks extends Component {
 
   async fetchLatestTasks() {
     try {
-      const tasks = await axios({ url: "/api/v1/task", method: "GET" });
-      const fetchedTaskArr = tasks.data.data;
+      const tasks = await all_tasks_callback();
+      const fetchedTaskArr = tasks.data;
       if (tasks) {
         this.setState({
           fetchTask: fetchedTaskArr.reverse(),

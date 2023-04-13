@@ -3,7 +3,7 @@ import Report from "../Report/Report";
 import classes from "./Reports.module.scss";
 import { Typography } from "@mui/material";
 import { blue, grey, purple } from "@mui/material/colors";
-import { all_reports_callback } from "../../../services/request_function";
+import { all_reports_callback } from "../../../services/pages/index_requests";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 class Reports extends Component {
   constructor(props) {

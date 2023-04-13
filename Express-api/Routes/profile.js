@@ -12,13 +12,13 @@ const Router = require("express").Router();
 Router.post("/logout", authController.logoutProfile);
 
 Router.use(protectedRoute);
+Router.get("/team", profileController.getTeam);
 
 Router.get("/", profileController.getProfile).get(
   "/:id",
   profileController.checkIfPartOfTeam,
   profileController.getSubAccountProfile
 );
-Router.get("/team", profileController.getTeam);
 Router.use(uploadProfileImage);
 Router.use(resizeProfilePicture);
 Router.patch(
