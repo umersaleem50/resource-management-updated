@@ -11,7 +11,6 @@ import {} from "../../Components/Input/TextInput/TextInput";
 import { useState } from "react";
 
 import Notification from "../../Components/stateless/Notification/Notification";
-import { login_validation } from "../../next-utils/login_validation";
 import SignupModel from "../../Components/AllModels/team/_signup_model";
 import Branch from "../../Components/stateless/Branch/Branch";
 
@@ -93,17 +92,30 @@ const Team = (props) => {
 };
 
 export async function getServerSideProps({ req }) {
-  const checkIsLogin = login_validation(req);
-  if (!checkIsLogin.isLogged) {
-    return checkIsLogin.redirect;
+  // const checkIsLogin = login_validation(req);
+  try {
+    await protected_route_next(context);
+
+    return {
+      props: {
+        data: user_data,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
   }
 
-  const data = await Member.findById(checkIsLogin.isLogged)
-    .select("team email permissions")
-    .populate("team");
+  // const data = await Member.findById(checkIsLogin.isLogged)
+  //   .select("team email permissions")
+  //   .populate("team");
 
-  const serialized_data = JSON.parse(JSON.stringify(data));
-  return { props: { data: serialized_data } };
+  // const serialized_data = JSON.parse(JSON.stringify(data));
+  // return { props: { data: serialized_data } };
 }
 
 export default Team;

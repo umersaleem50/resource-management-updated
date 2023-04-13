@@ -1,18 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import InsertNewNoteModel from "../../AllModels/dashboard/_insert_new_note";
-import { BtnFull, BtnOptions } from "../../Input/Buttons/Button";
-import { Heading_Tiny, Paragraph } from "../../Typography/Typography";
+
 import Model from "../Model/Model";
 import Note from "../Note/Note";
 import { useSnackbar } from "notistack";
-import { showNofication } from "../Notification/Notification";
 import classes from "./Notes.module.scss";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { Button, Typography } from "@mui/material";
 import AddTask from "@mui/icons-material/AddTask";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { blue, grey } from "@mui/material/colors";
+
 const Notes = (props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allnotes, setNotes] = useState([]);
@@ -88,14 +86,6 @@ const Notes = (props) => {
   };
   return (
     <div className={classes.Notes}>
-      {isWannaInsertNote && (
-        <Model toggleModel={setWannaInsertNote}>
-          <InsertNewNoteModel
-            setNotes={setNotes}
-            toggleModel={setWannaInsertNote}
-          ></InsertNewNoteModel>
-        </Model>
-      )}
       <div className={classes.Notes__Top}>
         {/* <Heading_Tiny style={{ fontWeight: "600" }}>My Notes</Heading_Tiny> */}
         <Typography

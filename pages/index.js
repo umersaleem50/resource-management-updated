@@ -13,7 +13,7 @@ import { useSnackbar } from "notistack";
 import {
   get_note_request,
   get_profile_request,
-} from "../services/index_requests";
+} from "../services/pages/index_requests";
 import Welcome_Screen from "../Components/stateless/Welcome_Screen/Welcome_Screen";
 
 export default function Home(props) {

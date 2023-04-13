@@ -1,9 +1,8 @@
 const { Component } = require("react");
 import { Avatar, Button, Typography } from "@mui/material";
 import classes from "./Report.module.scss";
-
 import { green, grey, red, blue } from "@mui/material/colors";
-import MenuOptions from "../../Menu_Options/Menu_Options";
+import MenuOptions from "../../stateful/Menu_Options/Menu_Options";
 
 import { Delete, Assignment, Check, Download } from "@mui/icons-material";
 

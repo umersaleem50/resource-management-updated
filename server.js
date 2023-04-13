@@ -37,14 +37,9 @@ app
     });
 
     io.on("connect", (socket) => {
-      console.log("a user is connected");
-
       socket.on("task-assigned", (data) => {
-        console.log("new task incoming");
         io.sockets.emit("new-task", data);
       });
-
-      socket.emit("message", "this is the message");
     });
 
     mainServer.listen(process.env.PORT, () => {

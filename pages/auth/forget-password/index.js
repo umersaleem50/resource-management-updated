@@ -4,10 +4,8 @@ import Head from "next/head";
 import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import {
-  forget_password,
-  login_callback,
-} from "../../../services/request_function";
+import { forget_password } from "../../../services/pages/auth";
+
 import { useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
@@ -150,21 +148,21 @@ const ForgetPassword = (props) => {
 };
 
 export async function getServerSideProps(context) {
-  const cookie = context && context?.req?.cookies?.jwt;
-  if (!cookie) {
-    return { props: {} };
-  }
-  const validId = await promisify(jwt.verify)(
-    cookie,
-    process.env.JWT_SECERT_KEY
-  );
-  if (validId.id)
+  try {
+    await protected_route_next(context);
+    return {
+      props: {
+        data: {},
+      },
+    };
+  } catch (error) {
     return {
       redirect: {
-        destination: "/",
+        destination: "/auth/login",
         permanent: false,
       },
     };
+  }
 
   // CHECKS IF THE USER IS LOGGED IN
 }
