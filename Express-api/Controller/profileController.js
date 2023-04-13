@@ -1,6 +1,5 @@
 const Member = require("../Models/member");
 const apiError = require("../Util/apiError");
-const ApiFeature = require("../Util/apiFeature");
 const catchAsync = require("../Util/catchAsync");
 
 const {

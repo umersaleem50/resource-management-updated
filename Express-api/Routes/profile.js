@@ -5,6 +5,8 @@ const authController = require("../Controller/authController");
 const {
   uploadProfileImage,
   resizeProfilePicture,
+  uploadCoverImage,
+  resizeCoverImage,
 } = require("../Controller/imageController");
 
 const Router = require("express").Router();
@@ -21,6 +23,8 @@ Router.get("/", profileController.getProfile).get(
 );
 Router.use(uploadProfileImage);
 Router.use(resizeProfilePicture);
+Router.use(uploadCoverImage);
+Router.use(resizeCoverImage);
 Router.patch(
   "/",
   profileController.checkIfHavePermission("update-account"),
