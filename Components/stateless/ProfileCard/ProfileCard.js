@@ -6,14 +6,13 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Avatar, Skeleton } from "@mui/material";
-import { blue, grey } from "@mui/material/colors";
+import { blue, grey, red } from "@mui/material/colors";
 import classes from "./ProfileCard.module.scss";
 
 export default function ProfileCard(props) {
-  console.log(props);
   return (
     <Card
-      sx={{ maxWidth: 345, backgroundColor: blue[100] }}
+      sx={{ maxWidth: 345, backgroundColor: grey["A200"] }}
       className={classes["Card"]}
     >
       <CardMedia
@@ -27,10 +26,8 @@ export default function ProfileCard(props) {
           src={`/storage/images/profilePicture/${props.profilePicture}`}
           className={classes["Card__Avatar"]}
           sx={{
-            maxWidth: 70,
-            maxHeight: 70,
-            width: "100%",
-            height: "100%",
+            width: 70,
+            height: 70,
           }}
         ></Avatar>
         <Typography
@@ -42,8 +39,12 @@ export default function ProfileCard(props) {
         >
           {props.fullName}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {props.bio}
+        <Typography
+          variant="body2"
+          color={props.bio ? "text.secondary" : red[500]}
+        >
+          {props.bio ||
+            "Please complete the profile, otherwise you won't able to perform certain tasks"}
         </Typography>
       </CardContent>
       <CardActions className={classes["Card__Actions"]}>

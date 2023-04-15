@@ -1,5 +1,6 @@
 const Member = require("../Models/member");
 const apiError = require("../Util/apiError");
+const ApiFeature = require("../Util/apiFeature");
 const catchAsync = require("../Util/catchAsync");
 
 const {
@@ -14,7 +15,13 @@ const {
  */
 
 exports.getProfile = catchAsync(async (req, res, next) => {
-  return res.status(200).json({ status: "success", data: req.user });
+  const id = req.user.id;
+  const features = new ApiFeature(
+    Member.findById(id).populate("team"),
+    req.query
+  ).limit();
+  const user = await features.query;
+  return res.status(200).json({ status: "success", data: user });
 });
 
 /**

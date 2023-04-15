@@ -4,29 +4,22 @@ import Link from "next/link";
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import React from "react";
-// import OptionModel from "../../Input/OptionModel/OptionModel";
-
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import ListItemIcon from "@mui/material/ListItemIcon";
-
 import classes from "./Navbar.module.scss";
 import { blue, grey, red } from "@mui/material/colors";
 import { useSnackbar } from "notistack";
-import { logout_callback } from "../../../services/request_function";
+import { logout_callback } from "../../../services/pages/auth";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+
 const Navbar = (props) => {
   const [user, setUser] = useState();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -37,8 +30,8 @@ const Navbar = (props) => {
     const results = await logout_callback();
 
     if (results.status === "success")
-      showSnackBar(enqueueSnackbar, `Logging out profile!`, "warning");
-
+      showSnackBar(enqueueSnackbar, `Logging out profile!`, "success");
+    Router.push("/auth/login");
     if (results.status === "failed") {
       showSnackBar(enqueueSnackbar, results.message, "error");
     }

@@ -6,7 +6,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import Router from "next/router";
-import { signup_callback } from "../../../services/request_function";
+import { signup_callback } from "../../../services/pages/auth";
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 // import { IconButton } from "@mui/icons-material";
@@ -41,6 +41,7 @@ const Signup = (props) => {
     if (results.status === "success") {
       closeSnackbar();
       showSnackBar("You account have been successfully created.", "success");
+      Router.push("/");
       return;
     }
     if (results.status === "failed" || "error") {
@@ -80,7 +81,7 @@ const Signup = (props) => {
             </Typography>
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__SubHeading"]}
             >
@@ -113,7 +114,7 @@ const Signup = (props) => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <TextField
-              id="password"
+              id="confirm-password"
               label="Confirm Password"
               variant="outlined"
               placeholder="Type your password again"
@@ -131,7 +132,6 @@ const Signup = (props) => {
               className={classes["Form__Button"]}
               onClick={onSubmit}
               loading={isLoading}
-              loadingPosition="start"
             >
               <Typography
                 // variant="button"
@@ -143,7 +143,7 @@ const Signup = (props) => {
 
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__otherText"]}
             >
@@ -157,7 +157,7 @@ const Signup = (props) => {
               className={[
                 classes["Form__Button"],
                 classes["Form__Button--signup"],
-              ]}
+              ].join(" ")}
               onClick={() => Router.push("/auth/login")}
             >
               <Typography
@@ -174,7 +174,7 @@ const Signup = (props) => {
               Forget your password:{" "}
               <span
                 onClick={() => {
-                  enqueueSnackbar("Forget", { variant: "warning" });
+                  Router.push("/auth/forget-password");
                 }}
               >
                 Click here!

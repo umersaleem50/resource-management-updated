@@ -1,4 +1,5 @@
 import axios from "axios";
+import { resolve } from "styled-jsx/css";
 
 const HOSTNAME = `http://localhost:${3000}/api/v1`;
 /**
@@ -37,6 +38,25 @@ export const request_function = async ({ url, method, data, token = null }) => {
     // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
     return error;
   }
+};
+
+export const request_function_test = ({ url, method, data, token = null }) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const results = await axios({
+        url: HOSTNAME + url,
+        method,
+        data,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (results) resolve(results.data);
+    } catch (error) {
+      // RETURN API ERROR
+      if (error.response) reject(error.response.data);
+      // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
+      reject(error);
+    }
+  });
 };
 
 // export const login_callback = (data) =>

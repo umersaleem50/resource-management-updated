@@ -4,11 +4,11 @@ import Head from "next/head";
 import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import { use_Login_validation } from "../../next-utils/login_validation";
-import { login_callback } from "../../services/request_function";
+import { login_callback } from "../../services/pages/auth";
 import { useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
+import { useJWTToken } from "../../next-utils/login_validation";
 const { promisify } = require("util");
 
 const Login = (props) => {
@@ -27,7 +27,8 @@ const Login = (props) => {
     closeSnackbar();
     const results = await login_callback({ email, password });
     if (results.status === "success")
-      showSnackBar("Welcome back! You have successfully logged in", "success");
+      showSnackBar("Login Successfully! You're redirecting...", "success");
+    Router.push("/team");
     setLoading(false);
     if (results.status === "failed") {
       showSnackBar(results.message, "error");
@@ -104,7 +105,7 @@ const Login = (props) => {
               className={classes["Form__Button"]}
               onClick={onSubmit}
               loading={isLoading}
-              loadingPosition="start"
+              // loadingPosition="start"
               type="submit"
             >
               <Typography
@@ -131,7 +132,7 @@ const Login = (props) => {
               className={[
                 classes["Form__Button"],
                 classes["Form__Button--signup"],
-              ]}
+              ].join(" ")}
               onClick={() => Router.push("/auth/signup")}
             >
               <Typography
@@ -162,12 +163,13 @@ const Login = (props) => {
 };
 
 export async function getServerSideProps(context) {
-  const cookie = context && context?.req?.cookies?.jwt;
-  if (!cookie) {
+  // const cookie = context && context?.req?.cookies?.jwt;
+  const { token } = useJWTToken(context);
+  if (!token) {
     return { props: {} };
   }
   const validId = await promisify(jwt.verify)(
-    cookie,
+    token,
     process.env.JWT_SECERT_KEY
   );
   if (!validId.id)

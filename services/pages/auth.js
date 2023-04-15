@@ -19,3 +19,6 @@ export const forget_password = async (data) =>
     method: "POST",
     data,
   });
+
+export const logout_callback = async () =>
+  request_function({ url: "/profile/logout", method: "POST" });

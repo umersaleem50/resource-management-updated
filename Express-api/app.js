@@ -29,7 +29,7 @@ app.use(
         "'unsafe-eval'",
         "fonts.googleapis.com",
       ],
-      imgSrc: ["'self'"],
+      imgSrc: ["'self'", "data:"],
     },
   })
 );

@@ -5,7 +5,6 @@ import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
 import { forget_password } from "../../../services/pages/auth";
-
 import { useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
@@ -31,7 +30,6 @@ const ForgetPassword = (props) => {
     }
   };
 
-  console.log(props);
   return (
     <>
       <Head>
@@ -62,7 +60,7 @@ const ForgetPassword = (props) => {
             </Typography>
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__SubHeading"]}
             >
@@ -91,7 +89,6 @@ const ForgetPassword = (props) => {
               className={classes["Form__Button"]}
               onClick={onSubmit}
               loading={isLoading}
-              loadingPosition="start"
             >
               <Typography
                 // variant="button"
@@ -103,7 +100,7 @@ const ForgetPassword = (props) => {
 
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__otherText"]}
             >
@@ -117,7 +114,7 @@ const ForgetPassword = (props) => {
               className={[
                 classes["Form__Button"],
                 classes["Form__Button--signup"],
-              ]}
+              ].join(" ")}
               onClick={() => Router.push("/auth/login")}
             >
               <Typography
@@ -134,7 +131,7 @@ const ForgetPassword = (props) => {
               Don't have an account yet:{" "}
               <span
                 onClick={() => {
-                  enqueueSnackbar("Forget", { variant: "warning" });
+                  Router.push("/auth/signup");
                 }}
               >
                 Click here!
@@ -148,21 +145,21 @@ const ForgetPassword = (props) => {
 };
 
 export async function getServerSideProps(context) {
-  try {
-    await protected_route_next(context);
-    return {
-      props: {
-        data: {},
-      },
-    };
-  } catch (error) {
+  const cookie = context && context?.req?.cookies?.jwt;
+  if (!cookie) {
+    return { props: {} };
+  }
+  const validId = await promisify(jwt.verify)(
+    cookie,
+    process.env.JWT_SECERT_KEY
+  );
+  if (validId.id)
     return {
       redirect: {
-        destination: "/auth/login",
+        destination: "/",
         permanent: false,
       },
     };
-  }
 
   // CHECKS IF THE USER IS LOGGED IN
 }

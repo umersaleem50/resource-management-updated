@@ -78,5 +78,5 @@ export const useJWTToken = (context) => {
   if (token) {
     return { token };
   }
-  return;
+  return { token: "" };
 };

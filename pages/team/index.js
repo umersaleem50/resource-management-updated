@@ -10,6 +10,9 @@ import classes from "./Team.module.scss";
 import Branch from "../../Components/stateless/Branch/Branch";
 import { Button, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import Model from "../../Components/stateless/Model/Model";
+import { useState } from "react";
+import Form_Create_New_Account from "../../Components/AllModels/team/Form_Create_New_Account";
 const generate_braches_data = (team) => {
   const branchesArray = team
     .map((el, i) => el.category)
@@ -27,23 +30,34 @@ const generate_braches_data = (team) => {
 
 const Team = (props) => {
   const branches = generate_braches_data(props.data.team);
+  const [isModelOpen, setIsModelOpen] = useState(false);
 
-  console.log(props);
   return (
     <MainContainer navbar title="Resource Management - My Team">
+      <Model toggle={isModelOpen} onClose={() => setIsModelOpen(false)}>
+        <Form_Create_New_Account
+          token={props.token}
+          otherData={{ permissions: props.data.permissions }}
+        />
+      </Model>
       <Section>
         <div className={classes.Top}>
           <Typography variant="h6" component={"h6"}>
             My Team
           </Typography>
-          {
-            // props.data.permissions.includes("have-team") &&
+          {props.data.permissions.includes("have-team") && (
             <div className={classes.Top__right}>
-              <Button variant="contained" startIcon={<Add></Add>}>
+              <Button
+                variant="contained"
+                startIcon={<Add></Add>}
+                onClick={() => {
+                  setIsModelOpen(true);
+                }}
+              >
                 Create sub account
               </Button>
             </div>
-          }
+          )}
         </div>
         <div className={classes.Container}>
           {branches.map((el, i) => {
@@ -64,6 +78,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         data: requestObj.data,
+        token,
       },
     };
   } catch (error) {

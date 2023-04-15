@@ -15,6 +15,3 @@ export const all_reports_callback = async () =>
 
 export const all_tasks_callback = async () =>
   request_function({ url: "/tasks", method: "GET" });
-
-export const logout_callback = async () =>
-  request_function({ url: "/profile/logout", method: "POST" });

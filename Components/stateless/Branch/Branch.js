@@ -4,6 +4,7 @@ import Account from "../Account--delete-later/Account";
 import classes from "./Branch.module.scss";
 import { grey } from "@mui/material/colors";
 import ProfileCard from "../ProfileCard/ProfileCard";
+console.log;
 const Branch = (props) => {
   return (
     <div className={classes.Branch}>
@@ -14,7 +15,7 @@ const Branch = (props) => {
         color={grey[700]}
         style={{ textTransform: "capitalize" }}
       >
-        {(props.branch && `${props.branch}s`) || "Other Team Members"}
+        {props.branch || "Other Team Members"}
       </Typography>
       <div className={classes.Branch__Sub}>
         {props.team &&
