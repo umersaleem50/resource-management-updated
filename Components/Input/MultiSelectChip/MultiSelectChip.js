@@ -7,6 +7,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import permissions from "../../../Dev-Data/permissions";
+import { array } from "prop-types";
+import { any } from "prop-types";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -57,3 +59,9 @@ export default function MultipleSelectCheckmarks(props) {
     </div>
   );
 }
+
+MultipleSelectCheckmarks.propTypes = {
+  options: array,
+  value: any,
+  setValue: any,
+};

@@ -36,6 +36,7 @@ const Team = (props) => {
     <MainContainer navbar title="Resource Management - My Team">
       <Model toggle={isModelOpen} onClose={() => setIsModelOpen(false)}>
         <Form_Create_New_Account
+          closeModel={() => setIsModelOpen(false)}
           token={props.token}
           otherData={{ permissions: props.data.permissions }}
         />

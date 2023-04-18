@@ -1,13 +1,15 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-
+import { useState } from "react";
 import classes from "./index.module.scss";
 import MainContainer from "../Components/stateless/MainContainer/MainContainer";
 import Notes from "../Components/stateless/Notes/Notes";
-
 import Tasks from "../Components/stateful/Tasks/Tasks";
 import Reports from "../Components/stateful/Reports/Reports";
-import { protected_route_next } from "../next-utils/login_validation";
+import {
+  protected_route_next,
+  useJWTToken,
+} from "../next-utils/login_validation";
 import Navbar from "../Components/stateful/Navbar/Navbar";
 import { useSnackbar } from "notistack";
 import {
@@ -18,6 +20,7 @@ import Welcome_Screen from "../Components/stateless/Welcome_Screen/Welcome_Scree
 
 export default function Home(props) {
   const { enqueueSnackbar } = useSnackbar();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -56,7 +59,7 @@ export default function Home(props) {
 
 export async function getServerSideProps(context) {
   // const isLoggedIn = login_validation(context.req);
-  const token = context.req && context.req?.cookies?.jwt;
+  const { token } = useJWTToken(context);
   try {
     const id = await protected_route_next(context);
     const user_data = await get_profile_request(token);

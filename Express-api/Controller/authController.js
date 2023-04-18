@@ -133,7 +133,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
         400
       )
     );
-  console.log(id, passwordConfirm, password);
+
   const user = await Member.findById(id).select("+password");
   // const user = await Member.findById(id);
   if (!user)

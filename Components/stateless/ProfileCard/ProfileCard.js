@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { Avatar, Skeleton } from "@mui/material";
 import { blue, grey, red } from "@mui/material/colors";
 import classes from "./ProfileCard.module.scss";
+import Router from "next/router";
 
 export default function ProfileCard(props) {
   return (
@@ -48,7 +49,12 @@ export default function ProfileCard(props) {
         </Typography>
       </CardContent>
       <CardActions className={classes["Card__Actions"]}>
-        <Button size="small">Show Profile</Button>
+        <Button
+          size="small"
+          onClick={() => Router.push(`/profile/${props.id}`)}
+        >
+          Show Profile
+        </Button>
       </CardActions>
     </Card>
   );

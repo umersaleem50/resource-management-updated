@@ -8,6 +8,7 @@ import { BtnFull } from "../Input/Buttons/Button";
 import { showNofication } from "../stateless/Notification/Notification";
 import axios from "axios";
 import Router from "next/router";
+import { Avatar, CardMedia } from "@mui/material";
 
 class ImageBox extends Component {
   constructor(props) {

@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "axios": "^1.2.1",
-    "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
@@ -40,7 +39,10 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.125",
     "@mui/material": "^5.11.16",
+    "@mui/x-date-pickers": "^6.2.0",
     "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "dayjs": "^1.11.7",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^6.7.0",
     "helmet": "^6.0.1",

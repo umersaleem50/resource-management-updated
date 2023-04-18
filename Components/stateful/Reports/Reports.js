@@ -35,11 +35,11 @@ class Reports extends Component {
     this.fetchLatestReports();
   }
 
-  generateReports(reports) {
-    return reports.map((el, i) => {
-      return <Report />;
-    });
-  }
+  // generateReports(reports) {
+  //   return reports.map((el, i) => {
+  //     return <Report />;
+  //   });
+  // }
 
   render() {
     return (
@@ -53,10 +53,7 @@ class Reports extends Component {
           Team's Report
         </Typography>
         <div className={classes["Reports__Container"]}>
-          {/* {this.generateReports(this.state.reports)} */}
           <Report color={purple[500]} />
-          <Report />
-          <Report color={blue[500]} />
         </div>
       </div>
     );

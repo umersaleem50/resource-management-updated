@@ -116,7 +116,7 @@ class Tasks extends Component {
       );
     }
     return (
-      <Scrollbars autoHeight autoHeightMin={400} autoHeightMax={400}>
+      <Scrollbars autoHeight autoHeightMax={400}>
         {tasks.map((el, i) => {
           return (
             <Task

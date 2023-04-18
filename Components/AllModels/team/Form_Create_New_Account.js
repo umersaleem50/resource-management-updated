@@ -1,23 +1,14 @@
-import {
-  Avatar,
-  Button,
-  CardMedia,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import CustomSelectInput from "../../Input/SelectInput/CustomSelectInput";
 import { useState } from "react";
-import IconButton from "@mui/material/IconButton";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import classes from "./Form_Create_New_Account.module.scss";
 import { post_create_sub_account } from "../../../services/pages/team";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
 import MultiSelectChip from "../../Input/MultiSelectChip/MultiSelectChip";
 import { branches } from "../../../Dev-Data/branches";
+
 const Form_Create_New_Account = (props) => {
-  // const [profilePictureURL, setProfilePictureURL] = useState(null);
-  // const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,16 +19,6 @@ const Form_Create_New_Account = (props) => {
   const [branch, setBranchOptions] = useState(
     props.otherData.branch || branches
   );
-  // const profilePictureHandler = (e) => {
-  //   const file = e.target.files[0];
-
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(file);
-  //   reader.onload = () => {
-  //     setProfilePicture(file);
-  //     setProfilePictureURL(reader.result);
-  //   };
-  // };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -53,12 +34,12 @@ const Form_Create_New_Account = (props) => {
         category,
       });
 
-      if (results.status === "success")
-        showSnackBar(
-          enqueueSnackbar,
-          "Successfully created a sub account",
-          "success"
-        );
+      if (results.status === "success") props.closeModel();
+      showSnackBar(
+        enqueueSnackbar,
+        "Successfully created a sub account",
+        "success"
+      );
     } catch (err) {
       if (err.status === "error")
         showSnackBar(enqueueSnackbar, err.message, "error");
@@ -80,27 +61,7 @@ const Form_Create_New_Account = (props) => {
       >
         Here you can create a sub account for your team member
       </Typography>
-      {/* <div className={classes["Form__Image"]}>
-        <Avatar
-          style={{ objectFit: "cover" }}
-          src={profilePictureURL}
-          sx={{ width: 100, height: 100 }}
-        ></Avatar>
-        <IconButton
-          color="primary"
-          aria-label="upload picture"
-          component="label"
-          sx={{ ml: 1 }}
-        >
-          <input
-            hidden
-            accept="image/*"
-            type="file"
-            onChange={profilePictureHandler}
-          />
-          <PhotoCamera />
-        </IconButton>
-      </div> */}
+
       <TextField
         type="email"
         required

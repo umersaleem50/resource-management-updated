@@ -10,25 +10,20 @@ import { grey } from "@mui/material/colors";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNote from "@mui/icons-material/EditNote";
+import { delete_note_request } from "../../../services/pages/index_requests";
 
 const Note = (props) => {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const [isNoteToggle, setNoteToggle] = useState(false);
-  const btn_style = {
-    height: "3.5rem",
-    display: "flex",
-    alignItems: "center",
-  };
 
   const removeNote = async (e) => {
     e.stopPropagation();
 
     try {
-      const note = await axios({
-        url: `/api/v1/note/${props.id}`,
-        method: "Delete",
-      });
-      if (note) {
+      const note = await delete_note_request(props.id);
+
+      if (!note) {
+        showSnackBar(enqueueSnackbar, "Note deleted sucessfully!", "error");
         props.setNotes((prev) => {
           const copyArr = [...prev];
           copyArr.splice(props.index, 1);
@@ -65,7 +60,6 @@ const Note = (props) => {
       </div>
       {isNoteToggle && (
         <div className={classes.Note__Actions}>
-          {/* <BtnFull style={{ ...btn_style }}>Edit</BtnFull> */}
           <Button variant="outlined" color="primary" startIcon={<EditNote />}>
             Edit
           </Button>

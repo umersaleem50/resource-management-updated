@@ -8,6 +8,7 @@ const {
   uploadCoverImage,
   resizeCoverImage,
 } = require("../Controller/imageController");
+const { defaultFields } = require("../Controller/services");
 
 const Router = require("express").Router();
 
@@ -21,6 +22,21 @@ Router.get("/", profileController.getProfile).get(
   profileController.checkIfPartOfTeam,
   profileController.getSubAccountProfile
 );
+Router.get(
+  "/other/:id",
+  defaultFields(
+    "firstName",
+    "lastName",
+    "email",
+    "team",
+    "service",
+    "profilePicture",
+    "coverPicture",
+    "profession",
+    "gallery"
+  ),
+  profileController.getProfile
+);
 Router.use(uploadProfileImage);
 Router.use(resizeProfilePicture);
 Router.use(uploadCoverImage);
@@ -32,6 +48,7 @@ Router.patch(
   profileController.updateProfile
 ).patch(
   "/:id",
+
   profileController.checkIfPartOfTeam,
   profileController.checkIfHavePermission("update-account"),
   profileController.updateSubAccount

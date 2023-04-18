@@ -15,7 +15,7 @@ const {
  */
 
 exports.getProfile = catchAsync(async (req, res, next) => {
-  const id = req.user.id;
+  const id = req.params.id || req.user.id;
   const features = new ApiFeature(
     Member.findById(id).populate("team"),
     req.query
@@ -33,7 +33,11 @@ exports.getProfile = catchAsync(async (req, res, next) => {
 
 exports.getSubAccountProfile = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const user = await Member.findById(id);
+  const features = new ApiFeature(
+    Member.findById(id).populate("team"),
+    req.query
+  ).limit();
+  const user = await features.query;
   if (!user) return next(new apiError("No user found with :id.", 404));
   res.status(200).json({ status: "success", data: user });
 });
@@ -85,22 +89,22 @@ exports.updateSubAccount = catchAsync(async (req, res, next) => {
 exports.updateProfile = catchAsync(async (req, res, next) => {
   const { id } = req.user;
   // const body = req.body;
-  const ALLOWED_FIELDS = [
-    "firstName",
-    "lastName",
-    "email",
-    "profession",
-    "profilePicture",
-    "coverPicture",
-    "bio",
-    "phone",
-    "postalCode",
-    "city",
-    "country",
-    "street",
-    "location",
-    "gallery",
-  ];
+  // const ALLOWED_FIELDS = [
+  //   "firstName",
+  //   "lastName",
+  //   "email",
+  //   "profession",
+  //   "profilePicture",
+  //   "coverPicture",
+  //   "bio",
+  //   "phone",
+  //   "postalCode",
+  //   "city",
+  //   "country",
+  //   "street",
+  //   "location",
+  //   "gallery",
+  // ];
   if (req.body?.password)
     return next(
       new apiError(
@@ -108,8 +112,8 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
         400
       )
     );
-  const filteredReq = filterReq(req.body, ...ALLOWED_FIELDS);
-  const user = await Member.findByIdAndUpdate(id, filteredReq, {
+  // const filteredReq = filterReq(req.body, ...ALLOWED_FIELDS);
+  const user = await Member.findByIdAndUpdate(id, req.body, {
     runValidators: true,
     new: true,
   });

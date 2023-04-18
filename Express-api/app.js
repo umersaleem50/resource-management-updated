@@ -7,6 +7,7 @@ const rateLimiter = require("express-rate-limit");
 const express = require("express");
 
 const mainRouter = require("./mainRouter");
+const bodyParser = require("body-parser");
 const limiter = rateLimiter({
   windowMs: 60 * 60 * 1000,
   max: 500,
@@ -35,10 +36,9 @@ app.use(
 );
 app.use(mongoSanitizer());
 app.use(xss());
-
+app.use(bodyParser.json({ limit: "10kb" }));
 app.use("/api", limiter);
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
 // MIDDLEWARE FOR THE ROUTES

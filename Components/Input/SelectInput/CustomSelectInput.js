@@ -1,10 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom";
+
 import Autocomplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
-import { branches as initialOptions } from "../../../Dev-Data/branches";
+import { bool } from "prop-types";
+import { object } from "prop-types";
+
 function CustomSelectInput(props) {
-  const [inputValue, setInputValue] = React.useState("");
+  // const [inputValue, setInputValue] = React.useState("");
   // const [options, setOptions] = React.useState(props.options || initialOptions);
 
   return (
@@ -17,11 +19,13 @@ function CustomSelectInput(props) {
       }}
       renderInput={(params) => (
         <TextField
+          required={props.required}
           {...params}
           label="Select"
           variant="outlined"
           onKeyDown={(e) => {
             if (
+              !props.anyValue &&
               e.key === "Enter" &&
               props.options.findIndex((o) => o.title === props.inputValue) ===
                 -1
@@ -34,5 +38,10 @@ function CustomSelectInput(props) {
     />
   );
 }
+
+CustomSelectInput.propTypes = {
+  required: bool,
+  options: object,
+};
 
 export default CustomSelectInput;

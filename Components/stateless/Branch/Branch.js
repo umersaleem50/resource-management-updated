@@ -23,6 +23,7 @@ const Branch = (props) => {
             return (
               <ProfileCard
                 key={i}
+                id={user.id}
                 bio={user.bio}
                 fullName={user.fullName}
                 coverPicture={user.coverPicture}

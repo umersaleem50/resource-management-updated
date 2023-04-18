@@ -3,3 +3,9 @@ export const branches = [
   { title: "Branches" },
   { title: "Admins" },
 ];
+
+export const taskPriorities = [
+  { title: "Important" },
+  { title: "Un-Important" },
+  { title: "Critical" },
+];
