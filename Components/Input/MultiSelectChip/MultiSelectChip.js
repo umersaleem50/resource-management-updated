@@ -37,7 +37,9 @@ export default function MultipleSelectCheckmarks(props) {
   return (
     <div>
       <FormControl sx={{ mt: 1, width: "100%" }}>
-        <InputLabel id="demo-multiple-checkbox-label">Permissons</InputLabel>
+        <InputLabel id="demo-multiple-checkbox-label">
+          {props.label || Permissons}
+        </InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"

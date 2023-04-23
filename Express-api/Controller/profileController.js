@@ -69,8 +69,8 @@ exports.getTeam = catchAsync(async (req, res, next) => {
  * @param id :id of the user's account
  * @returns Returns response with valid data
  */
-exports.updateSubAccount = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+exports.updateProfile = catchAsync(async (req, res, next) => {
+  const id = req.params.id || req.user;
   const user = await Member.findByIdAndUpdate(id, req.body, {
     runValidators: true,
     new: true,
@@ -78,7 +78,7 @@ exports.updateSubAccount = catchAsync(async (req, res, next) => {
 
   if (!user) return next(new apiError("No user found with :id.", 404));
 
-  res.status(200).json({ message: "success", data: user });
+  res.status(200).json({ status: "success", data: user });
 });
 
 /**
@@ -86,42 +86,42 @@ exports.updateSubAccount = catchAsync(async (req, res, next) => {
  * @returns Returns response with valid data
  */
 
-exports.updateProfile = catchAsync(async (req, res, next) => {
-  const { id } = req.user;
-  // const body = req.body;
-  // const ALLOWED_FIELDS = [
-  //   "firstName",
-  //   "lastName",
-  //   "email",
-  //   "profession",
-  //   "profilePicture",
-  //   "coverPicture",
-  //   "bio",
-  //   "phone",
-  //   "postalCode",
-  //   "city",
-  //   "country",
-  //   "street",
-  //   "location",
-  //   "gallery",
-  // ];
-  if (req.body?.password)
-    return next(
-      new apiError(
-        "Please use this route /auth/update-password for updating the password.",
-        400
-      )
-    );
-  // const filteredReq = filterReq(req.body, ...ALLOWED_FIELDS);
-  const user = await Member.findByIdAndUpdate(id, req.body, {
-    runValidators: true,
-    new: true,
-  });
+// exports.updateProfile = catchAsync(async (req, res, next) => {
+//   const { id } = req.user;
+//   const body = req.body;
+//   const ALLOWED_FIELDS = [
+//     "firstName",
+//     "lastName",
+//     "email",
+//     "profession",
+//     "profilePicture",
+//     "coverPicture",
+//     "bio",
+//     "phone",
+//     "postalCode",
+//     "city",
+//     "country",
+//     "street",
+//     "location",
+//     "gallery",
+//   ];
+//   if (req.body?.password)
+//     return next(
+//       new apiError(
+//         "Please use this route /auth/update-password for updating the password.",
+//         400
+//       )
+//     );
+//   // const filteredReq = filterReq(req.body, ...ALLOWED_FIELDS);
+//   const user = await Member.findByIdAndUpdate(id, req.body, {
+//     runValidators: true,
+//     new: true,
+//   });
 
-  if (!user) return next(new apiError("No document found with :id.", 404));
+//   if (!user) return next(new apiError("No document found with :id.", 404));
 
-  res.status(200).json({ message: "success", data: user });
-});
+//   res.status(200).json({ message: "success", data: user });
+// });
 
 /**
  * Checks if the given user is a team member of logged in user

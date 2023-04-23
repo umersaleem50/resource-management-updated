@@ -1,9 +1,5 @@
-import { BtnFull } from "../../Input/Buttons/Button";
-import { Heading_Tiny, Paragraph } from "../../Typography/Typography";
 import classes from "./Note.module.scss";
 import { useState } from "react";
-import axios from "axios";
-// import { showNofication } from "../Notification/Notification";
 import { Button, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { grey } from "@mui/material/colors";
@@ -60,7 +56,13 @@ const Note = (props) => {
       </div>
       {isNoteToggle && (
         <div className={classes.Note__Actions}>
-          <Button variant="outlined" color="primary" startIcon={<EditNote />}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<EditNote />}
+            sx={{ visibility: "hidden" }}
+            // if you wanna show the edit button
+          >
             Edit
           </Button>
 

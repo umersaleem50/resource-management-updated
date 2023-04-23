@@ -1,19 +1,20 @@
-import { request_function } from "../request_function";
+import { request_function, request_function_test } from "../request_function";
 
 export const get_profile_request = async (token, id = null, fields = null) => {
   let queryFields = null;
   if (fields) {
     queryFields = `?fields=${fields.join(",")}`;
   }
-  return await request_function({
+  return await request_function_test({
     url: `/profile${id ? "/" + id : ""}${fields ? queryFields : ""}`,
     method: "GET",
+    data: null,
     token,
   });
 };
 
 export const get_other_profile_request = async (token, id) =>
-  await request_function({
+  await request_function_test({
     url: `/profile/other/${id}`,
     method: "GET",
     token,

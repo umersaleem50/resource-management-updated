@@ -9,9 +9,16 @@
   overflow: hidden;
   border-radius: 1rem;
   transition: all 0.2s ease-in;
+
+  img {
+    transition: all 0.2s ease;
+  }
   &:hover {
     // transform: translateY(-1rem);
     box-shadow: 0 0 3rem rgba(0, 0, 0, 0.25);
+    img {
+      filter: blur(0.5rem);
+    }
   }
 
   &__details {

@@ -24,7 +24,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 3rem;
-    width: 70rem;
+    max-width: 70rem;
+    width: 50rem;
   }
 
   * {

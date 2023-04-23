@@ -177,6 +177,12 @@ memberSchema.virtual("memberQunatity").get(function () {
   if (this.team) return this.team.length;
 });
 
+memberSchema.virtual("address").get(function () {
+  if (this.street && this.city && this.country && this.postalCode) {
+    return `Postal Code: ${this.postalCode}, ${this.street}, ${this.city}, ${this.country}`;
+  }
+});
+
 memberSchema.methods.createResetToken = async function () {
   const randomToken = crypto.randomBytes(32).toString("hex");
   const resetToken = crypto

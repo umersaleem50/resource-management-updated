@@ -65,9 +65,9 @@ const MenuOptions = (props) => {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {props.settings.map((setting) => (
+        {props.settings.map((setting, i) => (
           <MenuItem
-            key={setting}
+            key={i}
             onClick={() => {
               setting.onClick();
               handleCloseUserMenu();

@@ -13,7 +13,13 @@ import Router from "next/router";
 export default function ProfileCard(props) {
   return (
     <Card
-      sx={{ maxWidth: 345, backgroundColor: grey["A200"] }}
+      sx={{
+        maxWidth: 345,
+        backgroundColor: grey["A200"],
+        minWidth: 300,
+        mr: 5,
+        mb: 2,
+      }}
       className={classes["Card"]}
     >
       <CardMedia

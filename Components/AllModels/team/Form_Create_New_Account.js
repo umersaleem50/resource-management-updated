@@ -16,9 +16,7 @@ const Form_Create_New_Account = (props) => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [permissions, setPermissions] = useState([]);
   const [category, setCategory] = useState("");
-  const [branch, setBranchOptions] = useState(
-    props.otherData.branch || branches
-  );
+  const [branch, setBranchOptions] = useState(branches);
 
   const onSubmit = async (e) => {
     e.preventDefault();

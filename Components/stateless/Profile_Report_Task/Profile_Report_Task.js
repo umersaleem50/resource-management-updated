@@ -1,7 +1,5 @@
 import classes from "./Profile_Report_Task.module.scss";
 import { generateDateFromString } from "../../../next-utils/helper_functions";
-import { Paragraph } from "../../Typography/Typography";
-import Image from "next/image";
 import { Avatar, Typography } from "@mui/material";
 import { green, grey, red } from "@mui/material/colors";
 const Profile_Report_Task = (props) => {
@@ -30,7 +28,9 @@ const Profile_Report_Task = (props) => {
         </Typography>
         <div className={classes["Profile__Container__Deadline"]}>
           {props.assignedOn && props.deadline && (
-            <Paragraph>{generateDateFromString(props.assignedOn)} - </Paragraph>
+            <Typography variant="body1" component={"p"}>
+              {generateDateFromString(props.assignedOn)} -{" "}
+            </Typography>
           )}
           {props.deadline && (
             <Typography

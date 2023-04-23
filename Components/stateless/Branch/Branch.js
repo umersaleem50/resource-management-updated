@@ -1,6 +1,4 @@
 import { Typography } from "@mui/material";
-import { Heading_Large } from "../../Typography/Typography";
-import Account from "../Account--delete-later/Account";
 import classes from "./Branch.module.scss";
 import { grey } from "@mui/material/colors";
 import ProfileCard from "../ProfileCard/ProfileCard";
@@ -29,16 +27,6 @@ const Branch = (props) => {
                 coverPicture={user.coverPicture}
                 profilePicture={user.profilePicture}
               />
-              // <Account
-              //   profilePicture={el.profilePicture}
-              //   coverImage={el.coverPicture}
-              //   fullName={el.fullName}
-              //   profession={el.profession}
-              //   address={el.address}
-              //   key={i}
-              //   id={el.id}
-              //   member={el?.team?.length}
-              // ></Account>
             );
           })}
       </div>

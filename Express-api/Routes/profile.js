@@ -51,7 +51,7 @@ Router.patch(
 
   profileController.checkIfPartOfTeam,
   profileController.checkIfHavePermission("update-account"),
-  profileController.updateSubAccount
+  profileController.updateProfile
 );
 
 module.exports = Router;

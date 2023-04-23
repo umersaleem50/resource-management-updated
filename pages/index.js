@@ -12,10 +12,7 @@ import {
 } from "../next-utils/login_validation";
 import Navbar from "../Components/stateful/Navbar/Navbar";
 import { useSnackbar } from "notistack";
-import {
-  get_note_request,
-  get_profile_request,
-} from "../services/pages/index_requests";
+import { get_profile_request } from "../services/pages/index_requests";
 import Welcome_Screen from "../Components/stateless/Welcome_Screen/Welcome_Screen";
 
 export default function Home(props) {
@@ -41,13 +38,13 @@ export default function Home(props) {
             <Notes />
           </div>
           <div className={classes.Main_Container__Right}>
-            <Welcome_Screen firstName="Samar" taskQunatity={10} />
+            <Welcome_Screen firstName={props.data.firstName} />
             <Tasks
               setSendModelToggle
               userId={props.data.id}
               snackBar={enqueueSnackbar}
             />
-            <Reports snackBar={enqueueSnackbar} />
+            {/* <Reports snackBar={enqueueSnackbar} /> */}
           </div>
         </main>
       </MainContainer>
@@ -61,9 +58,8 @@ export async function getServerSideProps(context) {
   // const isLoggedIn = login_validation(context.req);
   const { token } = useJWTToken(context);
   try {
-    const id = await protected_route_next(context);
+    await protected_route_next(context);
     const user_data = await get_profile_request(token);
-    const notes = await get_note_request(token);
 
     return {
       props: {

@@ -27,8 +27,9 @@ function CustomSelectInput(props) {
             if (
               !props.anyValue &&
               e.key === "Enter" &&
-              props.options.findIndex((o) => o.title === props.inputValue) ===
-                -1
+              props.options.findIndex(
+                (o) => (o.title === props.inputValue) === -1
+              )
             ) {
               props.setOptions((o) => o.concat({ title: props.inputValue }));
             }

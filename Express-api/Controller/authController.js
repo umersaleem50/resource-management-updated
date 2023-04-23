@@ -126,10 +126,12 @@ const updatePassword = catchAsync(async (req, res, next) => {
   // const { id } = req.params || req.user
   const id = (req.params && req.params.id) || req.user.id;
   const { oldPassword, password, passwordConfirm } = req.body;
-  if (!oldPassword || !password || !passwordConfirm)
+  if ((!req.params.id && !oldPassword) || !password || !passwordConfirm)
     return next(
       new apiError(
-        "Please provide old-password, password & password-confirm",
+        `Please provide ${
+          !req.params.id ? "current-password," : ""
+        } password & password-confirm`,
         400
       )
     );
@@ -141,7 +143,11 @@ const updatePassword = catchAsync(async (req, res, next) => {
       new apiError("No user found with :id or account is un-active.", 404)
     );
 
-  if (!(await user.correctPassword(oldPassword, user.password)))
+  //this will check if the there is id in the param, that means admin is changing password of the sub account
+  if (
+    !req.params.id &&
+    !(await user.correctPassword(oldPassword, user.password))
+  )
     return next(new apiError("Your current password is invalid.", 401));
 
   if (password !== passwordConfirm)

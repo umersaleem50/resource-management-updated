@@ -24,7 +24,7 @@ import { get_profile_request } from "../../../services/pages/index_requests";
 import { navLinks } from "../../../Dev-Data/navlinks";
 
 const Navbar = (props) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -61,7 +61,13 @@ const Navbar = (props) => {
     },
   ];
   if (user)
-    settings.unshift({ text: user.email, color: grey[700], onClick: () => {} });
+    settings.unshift({
+      text: user.email,
+      color: grey[700],
+      onClick: () => {
+        Router.push(`/profile/${user.id}`);
+      },
+    });
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -105,7 +111,6 @@ const Navbar = (props) => {
       }
     } catch (error) {
       showSnackBar(enqueueSnackbar, "Failed to some data.", "warning");
-      // console.log("error", error);
     }
   };
 
@@ -126,10 +131,8 @@ const Navbar = (props) => {
           <Tooltip title="Open settings">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
-                alt="Remy Sharp"
-                src={`/storage/images/profilePicture/${
-                  user && user.profilePicture
-                }`}
+                alt={"Profile Picture"}
+                src={`/storage/images/profilePicture/${user.profilePicture}`}
               />
             </IconButton>
           </Tooltip>

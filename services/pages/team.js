@@ -1,7 +1,7 @@
 import { request_function, request_function_test } from "../request_function";
 
 export const get_team_request = (token = null) =>
-  request_function({
+  request_function_test({
     url: "/profile?fields=team,permissions",
     method: "GET",
     token,

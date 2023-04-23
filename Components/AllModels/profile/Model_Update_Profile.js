@@ -3,14 +3,17 @@ import classes from "./Model_Update_Profile.module.scss";
 import { Divider, Typography, TextField, Button } from "@mui/material";
 import MultiSelectChip from "../../Input/MultiSelectChip/MultiSelectChip";
 import profession from "../../../Dev-Data/professions";
+import { showSnackBar } from "../../../next-utils/helper_functions";
+import { enqueueSnackbar } from "notistack";
+import { update_profile_request } from "../../../services/pages/profile";
 const Model_Update_Profile = (props) => {
   const INITIAL_EMAIL = props.data?.email;
-  const INITIAL_FIRSTNAME = props.data?.email;
-  const INITIAL_LASTNAME = props.data?.email;
+  const INITIAL_FIRSTNAME = props.data?.firstName;
+  const INITIAL_LASTNAME = props.data?.lastName;
   const INITIAL_PROFESSIONS = props.data?.professions;
   const INITIAL_BIO = props.data?.bio;
   const INITIAL_PHONE = props.data?.phone;
-  const INITIAL_POSTAL = props.data?.postal;
+  const INITIAL_POSTAL = props.data?.postalCode;
   const INITIAL_STREET = props.data?.street;
   const INITIAL_CITY = props.data?.city;
   const INITIAL_COUNTRY = props.data?.country;
@@ -21,12 +24,59 @@ const Model_Update_Profile = (props) => {
   const [bio, setBio] = useState(INITIAL_BIO || "");
   const [professions, setProfessions] = useState(INITIAL_PROFESSIONS || []);
   const [phone, setPhone] = useState(INITIAL_PHONE || "");
-  const [postal, setPostal] = useState(INITIAL_POSTAL || "");
+  const [postalCode, setPostalCode] = useState(INITIAL_POSTAL || "");
   const [street, setStreet] = useState(INITIAL_STREET || "");
   const [city, setCity] = useState(INITIAL_CITY || "");
   const [country, setCountry] = useState(INITIAL_COUNTRY || "");
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    const user = await update_profile_request(
+      {
+        email: props.data.email === email ? undefined : email,
+        firstName,
+        lastName,
+        bio,
+        professions,
+        phone,
+        postalCode,
+        street,
+        city,
+        country,
+      },
+      (props.page_data.type === "team-page" && props.data.id) || null
+    );
+
+    if (user.status === "success")
+      showSnackBar(enqueueSnackbar, "Profile updated successfully!", "success");
+
+    if (user.status === "failed") {
+      // props.closeModel();
+      showSnackBar(enqueueSnackbar, user.message, "error");
+      return;
+    }
+
+    // } catch (error) {
+    //   if (error.status === "failed") {
+    //     props.closeModel();
+    //     showSnackBar(enqueueSnackbar, error.message, "failed");
+    //     return;
+    //   }
+
+    //   showSnackBar(
+    //     enqueueSnackbar,
+    //     "Something went wrong, try again later!",
+    //     "error"
+    //   );
+    // }
+  };
+
   return (
-    <form className={[classes["Form"], classes["Form--expend"]].join(" ")}>
+    <form
+      onSubmit={onSubmit}
+      className={[classes["Form"], classes["Form--expend"]].join(" ")}
+    >
       <div className={classes["Heading"]}>
         <Typography
           className={classes["Form__Heading"]}
@@ -92,8 +142,8 @@ const Model_Update_Profile = (props) => {
         label={"Postal Code"}
         required
         variant="standard"
-        value={postal}
-        onChange={(e) => setPostal(e.target.value)}
+        value={postalCode}
+        onChange={(e) => setPostalCode(e.target.value)}
         placeholder="Enter your Postal Code"
       />
       <TextField
@@ -123,15 +173,7 @@ const Model_Update_Profile = (props) => {
         onChange={(e) => setCountry(e.target.value)}
         placeholder="Enter your Country"
       />
-      <TextField
-        type="text"
-        label={"City"}
-        required
-        variant="standard"
-        value={street}
-        onChange={(e) => setStreet(e.target.value)}
-        placeholder="Enter your city"
-      />
+
       <TextField
         type="text"
         label={"bio"}
@@ -142,8 +184,14 @@ const Model_Update_Profile = (props) => {
         value={bio}
         onChange={(e) => setBio(e.target.value)}
         placeholder="Enter your bio"
+        className={classes["input--bio"]}
       />
-      <Button className={classes["btn--submit"]} variant="contained">
+      <Button
+        className={classes["btn--submit"]}
+        variant="contained"
+        sx={{ m: "2rem 0" }}
+        type="submit"
+      >
         Update Profile
       </Button>
     </form>
