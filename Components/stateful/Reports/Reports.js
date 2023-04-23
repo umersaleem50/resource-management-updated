@@ -26,7 +26,7 @@ class Reports extends Component {
     try {
       const reports = await all_reports_callback();
       const fetchedReportsArr = reports.data;
-
+      console.log(fetchedReportsArr);
       if (reports) {
         this.setState({
           reports: fetchedReportsArr.reverse(),
@@ -42,19 +42,14 @@ class Reports extends Component {
   }
 
   generateReports(reports) {
-    return reports.map((el, i) => {
+    return reports.map((report, i) => {
       return (
-        <Report />
-        // <Report
-        //   task={el?.task?.tasks}
-        //   reportBy={el.reportBy}
-        //   reports={el.reports}
-        //   key={i}
-        //   taskId={el?.task?._id}
-        //   toggleModel={(id) =>
-        //     this.setState({ toggleAssignTaskModel: true, currentTaskId: id })
-        //   }
-        // ></Report>
+        <Report
+          key={i}
+          reports={report.reports}
+          fullName={report.reportBy.fullName}
+          profilePicture={report.reportBy.profilePicture}
+        />
       );
     });
   }
@@ -81,10 +76,7 @@ class Reports extends Component {
           Team's Report
         </Typography>
         <div className={classes["Reports__Container"]}>
-          {/* {this.generateReports(this.state.reports)} */}
-          <Report color={purple[500]} />
-          <Report />
-          <Report color={blue[500]} />
+          {this.generateReports(this.state.reports)}
         </div>
       </div>
     );

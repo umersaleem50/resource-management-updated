@@ -1,7 +1,7 @@
 const { Component } = require("react");
 import { Avatar, Button, Typography } from "@mui/material";
 import classes from "./Report.module.scss";
-
+import PropsType from "prop-types";
 import { green, grey, red, blue } from "@mui/material/colors";
 import MenuOptions from "../../Menu_Options/Menu_Options";
 
@@ -10,8 +10,16 @@ import { Delete, Assignment, Check, Download } from "@mui/icons-material";
 class Report extends Component {
   constructor(props) {
     super(props);
-    this.state = { currentReportIndex: 1 };
+
+    this.state = {
+      currentReportIndex: this.props?.reports?.length || 0,
+      currentReport: this.props.reports[0],
+    };
   }
+
+  state = {
+    currentReport: {},
+  };
 
   settings_options = [
     {
@@ -36,6 +44,10 @@ class Report extends Component {
     },
   ];
 
+  componentDidMount() {
+    console.log(this.props);
+  }
+
   render() {
     return (
       <div
@@ -50,7 +62,7 @@ class Report extends Component {
             style={{ textDecoration: "underline" }}
             fontWeight={"500"}
           >
-            Paint the other side of the doors. And also make it pop.
+            {this.props.taskHeading}
           </Typography>
           {/* <Select
             labelId="report-index-select"
@@ -78,7 +90,7 @@ class Report extends Component {
             sx={{ mb: 2 }}
             fontWeight={600}
           >
-            We have completed the house project on the north side.
+            {this.state.currentReport.heading}
           </Typography>
           <Typography
             variant="body1"
@@ -86,9 +98,7 @@ class Report extends Component {
             color={grey["A200"]}
             sx={{ mt: 5 }}
           >
-            We have successfully complete the building located on the north side
-            with the help of our team. Now we’re waiting for your response.
-            Please let us now
+            {this.state.currentReport.description}
           </Typography>
         </div>
         <div className={classes["Report__Bottom"]}>
@@ -103,7 +113,10 @@ class Report extends Component {
                 fontWeight={500}
                 color={grey[900]}
               >
-                Arrived on {new Date().toLocaleTimeString()}
+                Arrived on{" "}
+                {new Date(
+                  this.state.currentReport.createdOn
+                ).toLocaleTimeString()}
               </Typography>
               <Typography
                 variant="body1"
@@ -111,32 +124,41 @@ class Report extends Component {
                 fontWeight={600}
                 color={grey["A100"]}
               >
-                {"Muhammad Umar Saleem"}
+                {this.props.fullName}
               </Typography>
             </div>
           </div>
-          <div className={classes["Report__Attachments"]}>
-            <Typography
-              variant="body1"
-              component={"body1"}
-              fontWeight={600}
-              color={grey["A100"]}
-              sx={{ mb: 1 }}
-            >
-              2+ Attachments
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Download />}
-              style={{ backgroundColor: grey[900] }}
-            >
-              Download
-            </Button>
-          </div>
+          {this.state?.currentReport?.attachments &&
+            this.props.attachments.length && (
+              <div className={classes["Report__Attachments"]}>
+                <Typography
+                  variant="body1"
+                  component={"body1"}
+                  fontWeight={600}
+                  color={grey["A100"]}
+                  sx={{ mb: 1 }}
+                >
+                  {this.state.currentReport.attachments.length}+ Attachments
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<Download />}
+                  style={{ backgroundColor: grey[900] }}
+                >
+                  Download
+                </Button>
+              </div>
+            )}
         </div>
       </div>
     );
   }
 }
+
+Report.propsType = {
+  reports: PropsType.array,
+  profilePicture: PropsType.string,
+  fullName: PropsType.string,
+};
 
 export default Report;

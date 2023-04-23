@@ -88,14 +88,14 @@ const Notes = (props) => {
   };
   return (
     <div className={classes.Notes}>
-      {isWannaInsertNote && (
+      {/* {isWannaInsertNote && (
         <Model toggleModel={setWannaInsertNote}>
           <InsertNewNoteModel
             setNotes={setNotes}
             toggleModel={setWannaInsertNote}
           ></InsertNewNoteModel>
         </Model>
-      )}
+      )} */}
       <div className={classes.Notes__Top}>
         {/* <Heading_Tiny style={{ fontWeight: "600" }}>My Notes</Heading_Tiny> */}
         <Typography
