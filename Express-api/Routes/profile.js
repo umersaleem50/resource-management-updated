@@ -3,10 +3,9 @@ const { protectedRoute } = require("../Controller/authController");
 const profileController = require("../Controller/profileController");
 const authController = require("../Controller/authController");
 const {
-  uploadProfileImage,
   resizeProfilePicture,
-  uploadCoverImage,
   resizeCoverImage,
+  uploadProfileImages,
 } = require("../Controller/imageController");
 const { defaultFields } = require("../Controller/services");
 
@@ -37,20 +36,24 @@ Router.get(
   ),
   profileController.getProfile
 );
-Router.use(uploadProfileImage);
-Router.use(resizeProfilePicture);
-Router.use(uploadCoverImage);
-Router.use(resizeCoverImage);
+
+// Router.use(uploadProfileImages);
+// Router.use(resizeProfilePicture);
+// Router.use(resizeCoverImage);
 Router.patch(
   "/",
   profileController.checkIfHavePermission("update-account"),
-
+  uploadProfileImages,
+  resizeProfilePicture,
+  // resizeCoverImage,
   profileController.updateProfile
 ).patch(
   "/:id",
-
   profileController.checkIfPartOfTeam,
   profileController.checkIfHavePermission("update-account"),
+  uploadProfileImages,
+  resizeProfilePicture,
+  resizeCoverImage,
   profileController.updateProfile
 );
 

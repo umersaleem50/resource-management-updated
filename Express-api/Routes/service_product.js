@@ -3,8 +3,6 @@ const { protectedRoute } = require("../Controller/authController");
 const {
   resizeServiceGalleryImage,
   uploadGalleryImage,
-  uploadCoverImage,
-  resizeCoverImage,
 } = require("../Controller/imageController");
 const {
   createService,
@@ -22,13 +20,6 @@ service_product_router.post("/:id", createService);
 service_product_router.get("/:id", getOneService);
 service_product_router.patch("/:id", updateService);
 service_product_router.delete("/:id", deleteOneService);
-
-service_product_router.patch(
-  "/update-cover-picture/:id",
-  uploadCoverImage,
-  resizeCoverImage,
-  updateService
-);
 
 service_product_router.patch(
   "/update-gallery/:id/:order",
