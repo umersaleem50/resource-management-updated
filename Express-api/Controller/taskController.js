@@ -55,7 +55,6 @@ exports.deleteOneTask = deleteOne(Task);
 exports.getAllTask = catchAsync(async (req, res, next) => {
   const id = req.params?.id || req.user.id;
 
-  console.log(id, req.user.id);
   const tasks = await Tasks.find({ assignTo: id }).populate("tasks").populate({
     path: "assignBy",
     select: "profilePicture firstName lastName",

@@ -1,0 +1,14 @@
+.Card {
+  position: relative;
+  &__Avatar {
+    margin-bottom: 1rem;
+  }
+  &__Actions {
+    position: absolute;
+    bottom: 0;
+  }
+
+  &__Content {
+    margin-bottom: 3rem;
+  }
+}

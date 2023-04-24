@@ -56,10 +56,10 @@
 
     &__Buttons {
       display: flex;
+
+      grid-template-columns: 1fr 1fr 0.5fr;
+      grid-column-gap: 2rem;
       align-items: center;
-      justify-content: space-between;
-      width: 18rem;
-      margin-right: 5rem;
     }
   }
 
@@ -81,6 +81,12 @@
       text-decoration: none;
       color: currentColor;
       font-weight: bold;
+      margin-left: 1rem;
+    }
+
+    &__Content {
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -89,16 +95,19 @@
 
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
   }
 }
 
 .Team {
-  display: flex;
-  margin: 4rem 0;
-  overflow-x: scroll;
-  &:not(:last-child) {
-    margin-right: 1rem;
+  margin: 8rem 0;
+  &__container {
+    display: flex;
+    margin: 4rem 0;
+    overflow-x: scroll;
+    &:not(:last-child) {
+      margin-right: 1rem;
+    }
   }
 }
 

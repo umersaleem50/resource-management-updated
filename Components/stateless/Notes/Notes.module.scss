@@ -1,3 +1,4 @@
+@import "../../../styles/mixin";
 .Notes {
   width: 100%;
 
@@ -19,6 +20,11 @@
     // background-color: var(--color-grey-notes);
     // background-color: red;
     height: 70vh;
+
+    @include respond(tablet-port) {
+      height: auto;
+    }
+
     // padding: 0.5rem 1rem;
   }
 }

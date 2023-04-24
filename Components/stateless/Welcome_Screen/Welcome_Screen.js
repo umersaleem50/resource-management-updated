@@ -18,7 +18,7 @@ const Welcome_Screen = (props) => {
           Welcome back {props.firstName}!
         </Typography>
         <Typography color={blue[500]}>
-          You have {props.taskQunatity} new tasks of days!
+          Start your day with smaller tasks first.
         </Typography>
       </div>
       <div className={classes["Welcome__right"]}>
@@ -36,7 +36,6 @@ const Welcome_Screen = (props) => {
 
 Welcome_Screen.propTypes = {
   firstName: PropTypes.string,
-  taskQunatity: PropTypes.number,
 };
 
 export default Welcome_Screen;

@@ -67,35 +67,16 @@ export const protected_route_next = (context, redirect = false) =>
     }
   });
 
-// export const check_have_permission = (account_data, permission) => {
-//   // const SELECTED_PERMISSON = permissions[1];
+/**
+ *  Use this hook to get the token, if the user is logged in
+ * @param {Object} context Context object of the getServerSideProp
+ * @returns return jwt token if user is logged in
+ */
 
-//   if (
-//     account_data.permissions &&
-//     account_data.permissions.includes(permission)
-//   ) {
-//     return { updateOwnAccount: true };
-//   }
-//   return { updateOwnAccount: false };
-// };
-// module.exports = { login_validation };
-// export const verify_user_loggedin = (
-//   context,
-//   destination = "/",
-//   defaultReturn = true
-// ) => {
-//   const token = context.req?.cookies?.jwt;
-
-//   if (token && jwt.verify(token, process.env.JWT_SECERT_KEY)) {
-//     return {
-//       redirect: {
-//         permanent: false,
-//         destination,
-//       },
-//     };
-//   }
-//   if (defaultReturn) {
-//     return { props: {} };
-//   }
-//   return null;
-// };
+export const useJWTToken = (context) => {
+  const token = context.req && context.req?.cookies?.jwt;
+  if (token) {
+    return { token };
+  }
+  return { token: "" };
+};

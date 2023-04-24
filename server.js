@@ -29,23 +29,18 @@ app
     // AND CAN BE USE BY SOCKET.IO
     const mainServer = http.createServer(server);
 
-    io = new socketIo.Server(mainServer, {
-      cors: {
-        origin: "http://localhost:3000",
-        credentials: "true",
-      },
-    });
+    // io = new socketIo.Server(mainServer, {
+    //   cors: {
+    //     origin: "http://localhost:3000",
+    //     credentials: "true",
+    //   },
+    // });
 
-    io.on("connect", (socket) => {
-      console.log("a user is connected");
-
-      socket.on("task-assigned", (data) => {
-        console.log("new task incoming");
-        io.sockets.emit("new-task", data);
-      });
-
-      socket.emit("message", "this is the message");
-    });
+    // io.on("connect", (socket) => {
+    //   socket.on("task-assigned", (data) => {
+    //     io.sockets.emit("new-task", data);
+    //   });
+    // });
 
     mainServer.listen(process.env.PORT, () => {
       console.log(`Express is running at port ${process.env.PORT}`);
@@ -63,6 +58,7 @@ mongoose
   .catch((err) => {
     console.log(err);
     console.log("Database not connected, Error💥");
+    process.exit(1);
   });
 
 process.on("unhandledRejection", function (error) {

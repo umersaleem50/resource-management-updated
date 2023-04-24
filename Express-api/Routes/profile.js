@@ -5,22 +5,42 @@ const authController = require("../Controller/authController");
 const {
   uploadProfileImage,
   resizeProfilePicture,
+  uploadCoverImage,
+  resizeCoverImage,
 } = require("../Controller/imageController");
+const { defaultFields } = require("../Controller/services");
 
 const Router = require("express").Router();
 
 Router.post("/logout", authController.logoutProfile);
 
 Router.use(protectedRoute);
+Router.get("/team", profileController.getTeam);
 
 Router.get("/", profileController.getProfile).get(
   "/:id",
   profileController.checkIfPartOfTeam,
   profileController.getSubAccountProfile
 );
-Router.get("/team", profileController.getTeam);
+Router.get(
+  "/other/:id",
+  defaultFields(
+    "firstName",
+    "lastName",
+    "email",
+    "team",
+    "service",
+    "profilePicture",
+    "coverPicture",
+    "profession",
+    "gallery"
+  ),
+  profileController.getProfile
+);
 Router.use(uploadProfileImage);
 Router.use(resizeProfilePicture);
+Router.use(uploadCoverImage);
+Router.use(resizeCoverImage);
 Router.patch(
   "/",
   profileController.checkIfHavePermission("update-account"),
@@ -28,9 +48,10 @@ Router.patch(
   profileController.updateProfile
 ).patch(
   "/:id",
+
   profileController.checkIfPartOfTeam,
   profileController.checkIfHavePermission("update-account"),
-  profileController.updateSubAccount
+  profileController.updateProfile
 );
 
 module.exports = Router;

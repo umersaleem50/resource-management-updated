@@ -1,23 +1,23 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-
+import { useState } from "react";
 import classes from "./index.module.scss";
 import MainContainer from "../Components/stateless/MainContainer/MainContainer";
 import Notes from "../Components/stateless/Notes/Notes";
-
 import Tasks from "../Components/stateful/Tasks/Tasks";
 import Reports from "../Components/stateful/Reports/Reports";
-import { protected_route_next } from "../next-utils/login_validation";
+import {
+  protected_route_next,
+  useJWTToken,
+} from "../next-utils/login_validation";
 import Navbar from "../Components/stateful/Navbar/Navbar";
 import { useSnackbar } from "notistack";
-import {
-  get_note_request,
-  get_profile_request,
-} from "../services/index_requests";
+import { get_profile_request } from "../services/pages/index_requests";
 import Welcome_Screen from "../Components/stateless/Welcome_Screen/Welcome_Screen";
 
 export default function Home(props) {
   const { enqueueSnackbar } = useSnackbar();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -38,13 +38,13 @@ export default function Home(props) {
             <Notes />
           </div>
           <div className={classes.Main_Container__Right}>
-            <Welcome_Screen firstName="Samar" taskQunatity={10} />
+            <Welcome_Screen firstName={props.data.firstName} />
             <Tasks
               setSendModelToggle
               userId={props.data.id}
               snackBar={enqueueSnackbar}
             />
-            <Reports snackBar={enqueueSnackbar} />
+            {/* <Reports snackBar={enqueueSnackbar} /> */}
           </div>
         </main>
       </MainContainer>
@@ -56,11 +56,10 @@ export default function Home(props) {
 
 export async function getServerSideProps(context) {
   // const isLoggedIn = login_validation(context.req);
-  const token = context.req && context.req?.cookies?.jwt;
+  const { token } = useJWTToken(context);
   try {
-    const id = await protected_route_next(context);
+    await protected_route_next(context);
     const user_data = await get_profile_request(token);
-    const notes = await get_note_request(token);
 
     return {
       props: {

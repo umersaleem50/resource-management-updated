@@ -27,8 +27,6 @@ const Member = require("../Models/member");
 
 //   const serviceDetails = await ServiceProduct.findById(id);
 
-//   console.log("this is service Details", serviceDetails);
-
 //   galleryArr = [...serviceDetails.gallery];
 //   galleryArr[order] = req.body.gallery;
 //   serviceDetails.gallery = galleryArr;

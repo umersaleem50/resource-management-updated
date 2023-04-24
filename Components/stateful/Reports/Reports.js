@@ -1,15 +1,9 @@
 import { Component } from "react";
-import { Heading_Large, Heading_Tiny } from "../../Typography/Typography";
-// import Report from "../Report/Report";
 import Report from "../Report/Report";
-import axios from "axios";
-import Model from "../../stateless/Model/Model";
 import classes from "./Reports.module.scss";
-// import { showNofication } from "../../stateless/Notification/Notification";
-import Reassign_Task_Model from "../../AllModels/dashboard/_reassign_task_model";
 import { Typography } from "@mui/material";
 import { blue, grey, purple } from "@mui/material/colors";
-import { all_reports_callback } from "../../../services/request_function";
+import { all_reports_callback } from "../../../services/pages/index_requests";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 class Reports extends Component {
   constructor(props) {
@@ -41,32 +35,15 @@ class Reports extends Component {
     this.fetchLatestReports();
   }
 
-  generateReports(reports) {
-    return reports.map((report, i) => {
-      return (
-        <Report
-          key={i}
-          reports={report.reports}
-          fullName={report.reportBy.fullName}
-          profilePicture={report.reportBy.profilePicture}
-        />
-      );
-    });
-  }
+  // generateReports(reports) {
+  //   return reports.map((el, i) => {
+  //     return <Report />;
+  //   });
+  // }
 
   render() {
     return (
       <div className={classes["Reports"]}>
-        {this.state.toggleAssignTaskModel && (
-          <Model
-            toggleModel={() => this.setState({ toggleAssignTaskModel: false })}
-          >
-            <Reassign_Task_Model
-              closeModel={() => this.setState({ toggleAssignTaskModel: false })}
-              taskId={this.state.currentTaskId}
-            />
-          </Model>
-        )}
         <Typography
           variant="h6"
           component={"h6"}
@@ -76,7 +53,7 @@ class Reports extends Component {
           Team's Report
         </Typography>
         <div className={classes["Reports__Container"]}>
-          {this.generateReports(this.state.reports)}
+          <Report color={purple[500]} />
         </div>
       </div>
     );

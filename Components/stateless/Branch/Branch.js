@@ -1,26 +1,32 @@
-import { Heading_Large } from "../../Typography/Typography";
-import Account from "../Account/Account";
+import { Typography } from "@mui/material";
 import classes from "./Branch.module.scss";
+import { grey } from "@mui/material/colors";
+import ProfileCard from "../ProfileCard/ProfileCard";
+console.log;
 const Branch = (props) => {
   return (
     <div className={classes.Branch}>
-      <Heading_Large style={{ textTransform: "capitalize" }}>
-        {(props.branch && `${props.branch}s`) || "Higher Authorities"}
-      </Heading_Large>
+      <Typography
+        variant="h4"
+        component={"h4"}
+        fontWeight={500}
+        color={grey[700]}
+        style={{ textTransform: "capitalize" }}
+      >
+        {props.branch || "Other Team Members"}
+      </Typography>
       <div className={classes.Branch__Sub}>
         {props.team &&
-          props.team.map((el, i) => {
+          props.team.map((user, i) => {
             return (
-              <Account
-                profilePicture={el.profilePicture}
-                coverImage={el.coverPicture}
-                fullName={el.fullName}
-                profession={el.profession}
-                address={el.address}
+              <ProfileCard
                 key={i}
-                id={el.id}
-                member={el?.team?.length}
-              ></Account>
+                id={user.id}
+                bio={user.bio}
+                fullName={user.fullName}
+                coverPicture={user.coverPicture}
+                profilePicture={user.profilePicture}
+              />
             );
           })}
       </div>

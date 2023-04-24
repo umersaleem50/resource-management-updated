@@ -4,10 +4,7 @@ import Head from "next/head";
 import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import {
-  login_callback,
-  reset_password,
-} from "../../../services/request_function";
+import { reset_password } from "../../../services/pages/auth";
 import { useEffect, useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
@@ -75,7 +72,7 @@ const ResetPassword = (props) => {
             </Typography>
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{
                 color: props.error
                   ? "var(--color-error)"
@@ -98,7 +95,7 @@ const ResetPassword = (props) => {
               className={classes["Form__TextBox"]}
               value={password}
               required
-              disabled={props.error}
+              disabled={props.error && true}
               onChange={(e) => setPassword(e.target.value)}
             />
             <TextField
@@ -112,7 +109,7 @@ const ResetPassword = (props) => {
               className={classes["Form__TextBox"]}
               value={passwordConfirm}
               required
-              disabled={props.error}
+              disabled={props.error && true}
               onChange={(e) => setPasswordConfirm(e.target.value)}
               helperText={`Password ${
                 password == passwordConfirm ? "" : "not"
@@ -127,7 +124,6 @@ const ResetPassword = (props) => {
               onClick={onSubmit}
               loading={isLoading}
               type="submit"
-              loadingPosition="start"
             >
               <Typography
                 // variant="button"
@@ -139,7 +135,7 @@ const ResetPassword = (props) => {
 
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__otherText"]}
             >
@@ -153,7 +149,7 @@ const ResetPassword = (props) => {
               className={[
                 classes["Form__Button"],
                 classes["Form__Button--signup"],
-              ]}
+              ].join(" ")}
               onClick={() => Router.push("/auth/login")}
             >
               <Typography

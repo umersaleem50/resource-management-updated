@@ -3,7 +3,6 @@ const Member = require("../Models/member");
 const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
-const apiError = require("../Util/apiError");
 const path = require("path");
 
 const storage = multer.memoryStorage();
@@ -18,52 +17,6 @@ const imageFilter = (req, file, cb) => {
 
 const uploadImage = multer({ storage, fileFilter: imageFilter });
 
-
-// exports.resizeSingleImage = catchAsync(async (req, res, next) => {
-//   if (!req.file) return next();
-//   const fileName = `${req.body.firstName}-${
-//     Math.random() * 1000000
-//   }-${Date.now()}-profilePicture.jpeg`;
-//   await sharp(req.file.buffer)
-//     .resize(500, 500)
-//     .toFormat("jpeg")
-//     .jpeg({ quality: 90 })
-//     .toFile(`public/storage/images/profilePicture/${fileName}`);
-
-//   req.body.profilePicture = fileName;
-//   next();
-// });
-// exports.resizeSingleImage = catchAsync(async (req, res, next) => {
-//   if (!req.file) return next();
-//   const filename = `${
-//     req.body.profile_name || req.user.id
-//   }-${Date.now()}-profilePicture.jpeg`;
-//   await sharp(req.file.buffer)
-//     .resize(500, 500)
-//     .toFormat("jpeg")
-//     .jpeg({ quality: 90 })
-//     .toFile(`public/storage/images/profilePicture/${filename}`);
-
-//   req.body.profilePicture = filename;
-
-//   next();
-// });
-
-// exports.resizeSingleImage = catchAsync(async (req, res, next) => {
-//   if (!req.file) return next();
-//   const filename = `${
-//     req.body.profile_name || req.user.id
-//   }-${Date.now()}-coverPicture.jpeg`;
-//   await sharp(req.file.buffer)
-//     .resize(1420, 275)
-//     .toFormat("jpeg")
-//     .jpeg({ quality: 90 })
-//     .toFile(`public/storage/images/coverPicture/${filename}`);
-
-//   req.body.profilePicture = filename;
-
-//   next();
-// });
 /**
  * Generate an image with filename in the storage, set the field to image filename & call next() middleware
  * @param {String} field
@@ -90,12 +43,12 @@ const resizeOneImage = (field, sizes) =>
     next();
   });
 
-  /**
-   * 
-   * @param {String} field Field of the file
-   * @param {String} dirLocation Directory where the file might exist
-   * @returns Return next() middleware
-   */
+/**
+ *
+ * @param {String} field Field of the file
+ * @param {String} dirLocation Directory where the file might exist
+ * @returns Return next() middleware
+ */
 
 const deletePreviousImage = (field, dirLocation) => {
   return catchAsync(async (req, res, next) => {

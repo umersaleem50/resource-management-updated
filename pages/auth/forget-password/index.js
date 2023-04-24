@@ -4,10 +4,7 @@ import Head from "next/head";
 import { Button, TextField, Typography, colors } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import {
-  forget_password,
-  login_callback,
-} from "../../../services/request_function";
+import { forget_password } from "../../../services/pages/auth";
 import { useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
@@ -33,7 +30,6 @@ const ForgetPassword = (props) => {
     }
   };
 
-  console.log(props);
   return (
     <>
       <Head>
@@ -64,7 +60,7 @@ const ForgetPassword = (props) => {
             </Typography>
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__SubHeading"]}
             >
@@ -93,7 +89,6 @@ const ForgetPassword = (props) => {
               className={classes["Form__Button"]}
               onClick={onSubmit}
               loading={isLoading}
-              loadingPosition="start"
             >
               <Typography
                 // variant="button"
@@ -105,7 +100,7 @@ const ForgetPassword = (props) => {
 
             <Typography
               variant="body1"
-              component={"body1"}
+              component={"p"}
               style={{ color: "var(--color-font-grey)" }}
               className={classes["Form__otherText"]}
             >
@@ -119,7 +114,7 @@ const ForgetPassword = (props) => {
               className={[
                 classes["Form__Button"],
                 classes["Form__Button--signup"],
-              ]}
+              ].join(" ")}
               onClick={() => Router.push("/auth/login")}
             >
               <Typography
@@ -136,7 +131,7 @@ const ForgetPassword = (props) => {
               Don't have an account yet:{" "}
               <span
                 onClick={() => {
-                  enqueueSnackbar("Forget", { variant: "warning" });
+                  Router.push("/auth/signup");
                 }}
               >
                 Click here!

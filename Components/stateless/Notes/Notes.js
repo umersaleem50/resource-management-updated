@@ -1,22 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import InsertNewNoteModel from "../../AllModels/dashboard/_insert_new_note";
-import { BtnFull, BtnOptions } from "../../Input/Buttons/Button";
-import { Heading_Tiny, Paragraph } from "../../Typography/Typography";
+import Model_Insert_New_Note from "../../AllModels/dashboard/Model_Insert_New_Note";
 import Model from "../Model/Model";
 import Note from "../Note/Note";
 import { useSnackbar } from "notistack";
-import { showNofication } from "../Notification/Notification";
 import classes from "./Notes.module.scss";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { Button, Typography } from "@mui/material";
 import AddTask from "@mui/icons-material/AddTask";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { blue, grey } from "@mui/material/colors";
+
 const Notes = (props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allnotes, setNotes] = useState([]);
-  const [isWannaInsertNote, setWannaInsertNote] = useState(false);
+  const [toggleModel, setToggleModel] = useState(false);
   const note_options = [
     {
       title: "Insert a note",
@@ -34,26 +32,47 @@ const Notes = (props) => {
     },
   ];
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const notes = await axios({
-          url: "/api/v1/note",
-          method: "get",
-          params: {
-            sort: "-createdOn",
-          },
+  const fetchLatestNotes = async () => {
+    try {
+      const notes = await axios({
+        url: "/api/v1/notes",
+        method: "get",
+        params: {
+          sort: "-createdOn",
+        },
+      });
+      if (notes) {
+        setNotes((prev) => {
+          if (prev.length !== notes.data.data.length) return notes.data.data;
+          return prev;
         });
-        if (notes) {
-          setNotes((prev) => {
-            if (prev.length !== notes.data.data.length) return notes.data.data;
-            return prev;
-          });
-        }
-      } catch (error) {
-        showSnackBar(enqueueSnackbar, error.message, "error");
       }
-    })();
+    } catch (error) {
+      showSnackBar(enqueueSnackbar, error.message, "error");
+    }
+  };
+
+  useEffect(() => {
+    // (async () => {
+    //   try {
+    //     const notes = await axios({
+    //       url: "/api/v1/note",
+    //       method: "get",
+    //       params: {
+    //         sort: "-createdOn",
+    //       },
+    //     });
+    //     if (notes) {
+    //       setNotes((prev) => {
+    //         if (prev.length !== notes.data.data.length) return notes.data.data;
+    //         return prev;
+    //       });
+    //     }
+    //   } catch (error) {
+    //     showSnackBar(enqueueSnackbar, error.message, "error");
+    //   }
+    // })();
+    fetchLatestNotes();
   }, [allnotes]);
 
   const generateAllNotes = (notes) => {
@@ -88,16 +107,13 @@ const Notes = (props) => {
   };
   return (
     <div className={classes.Notes}>
-      {/* {isWannaInsertNote && (
-        <Model toggleModel={setWannaInsertNote}>
-          <InsertNewNoteModel
-            setNotes={setNotes}
-            toggleModel={setWannaInsertNote}
-          ></InsertNewNoteModel>
-        </Model>
-      )} */}
+      <Model toggle={toggleModel} onClose={() => setToggleModel(false)}>
+        <Model_Insert_New_Note
+          fetchData={() => fetchLatestNotes()}
+          closeModel={() => setToggleModel(false)}
+        />
+      </Model>
       <div className={classes.Notes__Top}>
-        {/* <Heading_Tiny style={{ fontWeight: "600" }}>My Notes</Heading_Tiny> */}
         <Typography
           variant="h6"
           component={"h6"}
@@ -109,34 +125,16 @@ const Notes = (props) => {
         <div className={classes.Notes__Top__Right}>
           <Button
             startIcon={<AddTask />}
-            onClick={() => setWannaInsertNote(true)}
+            onClick={() => setToggleModel(true)}
             color="primary"
             variant="contained"
           >
             New
           </Button>
-          {/* <BtnFull
-            style={{
-              height: "3rem",
-              display: "flex",
-              alignItems: "center",
-              marginRight: "2rem",
-            }}
-            clicked={() => setWannaInsertNote(true)}
-          >
-            New +
-          </BtnFull> */}
         </div>
       </div>
 
-      <div
-        className={classes.Notes__Notes}
-        // style={{ padding: "2rem", height: "70%" }}
-      >
-        {/* <Scrollbars autoHeight autoHeightMin={0} autoHeightMax={450}> */}
-        {generateAllNotes(allnotes)}
-        {/* </Scrollbars> */}
-      </div>
+      <div className={classes.Notes__Notes}>{generateAllNotes(allnotes)}</div>
     </div>
   );
 };

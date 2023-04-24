@@ -1,0 +1,15 @@
+.Form {
+  display: flex;
+  flex-direction: column;
+  padding: 4rem;
+  width: 40rem;
+
+  &__Image {
+    display: flex;
+    align-items: center;
+  }
+
+  * {
+    margin-bottom: 1rem;
+  }
+}

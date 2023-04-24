@@ -20,8 +20,6 @@ exports.createOneReport = catchAsync(async (req, res, next) => {
   //FOR SECURITY REASONS, SO OTHER CAN'T SEND REPORT TO OTHER USERS TASKS
   const task = await Tasks.findOne({ _id: taskId, assignTo: senderId });
 
-  // console.log(task, "reportcontroller.js 26");
-
   if (!task) {
     return next(new apiError(`You can't send report to this task.`, 400));
   }

@@ -4,10 +4,11 @@ import classes from "./ImageBox.module.scss";
 import Overlay from "../stateless/Overlay/Overlay";
 import { IoMdClose as IconClose } from "react-icons/io";
 import { FiEdit as IconEdit } from "react-icons/fi";
-import { BtnFull } from "../Input/Buttons/Button";
-import { showNofication } from "../stateless/Notification/Notification";
 import axios from "axios";
 import Router from "next/router";
+import { Button } from "@mui/material";
+import { showSnackBar } from "../../next-utils/helper_functions";
+import { enqueueSnackbar } from "notistack";
 
 class ImageBox extends Component {
   constructor(props) {
@@ -15,11 +16,8 @@ class ImageBox extends Component {
     this.state = { isToggle: false };
   }
 
-  componentDidUpdate() {
-    console.log("yup its updated");
-  }
-
   async submitImage(e) {
+    if (!this.props.canupdate) return;
     const formData = new FormData();
     formData.append(this.props.htmlFor, e.target.files[0]);
     // formData.append("profile_name", this.props.otherData);
@@ -31,17 +29,17 @@ class ImageBox extends Component {
       });
 
       if (updateUser)
-        showNofication(
+        showSnackBar(
+          enqueueSnackbar,
           `${this.props.htmlFor} updated, successfully. Reloading page!`,
-          "success",
-          () => Router.reload()
+          "success"
         );
+      Router.reload();
     } catch (err) {
-      console.log(err);
-      showNofication(
+      showSnackBar(
+        enqueueSnackbar,
         `Failed to change ${this.props.htmlFor}`,
-        "error",
-        () => {}
+        "error"
       );
     }
   }
@@ -50,26 +48,31 @@ class ImageBox extends Component {
     return (
       <Fragment>
         <Image
-          {...this.props}
+          // {...this.props}
+          src={this.props.src}
           fill={this.props.fill || "cover"}
           className={[this.props.className, classes["ImageBox"]]
             .flat()
             .join(" ")}
           onClick={() => this.setState({ isToggle: true })}
         />
-        <label htmlFor={this.props.htmlFor}>
-          <IconEdit
-            className={[classes["Icon"], classes["Icon--Edit"]].join(" ")}
-          />
-        </label>
+        {this.props.canupdate && (
+          <label htmlFor={this.props.htmlFor}>
+            <IconEdit
+              className={[classes["Icon"], classes["Icon--Edit"]].join(" ")}
+            />
+          </label>
+        )}
 
-        <input
-          type={"file"}
-          id={this.props.htmlFor}
-          accept={".jpg,.jpeg,.png"}
-          className={classes["Input"]}
-          onChange={(e) => this.submitImage(e)}
-        />
+        {this.props.canupdate && (
+          <input
+            type={"file"}
+            id={this.props.htmlFor}
+            accept={".jpg,.jpeg,.png"}
+            className={classes["Input"]}
+            onChange={(e) => this.submitImage(e)}
+          />
+        )}
 
         {this.state.isToggle && (
           <div
@@ -86,15 +89,23 @@ class ImageBox extends Component {
                 fill="contain"
                 objectFit="contain"
               />
-              <BtnFull
+              <Button
                 className={[classes["FancyBox__Icon"]].join()}
-                clicked={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                variant="contained"
               >
-                <label htmlFor={this.props.htmlFor}>
-                  Edit Photo
-                  <IconEdit style={{ marginLeft: ".5rem" }} />
-                </label>
-              </BtnFull>
+                upload
+                <input
+                  type={"file"}
+                  hidden
+                  id={this.props.htmlFor}
+                  accept={".jpg,.jpeg,.png"}
+                  className={classes["Input"]}
+                  onChange={(e) => this.submitImage(e)}
+                />
+              </Button>
             </div>
             <IconClose
               className={[classes["Icon"], classes["Icon--Close"]].join(" ")}

@@ -1,285 +1,267 @@
-import { BtnFull, BtnOptions } from "../../Components/Input/Buttons/Button";
+// import { BtnFull, BtnOptions } from "../../Components/Input/Buttons/Button";
 import MainContainer from "../../Components/stateless/MainContainer/MainContainer";
-import Section from "../../Components/stateless/Section/Section";
-import {
-  Heading_Hero,
-  Heading_Large,
-  Paragraph,
-} from "../../Components/Typography/Typography";
-import Member from "../../Express-api/Models/member";
-import {
-  check_have_permission,
-  check_if_edit_own_account,
-  login_validation,
-} from "../../next-utils/login_validation";
+import { useJWTToken } from "../../next-utils/login_validation";
 import classes from "./Profile.module.scss";
-import Notification from "../../Components/stateless/Notification/Notification";
+import Section from "../../Components/stateless/Section/Section";
+import ImageBox from "../../Components/ImageBox/ImageBox";
 import { useState } from "react";
 import Model from "../../Components/stateless/Model/Model";
-import EditProfileModel from "../../Components/AllModels/profile/_edit_profile";
-import Account from "../../Components/stateless/Account/Account";
-import Service from "../../Components/stateless/Service/Service";
-import AddNewService from "../../Components/AllModels/profile/_add_new_service";
-import Selective_Image from "../../Components/stateless/Selective_Image/Selective_Image";
-import permissions from "../../Dev-Data/permissions";
-import AssignTaskModel from "../../Components/AllModels/profile/_assign_task";
-import ImageBox from "../../Components/ImageBox/ImageBox";
-import Model_Slide from "../../Components/stateless/Model/Model";
-import Assign_New_Task from "../../Components/AllModels/General/_assign_new_task";
-
+import Model_Assign_New_Task from "../../Components/AllModels/General/Model_Assign_New_Task";
+import { protected_route_next } from "../../next-utils/login_validation";
+import {
+  get_other_profile_request,
+  get_profile_request,
+} from "../../services/pages/index_requests";
+import { Button, Typography } from "@mui/material";
+import MenuOptions from "../../Components/stateful/Menu_Options/Menu_Options";
+import { blue, grey } from "@mui/material/colors";
+import {
+  Add,
+  Edit,
+  Message,
+  Lock,
+  DisabledByDefault,
+  Phone,
+  Mail,
+  LocationCity,
+} from "@mui/icons-material";
+import Model_Update_Profile from "../../Components/AllModels/profile/Model_Update_Profile";
+import ProfileCard from "../../Components/stateless/ProfileCard/ProfileCard";
+import Service, {
+  ServiceTemplate,
+} from "../../Components/stateless/Service/Service";
+import Model_Add_Service from "../../Components/AllModels/profile/Model_Add_Service";
 // COMPONENT JSX
 const Profile = (props) => {
-  const [isEditProfileModel, setEditProfileModel] = useState(false);
-  const [isWannaAddServiceModel, setWannaAddServiceModel] = useState(false);
-  const [isWannaAssignTask, setWannaAssignTask] = useState(false);
-  const [toggleAssignTask, setToggleAssignTask] = useState(false);
-  const default_gallery = new Array(5).fill("default-gallery.jpg");
-  const admin_option = [
+  // const [isEditProfileModel, setEditProfileModel] = useState(false);
+  const [toggleUpdateProfileModel, setToggleUpdateProfileModel] =
+    useState(false);
+  const [toggleTaskModel, setToggleTaskModel] = useState(false);
+
+  const settings_options = [
     {
-      title: "Edit Account",
-      callback: () => {
-        setEditProfileModel(true);
-      },
+      text: "Message",
+
+      onClick: () => {},
+      icon: <Message fontSize="small" />,
     },
+
     {
-      title: "Remove Account",
-      // type:'critical'
-      callback: () => {},
+      text: "Deactivate Account",
+
+      onClick: () => {},
+      icon: <DisabledByDefault fontSize="small" />,
     },
   ];
 
-  function generate_gallery(images, id) {
-    return images.map((el, i) => {
-      return (
-        <div className={classes.Gallery__Image} key={i}>
-          <Selective_Image
-            src={`/storage/images/gallery/${el}`}
-            requestURL={`/api/profile/update-gallery/${id}/${i}`}
-            htmlFor={`gallery-${i}`}
-            alt={i}
-            isPermission={
-              (props.data.otherDetails && props.isUnderAdmin) ||
-              props.updateOwnAccount
-            }
-            fieldName="gallery"
-            autoSizer={true}
-          />
-        </div>
-      );
-    });
-  }
-
-  let edit_account_model_default_values;
-  if (props.data?.otherDetails) {
-    edit_account_model_default_values = {
-      bio: props.data.otherDetails.bio,
-      phone: props.data.otherDetails.phone,
-      postalCode: props.data.otherDetails.postalCode,
-      street: props.data.otherDetails.street,
-      city: props.data.otherDetails.city,
-      country: props.data.otherDetails.country,
-    };
-  }
+  settings_options.push({
+    text: "Update Password",
+    onClick: () => {
+      alert("working");
+    },
+    icon: <Lock fontSize="small" />,
+  });
 
   return (
-    <MainContainer navbar>
-      <Notification type="success" />
-      {toggleAssignTask && (
-        <Model_Slide
-          modelTitle={"Assign a new task"}
-          closeModel={setToggleAssignTask}
-        >
-          <Assign_New_Task />
-        </Model_Slide>
-      )}
-      {isWannaAssignTask && (
-        <Model toggleModel={setWannaAssignTask}>
-          <AssignTaskModel
-            toggleModel={setWannaAssignTask}
-            assignToId={props.data.id}
-          ></AssignTaskModel>
-        </Model>
-      )}
-      {isEditProfileModel && (
-        <Model toggleModel={setEditProfileModel}>
-          <EditProfileModel
-            toggleModel={setEditProfileModel}
-            userId={props.data.id}
-            defaultValues={edit_account_model_default_values}
-          />
-        </Model>
-      )}
-
-      {isWannaAddServiceModel && (
-        <Model toggleModel={setWannaAddServiceModel}>
-          <AddNewService
-            otherData={props.data.id}
-            toggleModel={setWannaAddServiceModel}
-          />
-        </Model>
-      )}
-      <Section className={[classes.Profile]}>
-        <div className={classes.Profile__Cover}>
-          {/* <Selective_Image
-            isPermission={props.isUnderAdmin || props.updateOwnAccount}
-            src={`/storage/images/coverPicture/${props.data?.coverPicture}`}
-            htmlFor="cover-picture"
-            fieldName="coverPicture"
-            requestURL={`/api/profile/update-cover-picture/${props.data.id}`}
-            otherData={props.data.firstName}
-          /> */}
-
-          <ImageBox
-            src={`/storage/images/coverPicture/${props.data?.coverPicture}`}
-            alt="coverPicture"
-            htmlFor="coverPicture"
-            requesturl={`/api/profile/update-cover-picture/${props.data.id}`}
-          />
-        </div>
-        <div
-          className={[
-            classes.Profile__Profile,
-            props.isUnderAdmin && classes.Profile__Profile__UnderAdmin,
-          ].join(" ")}
-        >
-          {/* <Selective_Image
-            isPermission={props.isUnderAdmin || props.updateOwnAccount}
-            src={`/storage/images/profilePicture/${props.data?.profilePicture}`}
-            htmlFor="profile-picture"
-            fieldName="profilePicture"
-            requestURL={`/api/profile/update-profile-picture/${props.data.id}`}
-            otherData={props.data.firstName}
-          /> */}
-          <ImageBox
-            src={`/storage/images/profilePicture/${props.data?.profilePicture}`}
-            alt="profilePicture"
-            htmlFor="profilePicture"
-            requesturl={`/api/profile/update-profile-picture/${props.data.id}`}
-          />
-        </div>
-      </Section>
-      <div className={classes.Profile__Details}>
-        <div className={classes.Profile__Details__Heading}>
-          <Heading_Hero
-            style={{ textTransform: "uppercase" }}
-            className={[classes.Profile__Heading]}
-          >
-            {props.data.fullName}
-          </Heading_Hero>
-          <Paragraph style={{ textTransform: "uppercase" }}>
-            {props.data.profession.join("")}
-          </Paragraph>
-        </div>
-        <div className={classes.Profile__Details__Buttons}>
-          {props.isUnderAdmin && (
-            <BtnFull
-              text="Assign Task"
-              clicked={() => setToggleAssignTask(true)}
-              // clicked={() => setWannaAssignTask(true)}
+    <>
+      <Model toggle={toggleTaskModel} onClose={() => setToggleTaskModel(false)}>
+        <Model_Assign_New_Task
+          data={{ id: props.user.id }}
+          closeModel={() => setToggleTaskModel(false)}
+        />
+      </Model>
+      <Model toggle={false} onClose={() => setS(false)}>
+        <Model_Add_Service />
+      </Model>
+      <Model
+        toggle={toggleUpdateProfileModel}
+        onClose={() => setToggleUpdateProfileModel(false)}
+      >
+        <Model_Update_Profile
+          data={props.user}
+          page_data={props.page_data}
+          closeModel={() => setToggleUpdateProfileModel(false)}
+        />
+      </Model>
+      <MainContainer navbar>
+        <Section className={[classes.Profile]}>
+          <div className={classes.Profile__Cover}>
+            <ImageBox
+              type="card"
+              src={`/storage/images/coverPicture/${props.user?.coverPicture}`}
+              alt="coverPicture"
+              htmlFor="coverPicture"
+              requesturl={`/api/profile/update-cover-picture/${props.user.id}`}
+              canupdate={props.page_data.type !== "other-page"}
             />
-          )}
-          {props.updateOwnAccount && (
-            <BtnFull
-              text="Update Account"
-              clicked={() => {
-                setEditProfileModel(true);
-              }}
-            />
-          )}
-          {props.isUnderAdmin && <BtnOptions options={admin_option} />}
-        </div>
-      </div>
-
-      <div className={classes.Profile__BioAddress}>
-        <div className={classes.Profile__Bio}>
-          <Paragraph>
-            {props.data?.otherDetails?.bio &&
-              props.data.otherDetails.bio.split(".").map((el) => {
-                return el + "." + "\n";
-              })}
-          </Paragraph>
-          {!props.data?.otherDetails && (
-            <Paragraph>
-              You need to complete the profile before offering your services or
-              product.
-            </Paragraph>
-          )}
-          {!props.data?.otherDetails?.bio && (
-            <Paragraph>
-              Please ask your admin to complete your profile
-            </Paragraph>
-          )}
-        </div>
-        {props.data.otherDetails && (
-          <div className={classes.Profile__Contact}>
-            <Paragraph bold>
-              <a href={`tel:${props.data.otherDetails.phone}`}>
-                {props.data.otherDetails.phone}
-              </a>
-            </Paragraph>
-            <Paragraph bold>
-              <a href={`mail:${props.data.email}`}>{props.data.email}</a>
-            </Paragraph>
-            <Paragraph bold>{props.data.otherDetails.address}</Paragraph>
           </div>
-        )}
-      </div>
-      {props.data.team && props.data.team.length !== 0 && (
-        <Section>
-          <Heading_Large>Team</Heading_Large>
-          <div className={classes.Team}>{generate_team(props.data.team)}</div>
-        </Section>
-      )}
-
-      <Section>
-        <div className={classes.Services__Top}>
-          <Heading_Large>Services</Heading_Large>
-          <BtnFull
-            disabled={!props.data.otherDetails && true}
-            clicked={() => setWannaAddServiceModel((prev) => !prev)}
+          <div
+            className={[
+              classes.Profile__Profile,
+              props.isUnderAdmin && classes.Profile__Profile__UnderAdmin,
+            ].join(" ")}
           >
-            Add Service
-          </BtnFull>
-        </div>
-        <div className={classes.Services}>
-          {/* {console.log("this is service", props.data.otherDetails.service)} */}
-          {(props.data.otherDetails?.service &&
-            props.data.otherDetails?.service.length &&
-            generate_services(props.data.otherDetails.service)) || (
-            <Paragraph>
-              {props.data.firstName} currently have no service to offer.
-            </Paragraph>
-          )}
-        </div>
-      </Section>
+            <ImageBox
+              src={`/storage/images/profilePicture/${
+                props.user?.profilePicture || "default-profilePicture.jpg"
+              }`}
+              alt="profilePicture"
+              htmlFor="profilePicture"
+              requesturl={`/api/v1/profile/`}
+              canupdate={props.page_data.type !== "other-page"}
+            />
+          </div>
+        </Section>
+        <div className={classes.Profile__Details}>
+          <div className={classes.Profile__Details__Heading}>
+            <Typography
+              variant="h4"
+              fontWeight={"bold"}
+              component={"h6"}
+              color={grey[800]}
+              style={{ textTransform: "uppercase" }}
+              className={classes.Profile__Heading}
+            >
+              {props.user.fullName}
+            </Typography>
+            <Typography
+              style={{ textTransform: "uppercase" }}
+              variant="body1"
+              component={"p"}
+            >
+              {props.user?.professions?.join(", ")}
+            </Typography>
+          </div>
 
-      <Section>
-        <Heading_Large>Gallery</Heading_Large>
-        <div className={classes.Gallery}>
-          {generate_gallery(
-            props.data?.otherDetails?.gallery || default_gallery,
-            props.data.id
+          {props.page_data.type !== "other-page" && (
+            <div className={classes.Profile__Details__Buttons}>
+              {props.page_data.type === "team-page" && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<Add />}
+                  onClick={() => setToggleTaskModel(true)}
+                >
+                  Assign Task
+                </Button>
+              )}
+
+              <Button
+                variant="outlined"
+                startIcon={<Edit />}
+                onClick={() => setToggleUpdateProfileModel(true)}
+              >
+                Update Profile
+              </Button>
+              <MenuOptions settings={settings_options} />
+            </div>
           )}
         </div>
-      </Section>
-    </MainContainer>
+        <div className={classes.Profile__BioAddress}>
+          <div className={classes.Profile__Bio}>
+            <Typography variant="h6" component={"p"} color={grey[700]}>
+              {props.user?.bio
+                ? props.user.bio
+                : "Please update your profile. Otherwise you will not able to perform certain tasks. You may need to contact your admin."}
+            </Typography>
+          </div>
+          {
+            <div className={classes.Profile__Contact}>
+              {props.user.phone && (
+                <Typography
+                  variant="body1"
+                  component={"p"}
+                  fontWeight={500}
+                  color={blue[500]}
+                  className={classes["Profile__Contact__Content"]}
+                >
+                  <Phone />
+                  <a href={`tel:${props.user.phone}`}>{props.user.phone}</a>
+                </Typography>
+              )}
+              {props.user.email && (
+                <Typography
+                  variant="body1"
+                  component={"p"}
+                  fontWeight={500}
+                  color={blue[500]}
+                  className={classes["Profile__Contact__Content"]}
+                >
+                  <Mail />
+                  <a href={`mail:${props.user.email}`}>{props.user.email}</a>
+                </Typography>
+              )}
+              {props.user.address && (
+                <Typography
+                  variant="body1"
+                  component={"p"}
+                  fontWeight={500}
+                  color={blue[500]}
+                  className={classes["Profile__Contact__Content"]}
+                >
+                  <LocationCity />
+                  {props.user.address}
+                </Typography>
+              )}
+            </div>
+          }
+        </div>
+        {props.user.team && props.user.team.length !== 0 && (
+          <Section className={classes["Team"]}>
+            <Typography component={"h5"} variant="h5" fontWeight={500}>
+              Team
+            </Typography>
+            <div className={classes["Team__container"]}>
+              {generate_team(props.user.team)}
+            </div>
+          </Section>
+        )}
+        <Section>
+          <div className={classes.Services__Top}>
+            <Typography component={"h5"} variant="h5" fontWeight={500}>
+              Services
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setWannaAddServiceModel((prev) => !prev)}
+            >
+              Add Service
+            </Button>
+          </div>
+          <div className={classes.Services}>
+            {/* {console.log("this is service", props.data.otherDetails.service)} */}
+            {(props.user?.service &&
+              props.user.service.length &&
+              generate_services(props.user.service)) || <ServiceTemplate />}
+          </div>
+        </Section>
+      </MainContainer>
+    </>
   );
 };
 
 function generate_team(team) {
-  return team.map((el, i) => {
+  return team.map((user, i) => {
     return (
-      <Account
-        className={classes.Account}
-        profilePicture={el.profilePicture}
-        coverImage={el.coverPicture}
-        fullName={el.fullName}
-        profession={el.profession}
-        address={el.address}
+      <ProfileCard
         key={i}
-        id={el.id}
-        member={el?.team?.length}
-      ></Account>
+        id={user.id}
+        bio={user.bio}
+        fullName={user.fullName}
+        coverPicture={user.coverPicture}
+        profilePicture={user.profilePicture}
+      />
+      // <Account
+      //   className={classes.Account}
+      //   profilePicture={el.profilePicture}
+      //   coverImage={el.coverPicture}
+      //   fullName={el.fullName}
+      //   profession={el.profession}
+      //   address={el.address}
+      //   key={i}
+      //   id={el.id}
+      //   member={el?.team?.length}
+      // ></Account>
     );
   });
 }
@@ -303,55 +285,40 @@ function generate_services(services) {
 }
 
 export async function getServerSideProps(context) {
-  const { id } = context.params;
-  const checkIsLogin = login_validation(context.req);
-  const UPDATE_OWN_ACCOUNT_PERMISSION = permissions[1]; //update-own-account
-  let checkIfEditOwnAccount;
+  let page_data = {};
+  const PAGE_ID = context.params.id;
 
-  if (!checkIsLogin.isLogged) {
-    return checkIsLogin.redirect;
-  }
-
+  let user;
   try {
-    const adminId = checkIsLogin.isLogged;
-    const data = await Member.findById(id)
-      // .populate("otherDetails")
-      // .populate("service")
-      .populate({ path: "otherDetails", populate: { path: "service" } })
-      .populate("team");
+    const { token } = useJWTToken(context);
+    const id = await protected_route_next(context);
+    const current_user_data = await get_profile_request(token);
 
-    if (!data)
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/404",
-        },
-      };
-
-    const adminData = await Member.findById(adminId).select("team");
-    // const isUnderAdmin = isAdmin && isAdmin.includes(id);
-    const adminTeam = JSON.parse(JSON.stringify(adminData.team));
-
-    const isUnderAdmin = adminTeam && adminTeam.includes(id);
-
-    if (data.id === id) {
-      checkIfEditOwnAccount = check_have_permission(
-        data,
-        UPDATE_OWN_ACCOUNT_PERMISSION
-      );
+    // if the user is accessing it own profile page
+    if (PAGE_ID === id) {
+      page_data.type = "own-page";
+      user = current_user_data;
+    } else if (
+      current_user_data.data &&
+      current_user_data.data.team.map((el) => el.id).includes(PAGE_ID)
+    ) {
+      user = await get_profile_request(token, PAGE_ID);
+      page_data.type = "team-page";
+    } else {
+      user = await get_other_profile_request(token, PAGE_ID);
+      page_data.type = "other-page";
     }
 
     return {
       props: {
-        data: JSON.parse(JSON.stringify(data)),
-        isUnderAdmin,
-        updateOwnAccount: checkIfEditOwnAccount.updateOwnAccount,
+        user: user.data,
+        page_data,
       },
     };
   } catch (error) {
     return {
       redirect: {
-        permanent: false,
+        permanent: true,
         destination: "/404",
       },
     };

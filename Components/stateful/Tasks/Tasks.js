@@ -1,23 +1,20 @@
 import Task from "../Task/Task";
-import { Heading_Tiny, Paragraph } from "../../Typography/Typography";
-import SendReportModel from "../../AllModels/dashboard/_send_report";
-import Model from "../../stateless/Model/Model";
+
 import classes from "./Tasks.module.scss";
 import axios from "axios";
-import { showNofication } from "../../stateless/Notification/Notification";
-import Notification from "../../stateless/Notification/Notification";
-import { useEffect, useState, useRef } from "react";
+
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { io } from "socket.io-client";
 import { Component } from "react";
 import { createRef } from "react";
 import { showSnackBar } from "../../../next-utils/helper_functions";
-import { Input, Typography } from "@mui/material";
-import { blue, grey } from "@mui/material/colors";
-
+import { Typography } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { Search } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
+import { all_tasks_callback } from "../../../services/pages/index_requests";
+
 class Tasks extends Component {
   constructor(props) {
     super(props);
@@ -64,8 +61,8 @@ class Tasks extends Component {
 
   async fetchLatestTasks() {
     try {
-      const tasks = await axios({ url: "/api/v1/task", method: "GET" });
-      const fetchedTaskArr = tasks.data.data;
+      const tasks = await all_tasks_callback();
+      const fetchedTaskArr = tasks.data;
       if (tasks) {
         this.setState({
           fetchTask: fetchedTaskArr.reverse(),
@@ -112,12 +109,14 @@ class Tasks extends Component {
     if (!tasks || !tasks.length) {
       return (
         <div className={classes["Default-Task"]}>
-          <Paragraph>You have currently no task.</Paragraph>
+          <Typography variant="body1" component={"p"}>
+            You have currently no task.
+          </Typography>
         </div>
       );
     }
     return (
-      <Scrollbars autoHeight autoHeightMin={400} autoHeightMax={400}>
+      <Scrollbars autoHeight autoHeightMax={400}>
         {tasks.map((el, i) => {
           return (
             <Task
@@ -140,16 +139,6 @@ class Tasks extends Component {
   render() {
     return (
       <div className={classes.Tasks}>
-        {this.state.isToggleReportModel && (
-          <Model
-            toggleModel={() => this.setState({ isToggleReportModel: false })}
-          >
-            <SendReportModel
-              sendReportRequest={this.sendReportRequest}
-              ref={this.reportDescriptionRef}
-            ></SendReportModel>
-          </Model>
-        )}
         <div className={classes.Tasks__Top}>
           <Typography
             variant="h6"
