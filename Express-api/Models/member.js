@@ -139,6 +139,12 @@ const memberSchema = new mongoose.Schema(
     gallery: {
       type: [String],
       default: () => new Array(5).fill("default-gallery.jpg"),
+      validate: [
+        function (val) {
+          return val.length <= 8;
+        },
+        "You can only upload maximum of 8 images for the gallery.",
+      ],
     },
     admin: {
       type: mongoose.Schema.ObjectId,

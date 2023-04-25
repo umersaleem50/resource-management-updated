@@ -40,14 +40,23 @@ export const request_function = async ({ url, method, data, token = null }) => {
   }
 };
 
-export const request_function_test = ({ url, method, data, token = null }) => {
+export const request_function_test = ({
+  url,
+  method,
+  data,
+  token = null,
+  multipart = false,
+}) => {
   return new Promise(async (resolve, reject) => {
     try {
       const results = await axios({
         url: HOSTNAME + url,
         method,
         data,
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "multipart/form-data",
+        },
       });
       if (results) resolve(results.data);
     } catch (error) {

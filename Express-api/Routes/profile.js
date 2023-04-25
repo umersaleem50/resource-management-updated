@@ -3,10 +3,11 @@ const { protectedRoute } = require("../Controller/authController");
 const profileController = require("../Controller/profileController");
 const authController = require("../Controller/authController");
 const {
-  uploadProfileImage,
   resizeProfilePicture,
-  uploadCoverImage,
+
   resizeCoverImage,
+  uploadProfileImages,
+  resizeGallery,
 } = require("../Controller/imageController");
 const { defaultFields } = require("../Controller/services");
 
@@ -37,10 +38,12 @@ Router.get(
   ),
   profileController.getProfile
 );
-Router.use(uploadProfileImage);
+
+Router.use(uploadProfileImages);
 Router.use(resizeProfilePicture);
-Router.use(uploadCoverImage);
 Router.use(resizeCoverImage);
+Router.use(resizeGallery);
+
 Router.patch(
   "/",
   profileController.checkIfHavePermission("update-account"),

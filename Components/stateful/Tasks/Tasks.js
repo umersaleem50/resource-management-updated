@@ -6,7 +6,7 @@ import axios from "axios";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { io } from "socket.io-client";
 import { Component } from "react";
-import { createRef } from "react";
+
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
@@ -26,16 +26,16 @@ class Tasks extends Component {
       updatedTask: "",
     };
 
-    this.socket = io("http://localhost:3000");
+    // this.socket = io("http://localhost:3000");
 
-    this.reportDescriptionRef = createRef();
+    // this.reportDescriptionRef = createRef();
 
-    this.socket.on("new-task", async (data) => {
-      if (props.userId === data.userId) {
-        showNofication("Your admin assigned a new task for you", "success");
-        this.fetchLatestTasks();
-      }
-    });
+    // this.socket.on("new-task", async (data) => {
+    //   if (props.userId === data.userId) {
+    //     showNofication("Your admin assigned a new task for you", "success");
+    //     this.fetchLatestTasks();
+    //   }
+    // });
   }
 
   /**

@@ -1,7 +1,7 @@
-import { request_function } from "../request_function";
+import { request_function, request_function_test } from "../request_function";
 
 export const update_profile_request = async (data, id = null, token = null) =>
-  await request_function({
+  await request_function_test({
     url: `/profile${id ? "/" + id : ""}`,
     method: "PATCH",
     data,
@@ -9,9 +9,24 @@ export const update_profile_request = async (data, id = null, token = null) =>
   });
 
 export const assign_task_request = async (data, id = null, token = null) => {
-  return await request_function({
+  return await request_function_test({
     url: `/tasks/${id}`,
     method: "POST",
     data,
   });
 };
+
+export const update_password_request = async (data, id = null, token = null) =>
+  await request_function_test({
+    url: `/auth/update-password${id ? "/" + id : ""}`,
+    method: "POST",
+    data,
+    token,
+  });
+
+export const request_upload_gallery = async (data) =>
+  await request_function_test({
+    url: "/profile",
+    method: "PATCH",
+    data,
+  });
