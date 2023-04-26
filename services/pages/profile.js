@@ -24,9 +24,9 @@ export const update_password_request = async (data, id = null, token = null) =>
     token,
   });
 
-export const request_upload_gallery = async (data) =>
+export const request_upload_gallery = async (data, id = "") =>
   await request_function_test({
-    url: "/profile",
+    url: `/profile/${id}`,
     method: "PATCH",
     data,
   });

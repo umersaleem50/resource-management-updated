@@ -38,7 +38,7 @@ app.use(mongoSanitizer());
 app.use(xss());
 app.use(bodyParser.json());
 // app.use("/api", limiter);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
 // MIDDLEWARE FOR THE ROUTES

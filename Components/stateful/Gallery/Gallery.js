@@ -18,7 +18,7 @@ const Gallery = (props) => {
           <Image
             fill
             src={`/storage/images/gallery/${image}`}
-            alt={"Gallery " + i + 1}
+            alt={"Gallery " + (i + 1)}
           />
         </div>
       );

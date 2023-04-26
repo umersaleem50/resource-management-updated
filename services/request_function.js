@@ -40,13 +40,7 @@ export const request_function = async ({ url, method, data, token = null }) => {
   }
 };
 
-export const request_function_test = ({
-  url,
-  method,
-  data,
-  token = null,
-  multipart = false,
-}) => {
+export const request_function_test = ({ url, method, data, token = null }) => {
   return new Promise(async (resolve, reject) => {
     try {
       const results = await axios({

@@ -36,6 +36,8 @@ import Gallery from "../../Components/stateful/Gallery/Gallery";
 import { request_upload_gallery } from "../../services/pages/profile";
 import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import Router from "next/router";
+import Head from "next/head";
 // COMPONENT JSX
 const Profile = (props) => {
   // const [isEditProfileModel, setEditProfileModel] = useState(false);
@@ -72,21 +74,23 @@ const Profile = (props) => {
     const images = Object.values(e.target.files);
     const formData = new FormData();
 
-    // alert("working");
     images.forEach((img, i) => {
       formData.append("gallery", img);
     });
 
-    // console.log("this is form data", formData);
-
     try {
-      const results = await request_upload_gallery(formData);
-      if (results.status === "success")
+      const results = await request_upload_gallery(
+        formData,
+        props.page_data.type === "team-page" ? props.user.id : ""
+      );
+      if (results.status === "success") {
         showSnackBar(
           enqueueSnackbar,
           "Successfully uploaded the gallery images",
           "success"
         );
+        Router.reload();
+      }
     } catch (error) {
       if (error.status === "error") {
         return showSnackBar(enqueueSnackbar, error.message, "error");
@@ -130,6 +134,16 @@ const Profile = (props) => {
         />
       </Model>
       <MainContainer navbar>
+        <Head>
+          <title>
+            {props.user?.fullName ? props.user.fullName : ""} profile page
+          </title>
+          <meta
+            name={props.user?.fullName || "description"}
+            content={props.user.bio}
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
         <Section className={[classes.Profile]}>
           <div className={classes.Profile__Cover}>
             <ImageBox
@@ -137,7 +151,9 @@ const Profile = (props) => {
               src={`/storage/images/coverPicture/${props.user?.coverPicture}`}
               alt="coverPicture"
               htmlFor="coverPicture"
-              requesturl={`/api/v1/profile`}
+              requesturl={`/api/v1/profile${
+                props.page_data.type === "team-page" ? "/" + props.user.id : ""
+              }`}
               canupdate={props.page_data.type !== "other-page"}
             />
           </div>
@@ -153,7 +169,9 @@ const Profile = (props) => {
               }`}
               alt="profilePicture"
               htmlFor="profilePicture"
-              requesturl={`/api/v1/profile/`}
+              requesturl={`/api/v1/profile${
+                props.page_data.type === "team-page" ? "/" + props.user.id : ""
+              }`}
               canupdate={props.page_data.type !== "other-page"}
             />
           </div>
@@ -275,7 +293,6 @@ const Profile = (props) => {
             </Button>
           </div>
           <div className={classes.Services}>
-            {/* {console.log("this is service", props.data.otherDetails.service)} */}
             {(props.user?.service &&
               props.user.service.length &&
               generate_services(props.user.service)) || <ServiceTemplate />}
@@ -286,17 +303,19 @@ const Profile = (props) => {
             <Typography component={"h5"} variant="h5" fontWeight={500}>
               Gallery
             </Typography>
-            <Button variant="contained" component="label">
-              Upload Gallery
-              <input
-                hidden
-                multiple
-                accept="image/*"
-                type="file"
-                ref={galleryInputRef}
-                onChange={uploadGalleryImages}
-              />
-            </Button>
+            {props.page_data.type !== "other-page" && (
+              <Button variant="contained" component="label">
+                Upload Gallery
+                <input
+                  hidden
+                  multiple
+                  accept="image/*"
+                  type="file"
+                  ref={galleryInputRef}
+                  onChange={uploadGalleryImages}
+                />
+              </Button>
+            )}
           </div>
           <Gallery images={props.user.gallery} />
         </Section>
@@ -316,17 +335,6 @@ function generate_team(team) {
         coverPicture={user.coverPicture}
         profilePicture={user.profilePicture}
       />
-      // <Account
-      //   className={classes.Account}
-      //   profilePicture={el.profilePicture}
-      //   coverImage={el.coverPicture}
-      //   fullName={el.fullName}
-      //   profession={el.profession}
-      //   address={el.address}
-      //   key={i}
-      //   id={el.id}
-      //   member={el?.team?.length}
-      // ></Account>
     );
   });
 }
@@ -334,7 +342,6 @@ function generate_team(team) {
 function generate_services(services) {
   return services.map((el, i) => {
     return (
-      // <div key={i}>
       <Service
         className={[classes.Service]}
         key={i}
@@ -344,7 +351,6 @@ function generate_services(services) {
         name={el.name}
         title={el.title}
       />
-      // </div>
     );
   });
 }

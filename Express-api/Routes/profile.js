@@ -47,11 +47,9 @@ Router.use(resizeGallery);
 Router.patch(
   "/",
   profileController.checkIfHavePermission("update-account"),
-
   profileController.updateProfile
 ).patch(
   "/:id",
-
   profileController.checkIfPartOfTeam,
   profileController.checkIfHavePermission("update-account"),
   profileController.updateProfile

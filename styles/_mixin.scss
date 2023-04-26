@@ -5,16 +5,17 @@
       @content;
     }
   }
-  @if $breakpoint == tablet-land {
-    @media only screen and (max-width: 56.25em) {
-      //900px
-      @content;
-    }
-  }
 
   @if $breakpoint == tablet-port {
     @media only screen and (max-width: 50em) {
       //800px
+      @content;
+    }
+  }
+
+  @if $breakpoint == tablet-land {
+    @media only screen and (max-width: 56.25em) {
+      //900px
       @content;
     }
   }

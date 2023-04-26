@@ -13,8 +13,8 @@ const { promisify } = require("util");
 
 const Login = (props) => {
   const [isLoading, setLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const showSnackBar = (message, variant = "success") => {
     return enqueueSnackbar(<Typography>{message}</Typography>, {

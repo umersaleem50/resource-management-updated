@@ -1,18 +1,22 @@
-@import '../../styles/mixin';
+@import "../../styles/mixin";
 
 .Profile {
   // margin-top: 0;
   position: relative;
+
   &__Cover {
     cursor: pointer;
     width: 100%;
     position: relative;
-
     border-radius: 1rem;
     overflow: hidden;
     height: 27.5rem;
     max-height: 27.5rem;
     overflow: hidden;
+
+    @include respond(tablet-land) {
+      max-height: 20rem;
+    }
 
     img {
       filter: brightness(60%);
@@ -54,6 +58,15 @@
     display: flex;
     justify-content: space-between;
     margin-left: 23vw;
+
+    @include respond(tablet-land) {
+      margin-left: 20rem;
+    }
+
+    @include respond(phone-l) {
+      margin-left: auto;
+      margin-top: 8rem;
+    }
     align-items: center;
 
     &__Buttons {
@@ -68,6 +81,7 @@
   &__Bio {
     max-width: 50rem;
     margin-left: 5rem;
+
     // margin-top: 6rem;
   }
 
@@ -98,6 +112,11 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+
+    @include respond(phone-l) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 }
 

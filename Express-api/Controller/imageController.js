@@ -11,7 +11,6 @@ const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     return cb(null, true);
   }
-
   cb("Please only upload Images", false);
 };
 
@@ -30,6 +29,7 @@ const uploadImage = multer({
 
 const resizeOneImage = (field, sizes) =>
   catchAsync(async (req, res, next) => {
+    console.log(req.files[field]);
     if (!req.files[field]) return next();
     const filename = `${req.user.id}-${Date.now()}-${field}.jpeg`;
 
@@ -45,17 +45,20 @@ const resizeOneImage = (field, sizes) =>
 
 const resizeGalleryImages = (field, sizes) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.files[field]);
-    if (!req.files || !req.files[field]) return next();
+    if (!req.files[field]) return next();
+    console.log("in gallery", req.files[field]);
     const arrayOfFileName = [];
     const arrayOfFiles = [...req.files[field]];
-    let test;
+
     arrayOfFiles.forEach(async (file, i) => {
       const filename = `${req.user.id}-${Date.now()}-${
         field + "-" + (i + 1)
       }.jpeg`;
 
+      console.log("this is the gallery", filename);
+
       arrayOfFileName.unshift(filename);
+
       await sharp(file.buffer)
         .resize(sizes[0], sizes[1])
         .toFormat("jpeg")
@@ -95,6 +98,18 @@ const deletePreviousImage = (field, dirLocation) => {
 };
 
 exports.deletePreviousImage = deletePreviousImage;
+
+exports.uploadProfileImages = uploadImage.fields([
+  {
+    name: "profilePicture",
+    maxCount: 1,
+  },
+  {
+    name: "coverPicture",
+    maxCount: 1,
+  },
+]);
+
 exports.uploadProfileImage = uploadImage.single("profilePicture");
 exports.uploadProfileImages = uploadImage.fields([
   {
@@ -117,6 +132,8 @@ exports.resizeGallery = resizeGalleryImages("gallery", [700, 500]);
 exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
 exports.resizeProfilePicture = resizeOneImage("profilePicture", [500, 500]);
 exports.resizeCoverImage = resizeOneImage("coverPicture", [1420, 275]);
+exports.resizeGalleryImage = resizeOneImage("gallery", [500, 340]);
+exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
 
 // exports.resizeProfilePicture = resizePhoto("profilePicture", [500, 500]);
 
