@@ -1,8 +1,36 @@
+import { enqueueSnackbar } from "notistack";
+import { showSnackBar } from "../../../../next-utils/helper_functions";
+import { update_password_request } from "../../../../services/pages/profile";
 import classes from "./Model_Change_Password.module.scss";
-import { Typography, TextField, Divider } from "@mui/material";
-const Model_Change_Password = (props) => {
+import { Typography, TextField, Divider, Button } from "@mui/material";
+import { useState } from "react";
+const Model_Change_Password = ({ data }) => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    const requestData = { password, passwordConfirm };
+    if (data?.page_data.type === "own-page") {
+      requestData.oldPassword = oldPassword;
+    }
+    try {
+      const result = await update_password_request(
+        requestData,
+        data.page_data.type === "own-page" ? null : id
+      );
+      if (result.status === "success")
+        showSnackBar(
+          enqueueSnackbar,
+          "Password updated successfully!",
+          "success"
+        );
+    } catch (error) {
+      showSnackBar(enqueueSnackbar, error.message, "error");
+    }
+  };
   return (
     <form onSubmit={onSubmit} className={classes["Form"]}>
       <div className={classes["Heading"]}>
@@ -24,6 +52,17 @@ const Model_Change_Password = (props) => {
 
         <Divider sx={{ m: "1rem 0" }} />
       </div>
+      {data?.page_data.type === "own-page" && (
+        <TextField
+          type="password"
+          required
+          variant="standard"
+          placeholder="Type your current password"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+          label={"Current Password"}
+        />
+      )}
       <TextField
         type="password"
         required
@@ -42,6 +81,9 @@ const Model_Change_Password = (props) => {
         onChange={(e) => setPasswordConfirm(e.target.value)}
         placeholder="Type your password again"
       />
+      <Button variant="contained" type="submit">
+        Update Password
+      </Button>
     </form>
   );
 };

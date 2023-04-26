@@ -71,6 +71,7 @@ exports.getTeam = catchAsync(async (req, res, next) => {
  */
 exports.updateProfile = catchAsync(async (req, res, next) => {
   const id = req.params.id || req.user;
+
   const user = await Member.findByIdAndUpdate(id, req.body, {
     runValidators: true,
     new: true,

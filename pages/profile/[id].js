@@ -4,7 +4,7 @@ import { useJWTToken } from "../../next-utils/login_validation";
 import classes from "./Profile.module.scss";
 import Section from "../../Components/stateless/Section/Section";
 import ImageBox from "../../Components/ImageBox/ImageBox";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Model from "../../Components/stateless/Model/Model";
 import Model_Assign_New_Task from "../../Components/AllModels/General/Model_Assign_New_Task";
 import { protected_route_next } from "../../next-utils/login_validation";
@@ -31,13 +31,20 @@ import Service, {
   ServiceTemplate,
 } from "../../Components/stateless/Service/Service";
 import Model_Add_Service from "../../Components/AllModels/profile/Model_Add_Service";
+import Model_Change_Password from "../../Components/AllModels/profile/Model_Chanage_Password.js/Model_Change_Password";
+import Gallery from "../../Components/stateful/Gallery/Gallery";
+import { request_upload_gallery } from "../../services/pages/profile";
+import { showSnackBar } from "../../next-utils/helper_functions";
+import { enqueueSnackbar } from "notistack";
+import Router from "next/router";
 // COMPONENT JSX
 const Profile = (props) => {
   // const [isEditProfileModel, setEditProfileModel] = useState(false);
   const [toggleUpdateProfileModel, setToggleUpdateProfileModel] =
     useState(false);
   const [toggleTaskModel, setToggleTaskModel] = useState(false);
-
+  const [changePasswordModel, setChangePasswordModel] = useState(false);
+  const galleryInputRef = useRef(null);
   const settings_options = [
     {
       text: "Message",
@@ -62,8 +69,50 @@ const Profile = (props) => {
     icon: <Lock fontSize="small" />,
   });
 
+  const uploadGalleryImages = async (e) => {
+    const images = Object.values(e.target.files);
+    const formData = new FormData();
+
+    images.forEach((img, i) => {
+      formData.append("gallery", img);
+    });
+
+    try {
+      const results = await request_upload_gallery(
+        formData,
+        props.page_data.type === "team-page" ? props.user.id : ""
+      );
+      if (results.status === "success") {
+        showSnackBar(
+          enqueueSnackbar,
+          "Successfully uploaded the gallery images",
+          "success"
+        );
+        Router.reload();
+      }
+    } catch (error) {
+      if (error.status === "error") {
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      }
+      showSnackBar(
+        enqueueSnackbar,
+        "Failed to upload the gallery images",
+        "error"
+      );
+    }
+  };
+
   return (
     <>
+      <Model
+        toggle={changePasswordModel}
+        onClose={() => setChangePasswordModel(false)}
+      >
+        <Model_Change_Password
+          data={{ id: props.user.id, page_data: props.page_data }}
+          closeModel={() => setToggleTaskModel(false)}
+        />
+      </Model>
       <Model toggle={toggleTaskModel} onClose={() => setToggleTaskModel(false)}>
         <Model_Assign_New_Task
           data={{ id: props.user.id }}
@@ -91,7 +140,9 @@ const Profile = (props) => {
               src={`/storage/images/coverPicture/${props.user?.coverPicture}`}
               alt="coverPicture"
               htmlFor="coverPicture"
-              requesturl={`/api/profile/update-cover-picture/${props.user.id}`}
+              requesturl={`/api/v1/profile${
+                props.page_data.type === "team-page" ? "/" + props.user.id : ""
+              }`}
               canupdate={props.page_data.type !== "other-page"}
             />
           </div>
@@ -107,7 +158,9 @@ const Profile = (props) => {
               }`}
               alt="profilePicture"
               htmlFor="profilePicture"
-              requesturl={`/api/v1/profile/`}
+              requesturl={`/api/v1/profile${
+                props.page_data.type === "team-page" ? "/" + props.user.id : ""
+              }`}
               canupdate={props.page_data.type !== "other-page"}
             />
           </div>
@@ -229,11 +282,31 @@ const Profile = (props) => {
             </Button>
           </div>
           <div className={classes.Services}>
-            {/* {console.log("this is service", props.data.otherDetails.service)} */}
             {(props.user?.service &&
               props.user.service.length &&
               generate_services(props.user.service)) || <ServiceTemplate />}
           </div>
+        </Section>
+        <Section>
+          <div className={classes.Services__Top}>
+            <Typography component={"h5"} variant="h5" fontWeight={500}>
+              Gallery
+            </Typography>
+            {props.page_data.type !== "other-page" && (
+              <Button variant="contained" component="label">
+                Upload Gallery
+                <input
+                  hidden
+                  multiple
+                  accept="image/*"
+                  type="file"
+                  ref={galleryInputRef}
+                  onChange={uploadGalleryImages}
+                />
+              </Button>
+            )}
+          </div>
+          <Gallery images={props.user.gallery} />
         </Section>
       </MainContainer>
     </>
@@ -251,17 +324,6 @@ function generate_team(team) {
         coverPicture={user.coverPicture}
         profilePicture={user.profilePicture}
       />
-      // <Account
-      //   className={classes.Account}
-      //   profilePicture={el.profilePicture}
-      //   coverImage={el.coverPicture}
-      //   fullName={el.fullName}
-      //   profession={el.profession}
-      //   address={el.address}
-      //   key={i}
-      //   id={el.id}
-      //   member={el?.team?.length}
-      // ></Account>
     );
   });
 }
@@ -269,7 +331,6 @@ function generate_team(team) {
 function generate_services(services) {
   return services.map((el, i) => {
     return (
-      // <div key={i}>
       <Service
         className={[classes.Service]}
         key={i}
@@ -279,7 +340,6 @@ function generate_services(services) {
         name={el.name}
         title={el.title}
       />
-      // </div>
     );
   });
 }

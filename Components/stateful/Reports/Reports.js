@@ -20,7 +20,7 @@ class Reports extends Component {
     try {
       const reports = await all_reports_callback();
       const fetchedReportsArr = reports.data;
-
+      console.log(fetchedReportsArr);
       if (reports) {
         this.setState({
           reports: fetchedReportsArr.reverse(),

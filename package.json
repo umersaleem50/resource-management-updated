@@ -11,6 +11,7 @@
     "dev:front": "node server.js"
   },
   "dependencies": {
+    "@fancyapps/ui": "^5.0.16",
     "axios": "^1.2.1",
     "cookie-parser": "^1.4.6",
     "eslint": "8.28.0",

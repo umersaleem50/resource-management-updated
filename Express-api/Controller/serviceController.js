@@ -9,7 +9,7 @@ const {
 
 const Service_Product_Model = require("../Models/serviceProduct");
 const apiError = require("../Util/apiError");
-const ProfileDetailModel = require("../Models/profileDetail");
+
 const Member = require("../Models/member");
 
 // exports.editServiceGallery = catchAsync(async (req, res, next) => {
@@ -52,7 +52,7 @@ exports.createService = catchAsync(async (req, res, next) => {
   });
   if (!service_product)
     return next(new apiError("Failed to create a new service or product", 400));
-  const member = await Member.findByIdAndUpdate(id, {
+  await Member.findByIdAndUpdate(id, {
     $push: { service: service_product.id },
   });
   res.status(201).json({ status: "success", data: service_product });

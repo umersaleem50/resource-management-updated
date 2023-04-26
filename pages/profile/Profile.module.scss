@@ -1,11 +1,13 @@
+@import "../../styles/mixin";
+
 .Profile {
   // margin-top: 0;
   position: relative;
+
   &__Cover {
     cursor: pointer;
     width: 100%;
     position: relative;
-
     border-radius: 1rem;
     overflow: hidden;
     height: 27.5rem;
@@ -52,6 +54,10 @@
     display: flex;
     justify-content: space-between;
     margin-left: 23vw;
+
+    @include respond(tablet-land) {
+      margin-left: 20rem;
+    }
     align-items: center;
 
     &__Buttons {

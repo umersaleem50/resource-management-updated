@@ -47,7 +47,10 @@ export const request_function_test = ({ url, method, data, token = null }) => {
         url: HOSTNAME + url,
         method,
         data,
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "multipart/form-data",
+        },
       });
       if (results) resolve(results.data);
     } catch (error) {
