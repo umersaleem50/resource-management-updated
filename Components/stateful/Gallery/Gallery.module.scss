@@ -39,6 +39,11 @@
 
     @include respond(tablet-land) {
       min-width: 15rem;
+      max-width: 20rem;
+    }
+
+    @include respond(phone-l) {
+      max-width: 10rem;
     }
 
     cursor: pointer;
