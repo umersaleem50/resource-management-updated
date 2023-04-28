@@ -9,30 +9,46 @@ import {
 import MainContainer from "../../Components/stateless/MainContainer/MainContainer";
 import Section from "../../Components/stateless/Section/Section";
 import ImageBox from "../../Components/ImageBox/ImageBox";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Typography, Button } from "@mui/material";
 import { grey, blue } from "@mui/material/colors";
 import { Phone, Mail, LocationCity } from "@mui/icons-material";
-
+import Router from "next/router";
+import Gallery from "../../Components/stateful/Gallery/Gallery";
+import { useRef } from "react";
+import Detail_Box from "../../Components/stateless/Detail_Box/Detail_Box";
+import MenuOptions from "../../Components/stateful/Menu_Options/Menu_Options";
+import { Edit, Delete } from "@mui/icons-material";
 const Service = (props) => {
-  console.log("this is props", props);
+  const galleryInputRef = useRef(null);
+  const uploadGalleryImages = () => {};
 
-  //   function generate_gallery(images, id) {
-  //     return images.map((el, i) => {
-  //       return (
-  //         <div className={classes.Gallery__Image} key={i}>
-  //           <Selective_Image
-  //             src={`/storage/images/gallery/${el}`}
-  //             requestURL={`/api/service/update-gallery/${id}/${i}`}
-  //             htmlFor={`service-gallery-${i}`}
-  //             alt={i}
-  //             isPermission={props.isUnderAdmin || props.updateOwnAccount}
-  //             fieldName="gallery"
-  //             autoSizer={true}
-  //           />
-  //         </div>
-  //       );
-  //     });
-  //   }
+  const settings_options = [
+    {
+      text: "Edit Page",
+      onClick: () => {},
+      icon: <Edit fontSize="small" />,
+    },
+
+    {
+      text: "Delete Page",
+      onClick: () => {},
+      icon: <Delete fontSize="small" />,
+    },
+  ];
+
+  const generate_details_section = (detailsArr) => {
+    return detailsArr.map((detail, i) => {
+      return (
+        <Detail_Box
+          src={detail.photo}
+          heading={detail.heading}
+          description={detail.description}
+          key={i}
+          reverse={i % 2 !== 0}
+        />
+      );
+    });
+  };
 
   return (
     <MainContainer navbar>
@@ -43,9 +59,7 @@ const Service = (props) => {
             src={`/storage/images/coverPicture/${props.data?.coverPicture}`}
             alt="coverPicture"
             htmlFor="coverPicture"
-            requesturl={`/api/v1/service${
-              props.page_data.type === "own-page" ? "/" + props.data.id : ""
-            }`}
+            requesturl={`/api/v1/service/${props.data._id}`}
             canupdate={props.page_data.type !== "other-page"}
           />
         </div>
@@ -75,8 +89,12 @@ const Service = (props) => {
           </Typography>
         </div>
         <div className={classes.Profile__Details__Buttons}>
-          {props.isUnderAdmin && <BtnFull text="Order" />}
-          {props.isUnderAdmin && <BtnOptions options={admin_option} />}
+          {props.page_data.type === "own-page" && (
+            <MenuOptions settings={settings_options} />
+          )}
+          {props.page_data.type !== "own-page" && (
+            <Button variant="contained">Order</Button>
+          )}
         </div>
       </div>
 
@@ -99,7 +117,7 @@ const Service = (props) => {
                   component={"p"}
                   fontWeight={500}
                   color={blue[500]}
-                  bold
+                  bold={"true"}
                   className={classes["Profile__Contact__Icon"]}
                 >
                   <Phone />
@@ -112,7 +130,7 @@ const Service = (props) => {
                   component={"p"}
                   fontWeight={500}
                   color={blue[500]}
-                  bold
+                  bold={"true"}
                   className={classes["Profile__Contact__Icon"]}
                 >
                   <Mail />
@@ -125,7 +143,7 @@ const Service = (props) => {
                   component={"p"}
                   fontWeight={500}
                   color={blue[500]}
-                  bold
+                  bold={"true"}
                   className={classes["Profile__Contact__Icon"]}
                 >
                   <LocationCity />
@@ -135,6 +153,10 @@ const Service = (props) => {
               <div className={classes["Profile__Contact__Profile"]}>
                 <Avatar
                   src={`/storage/images/profilePicture/${props.data.provider.profilePicture}`}
+                  onClick={() =>
+                    Router.push("/profile/" + props.data.provider._id)
+                  }
+                  alt="profile picture"
                 ></Avatar>
                 <div>
                   <Typography
@@ -148,19 +170,13 @@ const Service = (props) => {
                   </Typography>
                 </div>
               </div>
-              {/* <Account_Small
-                name={props.data.provider.firstName}
-                type={props.data.type}
-                alt="test"
-                src={`/storage/images/profilePicture/${props.data.member.profilePicture}`}
-              /> */}
             </div>
           )}
         </div>
       </Section>
-      {/*
+
       <Section>
-        <div className={classes.Services__Top}>
+        <div className={classes.Gallery}>
           <Typography component={"h5"} variant="h5" fontWeight={500}>
             Gallery
           </Typography>
@@ -178,25 +194,25 @@ const Service = (props) => {
             </Button>
           )}
         </div>
-        <Gallery images={props.user.gallery} />
+        <Gallery
+          images={props.data.gallery}
+          url={`/storage/images/service/gallery`}
+        />
       </Section>
 
       <Section>
-        <div className={classes.Details__Top}>
-          <Heading_Large>Details</Heading_Large>
-          <BtnFull
-            disabled={!props.data.otherDetails && true}
-            clicked={() => setWannaAddServiceModel((prev) => !prev)}
-          >
+        <div className={classes.Service__Feature}>
+          <Typography component={"h5"} variant="h5" fontWeight={500}>
+            Features
+          </Typography>
+          <Button variant="contained" component="label">
             Edit Details
-          </BtnFull>
+          </Button>
         </div>
-        <div className={classes.Details__Container}>
-         
-          add Details
-        </div>
-      </Section> */}
-      {props.page_data.type}
+      </Section>
+      <div className={classes["Features"]}>
+        {generate_details_section(props.data.details)}
+      </div>
     </MainContainer>
   );
 };
@@ -228,7 +244,7 @@ export async function getServerSideProps(context) {
       props: {
         data: requestObj.data,
         page_data,
-        token,
+        // token,
       },
     };
   } catch (error) {

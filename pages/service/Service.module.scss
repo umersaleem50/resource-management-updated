@@ -56,7 +56,8 @@
       align-items: center;
       justify-content: space-between;
       width: 18rem;
-      margin-right: 5rem;
+
+      flex-direction: row-reverse;
     }
   }
 
@@ -148,4 +149,16 @@
   //     grid-row: 1 / -1;
   //   }
   // }
+}
+
+.Service__Feature {
+  margin-top: 10rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Gallery {
+  margin-top: 8rem;
+  display: flex;
+  justify-content: space-between;
 }

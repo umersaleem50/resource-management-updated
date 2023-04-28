@@ -1,0 +1,33 @@
+.Container {
+  display: flex;
+  max-height: 40rem;
+
+  min-height: 40rem;
+  position: relative !important;
+
+  &--Left {
+    flex-direction: row-reverse;
+  }
+  //   align-items: center;
+  &__Image {
+    position: relative;
+
+    flex: 0 1 50%;
+    border: 1rem;
+  }
+  &__Details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10rem;
+    max-width: 50%;
+
+    &--Left {
+      text-align: left;
+    }
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: 8rem;
+  }
+}

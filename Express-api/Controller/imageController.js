@@ -164,6 +164,10 @@ exports.uploadServiceImages = uploadImage.fields([
     maxCount: 8,
   },
   {
+    name: "coverPicture",
+    maxCount: 1,
+  },
+  {
     name: "details[0][photo]",
     maxCount: 1,
   },

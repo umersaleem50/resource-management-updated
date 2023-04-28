@@ -18,7 +18,10 @@ const Gallery = (props) => {
         >
           <Image
             fill
-            src={`/storage/images/gallery/${image}`}
+            src={
+              (props.url && `${props.url}/${image}`) ||
+              `/storage/images/gallery/${image}`
+            }
             alt={"Gallery " + (i + 1)}
           />
         </div>
@@ -30,7 +33,10 @@ const Gallery = (props) => {
     <div className={classes["Gallery"]}>
       <div className={classes["Gallery__CurrentImage"]}>
         <ImageBox
-          src={`/storage/images/gallery/${currentImageSrc}`}
+          src={
+            (props.url && `${props.url}/${currentImageSrc}`) ||
+            `/storage/images/gallery/${currentImageSrc}`
+          }
           fill
           alt="Gallery 1"
         />

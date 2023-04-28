@@ -5,6 +5,7 @@ const {
   uploadGalleryImage,
   uploadServiceImages,
   resizeServiceDetailPhoto,
+  resizeCoverImage,
 } = require("../Controller/imageController");
 const {
   createService,
@@ -36,6 +37,7 @@ service_product_router.patch(
   "/:id",
   uploadServiceImages,
   resizeServiceDetailPhoto,
+  resizeCoverImage,
   resizeServiceGallery,
   updateService
 );
