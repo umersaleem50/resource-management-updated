@@ -4,6 +4,7 @@ const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
+const apiError = require("../Util/apiError");
 
 const storage = multer.memoryStorage();
 
@@ -29,7 +30,6 @@ const uploadImage = multer({
 
 const resizeOneImage = (field, sizes) =>
   catchAsync(async (req, res, next) => {
-    console.log(req.files[field]);
     if (!req.files[field]) return next();
     const filename = `${req.user.id}-${Date.now()}-${field}.jpeg`;
 
@@ -43,10 +43,10 @@ const resizeOneImage = (field, sizes) =>
     next();
   });
 
-const resizeGalleryImages = (field, sizes) =>
+const resizeGalleryImages = (field, sizes, path = "") =>
   catchAsync(async (req, res, next) => {
-    if (!req.files[field]) return next();
-    console.log("in gallery", req.files[field]);
+    if (!req.files || !req.files[field]) return next();
+
     const arrayOfFileName = [];
     const arrayOfFiles = [...req.files[field]];
 
@@ -55,18 +55,50 @@ const resizeGalleryImages = (field, sizes) =>
         field + "-" + (i + 1)
       }.jpeg`;
 
-      console.log("this is the gallery", filename);
-
       arrayOfFileName.unshift(filename);
 
       await sharp(file.buffer)
         .resize(sizes[0], sizes[1])
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`public/storage/images/${field}/${filename}`);
+        .toFile(`public/storage/images${path}/${field}/${filename}`);
     });
 
     req.body[field] = arrayOfFileName;
+
+    next();
+  });
+
+const resizeServiceDetail = (totalField = 3, sizes) =>
+  catchAsync(async (req, res, next) => {
+    if (!req.files) return next();
+    const entries = Object.keys(req.files).filter((name, i) => {
+      return name.includes("details");
+    });
+
+    if (!entries || !entries.length) return next();
+
+    entries.forEach(async (field, i) => {
+      const fileName = `${req.user.id}-${Date.now()}-${
+        "details" + "-" + (i + 1)
+      }.jpeg`;
+
+      if (!req.body.details || !req.body.details.length)
+        return next(
+          new apiError(
+            "Please also add heading in you body. To change the photo",
+            400
+          )
+        );
+
+      req.body.details[i].photo = fileName;
+
+      await sharp(req.files[field][0].buffer)
+        .resize(sizes[0], sizes[1])
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/storage/images/service/photo/${fileName}`);
+    });
 
     next();
   });
@@ -110,7 +142,7 @@ exports.uploadProfileImages = uploadImage.fields([
   },
 ]);
 
-exports.uploadProfileImage = uploadImage.single("profilePicture");
+// exports.uploadProfileImage = uploadImage.single("profilePicture");
 exports.uploadProfileImages = uploadImage.fields([
   {
     name: "profilePicture",
@@ -125,15 +157,41 @@ exports.uploadProfileImages = uploadImage.fields([
     maxCount: 8,
   },
 ]);
-exports.uploadCoverImage = uploadImage.single("coverPicture");
-exports.uploadGalleryImage = uploadImage.single("gallery");
+
+exports.uploadServiceImages = uploadImage.fields([
+  {
+    name: "gallery",
+    maxCount: 8,
+  },
+  {
+    name: "details[0][photo]",
+    maxCount: 1,
+  },
+  {
+    name: "details[1][photo]",
+    maxCount: 1,
+  },
+  {
+    name: "details[2][photo]",
+    maxCount: 1,
+  },
+]);
+
+// exports.uploadCoverImage = uploadImage.single("coverPicture");
+// exports.uploadGalleryImage = uploadImage.single("gallery");
 
 exports.resizeGallery = resizeGalleryImages("gallery", [700, 500]);
-exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
+// exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
 exports.resizeProfilePicture = resizeOneImage("profilePicture", [500, 500]);
 exports.resizeCoverImage = resizeOneImage("coverPicture", [1420, 275]);
 exports.resizeGalleryImage = resizeOneImage("gallery", [500, 340]);
-exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
+// exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
+exports.resizeServiceDetailPhoto = resizeServiceDetail(3, [600, 500]);
+exports.resizeServiceGallery = resizeGalleryImages(
+  "gallery",
+  [700, 500],
+  "/service"
+);
 
 // exports.resizeProfilePicture = resizePhoto("profilePicture", [500, 500]);
 

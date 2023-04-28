@@ -134,7 +134,7 @@ const memberSchema = new mongoose.Schema(
     },
     service: {
       type: [mongoose.Schema.ObjectId],
-      ref: "serviceProduct",
+      ref: "serviceproduct",
     },
     gallery: {
       type: [String],

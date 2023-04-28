@@ -17,7 +17,7 @@ const {
 exports.getProfile = catchAsync(async (req, res, next) => {
   const id = req.params.id || req.user.id;
   const features = new ApiFeature(
-    Member.findById(id).populate("team"),
+    Member.findById(id).populate("team").populate("service"),
     req.query
   ).limit();
   const user = await features.query;
@@ -34,7 +34,7 @@ exports.getProfile = catchAsync(async (req, res, next) => {
 exports.getSubAccountProfile = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const features = new ApiFeature(
-    Member.findById(id).populate("team"),
+    Member.findById(id).populate("team").populate("service"),
     req.query
   ).limit();
   const user = await features.query;

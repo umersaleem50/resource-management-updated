@@ -29,7 +29,8 @@ exports.createOne = (Model) => {
 exports.updateOne = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
     const body = req.body;
-    const doc = await Model.findByIdAndUpdate(req.params.id, body, {
+    const id = req.params.id;
+    const doc = await Model.findByIdAndUpdate(id, body, {
       runValidators: true,
       new: true,
     });
@@ -48,7 +49,8 @@ exports.updateOne = (Model, populateOptions) => {
 */
 exports.deleteOne = (Model) => {
   return catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
+    const id = req.params.id;
+    const doc = await Model.findByIdAndDelete(id);
     if (!doc) return next(new apiError("No document found with this id!", 404));
     res.status(204).json({ status: "success", data: null });
   });
@@ -63,11 +65,9 @@ exports.deleteOne = (Model) => {
 
 exports.getOne = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
-    // if (populateOptions && populateOptions.length)
-    //   populateOptions.forEach((el, i) => {
-    //     query.populate(el);
-    //   });
+    const id = req.params.id;
+    let query = Model.findById(id);
+
     if (populateOptions && Array.isArray(populateOptions)) {
       populateOptions.forEach((el, i) => {
         query.populate(el);

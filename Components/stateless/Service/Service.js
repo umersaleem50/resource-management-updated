@@ -34,8 +34,8 @@ export const ServiceTemplate = () => {
 };
 
 const Service = (props) => {
-  const navigate_to_service = (e, id) => {
-    return Router.push(`/market/${id}`);
+  const navigate_to_service = (e) => {
+    return Router.push(`/service/${props.id}`);
   };
 
   return (
@@ -62,7 +62,7 @@ const Service = (props) => {
         <Typography variant="body1" component={"p"} color={grey["A200"]}>
           {props.title}
         </Typography>
-        <Button type="button" variant="contained">
+        <Button type="button" variant="contained" onClick={navigate_to_service}>
           More Details
         </Button>
       </div>

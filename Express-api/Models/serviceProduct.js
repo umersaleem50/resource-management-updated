@@ -1,4 +1,4 @@
-const { models, model, Schema, default: mongoose } = require("mongoose");
+const { model, Schema, default: mongoose } = require("mongoose");
 
 const serviceProductSchema = new Schema({
   type: {
@@ -14,17 +14,15 @@ const serviceProductSchema = new Schema({
     type: Number,
     min: [1, "Please a provide a postive number."],
   },
-  service: {
+  heading: {
     type: String,
-    max: [
-      128,
-      "Please use a shorter name of maximum 128 letters for you product or service.",
-    ],
+    max: [128, "Please provide the name with less the 128 characters."],
     required: [true, "Please provide the name of product or service."],
   },
   description: {
     type: String,
     required: [true, "Please provide a description for the service."],
+    max: [400, `Please provide the name with less the 400 characters.`],
   },
   title: {
     type: String,
@@ -34,19 +32,19 @@ const serviceProductSchema = new Schema({
     type: String,
     default: "default-coverPicture.jpg",
   },
-  ratingAverage: {
-    type: Number,
-    default: 4.5,
-    min: [1, "A product or service must have rating equal or greater than 1"],
-    max: [5, "A product or service must have rating equal or less than 5"],
-    set: (val) => Math.round(val * 10) / 10,
-  },
-  ratingQuantity: {
-    type: Number,
-    default: 0,
-  },
+  // ratingAverage: {
+  //   type: Number,
+  //   default: 4.5,
+  //   min: [1, "A product or service must have rating equal or greater than 1"],
+  //   max: [5, "A product or service must have rating equal or less than 5"],
+  //   set: (val) => Math.round(val * 10) / 10,
+  // },
+  // ratingQuantity: {
+  //   type: Number,
+  //   default: 0,
+  // },
 
-  serviceBy: {
+  provider: {
     type: mongoose.Schema.ObjectId,
     ref: "member",
     required: [true, "A product or service must belong to a member."],
@@ -56,9 +54,9 @@ const serviceProductSchema = new Schema({
     type: [String],
     validate: [
       function (val) {
-        return val.length <= 5;
+        return val.length <= 8;
       },
-      "A galley could only have 5 images.",
+      "A galley could only have 8 images.",
     ],
     default: new Array(4).fill("default-gallery.jpg"),
   },
@@ -66,13 +64,24 @@ const serviceProductSchema = new Schema({
   details: {
     type: [
       {
-        type: String,
-        default: "default-coverPicture.jpg",
+        photo: { type: String, default: "default-coverPicture.jpg" },
         heading: {
           type: String,
+          max: [
+            128,
+            `Please provide the heading with less the 128 characters.`,
+          ],
+          default:
+            "Please add some heading for the feature of your service or product.",
         },
         description: {
           type: String,
+          max: [
+            200,
+            `Please provide the description of details with less the 200 characters.`,
+          ],
+          default:
+            "Please add some details about the features of your service or product.",
         },
       },
     ],
@@ -90,7 +99,6 @@ const serviceProductSchema = new Schema({
   },
 });
 
-const ServiceProduct =
-  models.serviceProduct || model("serviceProduct", serviceProductSchema);
+const ServiceProduct = model("serviceproduct", serviceProductSchema);
 
 module.exports = ServiceProduct;

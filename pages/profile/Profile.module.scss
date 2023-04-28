@@ -115,6 +115,10 @@
       display: flex;
       align-items: center;
     }
+
+    &__Avatar {
+      background-color: orange;
+    }
   }
 
   &__BioAddress {

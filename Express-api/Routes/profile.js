@@ -4,7 +4,6 @@ const profileController = require("../Controller/profileController");
 const authController = require("../Controller/authController");
 const {
   resizeProfilePicture,
-
   resizeCoverImage,
   uploadProfileImages,
   resizeGallery,

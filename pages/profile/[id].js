@@ -292,6 +292,7 @@ const Profile = (props) => {
               Add Service
             </Button>
           </div>
+
           <div className={classes.Services}>
             {(props.user?.service &&
               props.user.service.length &&
@@ -348,8 +349,8 @@ function generate_services(services) {
         id={el._id}
         coverPicture={el.coverPicture}
         imageAlt={el.type}
-        name={el.name}
-        title={el.title}
+        name={el.title}
+        title={el.heading}
       />
     );
   });

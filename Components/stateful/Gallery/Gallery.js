@@ -12,6 +12,7 @@ const Gallery = (props) => {
     return images.map((image, i) => {
       return (
         <div
+          key={i}
           className={classes["Gallery__Image"]}
           onClick={() => setCurrentImageSrc(image)}
         >
