@@ -4,6 +4,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
 import { bool } from "prop-types";
 import { object } from "prop-types";
+import PropTypes from "prop-types";
 
 function CustomSelectInput(props) {
   // const [inputValue, setInputValue] = React.useState("");
@@ -43,6 +44,8 @@ function CustomSelectInput(props) {
 CustomSelectInput.propTypes = {
   required: bool,
   options: object,
+  inputValue: PropTypes.string,
+  setInputValue: PropTypes.func,
 };
 
 export default CustomSelectInput;

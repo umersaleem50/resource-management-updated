@@ -9,3 +9,5 @@ export const taskPriorities = [
   { title: "Un-Important" },
   { title: "Critical" },
 ];
+
+export const serviceType = [{ title: "service" }, { title: "product" }];
