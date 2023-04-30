@@ -38,6 +38,7 @@ import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
 import Router from "next/router";
 import Head from "next/head";
+import Model_Edit_Service from "../../Components/AllModels/Services/Model_Edit_Service/Model_Edit_Service";
 // COMPONENT JSX
 const Profile = (props) => {
   // const [isEditProfileModel, setEditProfileModel] = useState(false);
@@ -46,6 +47,7 @@ const Profile = (props) => {
   const [toggleTaskModel, setToggleTaskModel] = useState(false);
   const [changePasswordModel, setChangePasswordModel] = useState(false);
   const galleryInputRef = useRef(null);
+  const [toggleAddServiceModel, setToggleAddServiceModel] = useState(true);
   const settings_options = [
     {
       text: "Message",
@@ -105,6 +107,12 @@ const Profile = (props) => {
 
   return (
     <>
+      <Model
+        toggle={toggleAddServiceModel}
+        onClose={() => setToggleAddServiceModel(false)}
+      >
+        <Model_Edit_Service requestType="POST" />
+      </Model>
       <Model
         toggle={changePasswordModel}
         onClose={() => setChangePasswordModel(false)}

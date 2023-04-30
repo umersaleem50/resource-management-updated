@@ -32,21 +32,33 @@ const Model_Edit_Service = (props) => {
   const detailImage2 = useRef(null);
   const detailImage3 = useRef(null);
 
+  const [photo1, setPhoto1] = useState(null);
+  const [photo2, setPhoto2] = useState(null);
+  const [photo3, setPhoto3] = useState(null);
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    const data = {
-      title,
-      heading,
-      type,
-      description,
-      details: [
-        { heading: detailHeading1, description: detailText1 },
-        { heading: detailHeading2, description: detailText2 },
-        { heading: detailHeading3, description: detailText3 },
-      ],
-    };
+    const formDate = new FormData();
+    formDate.append("type", type);
+    formDate.append("title", title);
+    formDate.append("heading", heading);
+    formDate.append("description", description);
+    formDate.append("details[0][heading]", detailHeading1);
+    formDate.append("details[0][description]", detailText1);
+    formDate.append("details[0][photo]", photo1);
+    formDate.append("details[1][heading]", detailHeading2);
+    formDate.append("details[1][description]", detailText2);
+    formDate.append("details[1][photo]", photo2);
+    formDate.append("details[2][heading]", detailHeading3);
+    formDate.append("details[2][description]", detailText3);
+    formDate.append("details[2][photo]", photo3);
+
     try {
-      const results = await service_request(data, props.id, "PATCH");
+      const results = await service_request(
+        formDate,
+        props.id,
+        props.requestType || "PATCH"
+      );
       if (results.status === "success") {
         showSnackBar(
           enqueueSnackbar,
@@ -99,8 +111,8 @@ const Model_Edit_Service = (props) => {
         type="text"
         required
         variant="standard"
-        placeholder="Enter the description for service"
-        label={"Description"}
+        placeholder="Enter the heading for service"
+        label={"heading"}
         value={heading}
         onChange={(e) => setHeading(e.target.value)}
       />
@@ -130,7 +142,9 @@ const Model_Edit_Service = (props) => {
           accept="image/*"
           type="file"
           ref={detailImage1}
-          onChange={() => {}}
+          onChange={(e) => {
+            setPhoto1(e.target.files[0]);
+          }}
         />
       </Button>
       <TextField
@@ -165,7 +179,9 @@ const Model_Edit_Service = (props) => {
           accept="image/*"
           type="file"
           ref={detailImage2}
-          onChange={() => {}}
+          onChange={(e) => {
+            setPhoto2(e.target.files[0]);
+          }}
         />
       </Button>
       <TextField
@@ -200,7 +216,9 @@ const Model_Edit_Service = (props) => {
           accept="image/*"
           type="file"
           ref={detailImage3}
-          onChange={() => {}}
+          onChange={(e) => {
+            setPhoto3(e.target.files[0]);
+          }}
         />
       </Button>
       <TextField

@@ -1,9 +1,14 @@
+@import "../../../styles/mixin";
 .Container {
   display: flex;
   max-height: 40rem;
 
   min-height: 40rem;
   position: relative !important;
+
+  // @include respond(phone-l) {
+  //   flex-direction: column;
+  // }
 
   &--Left {
     flex-direction: row-reverse;

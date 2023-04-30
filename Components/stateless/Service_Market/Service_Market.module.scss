@@ -1,0 +1,25 @@
+.Container {
+  display: flex;
+  padding: 4rem;
+  border-radius: var(--border-radius);
+}
+
+.Left {
+  flex: 0 1 65%;
+}
+.Right {
+  flex: 0 1 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  &__Bottom {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 2rem;
+    align-items: center;
+    height: 100%;
+    margin-top: 3rem;
+  }
+}

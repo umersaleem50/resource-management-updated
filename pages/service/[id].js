@@ -4,6 +4,7 @@ import { protected_route_next } from "../../next-utils/login_validation";
 import {
   delete_service_request,
   get_one_service,
+  service_request,
 } from "../../services/pages/service";
 import {
   get_profile_request,
@@ -28,8 +29,37 @@ import { enqueueSnackbar } from "notistack";
 const Service = (props) => {
   const galleryInputRef = useRef(null);
   const [toggle_model_edit_service, setToggle_model_edit_service] =
-    useState(true);
-  const uploadGalleryImages = () => {};
+    useState(false);
+  const uploadGalleryImages = async (e) => {
+    const images = Object.values(e.target.files);
+    const formData = new FormData();
+
+    images.forEach((img, i) => {
+      formData.append("gallery", img);
+    });
+
+    try {
+      const results = await service_request(formData, props.data._id, "PATCH");
+
+      if (results.status === "success") {
+        showSnackBar(
+          enqueueSnackbar,
+          "Successfully uploaded the gallery images",
+          "success"
+        );
+        Router.reload();
+      }
+    } catch (error) {
+      if (error.status === "error") {
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      }
+      showSnackBar(
+        enqueueSnackbar,
+        "Failed to upload the gallery images",
+        "error"
+      );
+    }
+  };
 
   const delete_service = async (id) => {
     try {
@@ -254,9 +284,6 @@ const Service = (props) => {
             <Typography component={"h5"} variant="h5" fontWeight={500}>
               Features
             </Typography>
-            <Button variant="contained" component="label">
-              Edit Details
-            </Button>
           </div>
         </Section>
         <div className={classes["Features"]}>
