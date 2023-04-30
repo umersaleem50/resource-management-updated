@@ -1,7 +1,10 @@
 import classes from "./Service.module.scss";
 import { useJWTToken } from "../../next-utils/login_validation";
 import { protected_route_next } from "../../next-utils/login_validation";
-import { get_one_service } from "../../services/pages/service";
+import {
+  delete_service_request,
+  get_one_service,
+} from "../../services/pages/service";
 import {
   get_profile_request,
   get_other_profile_request,
@@ -14,26 +17,51 @@ import { grey, blue } from "@mui/material/colors";
 import { Phone, Mail, LocationCity } from "@mui/icons-material";
 import Router from "next/router";
 import Gallery from "../../Components/stateful/Gallery/Gallery";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Detail_Box from "../../Components/stateless/Detail_Box/Detail_Box";
 import MenuOptions from "../../Components/stateful/Menu_Options/Menu_Options";
 import { Edit, Delete } from "@mui/icons-material";
 import Model from "../../Components/stateless/Model/Model";
 import Model_Edit_Service from "../../Components/AllModels/Services/Model_Edit_Service/Model_Edit_Service";
+import { showSnackBar } from "../../next-utils/helper_functions";
+import { enqueueSnackbar } from "notistack";
 const Service = (props) => {
   const galleryInputRef = useRef(null);
+  const [toggle_model_edit_service, setToggle_model_edit_service] =
+    useState(true);
   const uploadGalleryImages = () => {};
+
+  const delete_service = async (id) => {
+    try {
+      const result = await delete_service_request(props.data._id);
+      if (result.status === 204) {
+        showSnackBar(
+          enqueueSnackbar,
+          "Successfully! delete the service.",
+          "success"
+        );
+        Router.push("/team");
+      }
+    } catch (error) {
+      if (error.status === "error") {
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      }
+      showSnackBar(enqueueSnackbar, "Failed to delete the message!", "error");
+    }
+  };
 
   const settings_options = [
     {
       text: "Edit Page",
-      onClick: () => {},
+      onClick: () => {
+        setToggle_model_edit_service(true);
+      },
       icon: <Edit fontSize="small" />,
     },
 
     {
       text: "Delete Page",
-      onClick: () => {},
+      onClick: delete_service,
       icon: <Delete fontSize="small" />,
     },
   ];
@@ -54,17 +82,22 @@ const Service = (props) => {
 
   return (
     <>
-      <Model toggle={true}>
+      <Model
+        toggle={toggle_model_edit_service}
+        onClose={() => setToggle_model_edit_service(false)}
+      >
         <Model_Edit_Service
-          name={props.data.title}
+          title={props.data.title}
           heading={props.data.heading}
           description={props.data.description}
+          type={props.data.type}
           detailHeading1={props.data?.details[0]?.heading || ""}
           detailText1={props.data?.details[0]?.description || ""}
           detailHeading2={props.data?.details[1]?.heading || ""}
           detailText2={props.data?.details[1]?.description || ""}
           detailHeading3={props.data?.details[2]?.heading || ""}
           detailText3={props.data?.details[2]?.heading || ""}
+          id={props.data._id}
         />
       </Model>
       <MainContainer navbar>

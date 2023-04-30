@@ -2,11 +2,14 @@ import { Typography, TextField, Divider, Button } from "@mui/material";
 import { useState } from "react";
 import classes from "./Model_Edit_Service.module.scss";
 import { useRef } from "react";
-import { edit_service_request } from "../../../../services/pages/service";
+import { service_request } from "../../../../services/pages/service";
 import CustomSelectInput from "../../../Input/SelectInput/CustomSelectInput";
 import { serviceType } from "../../../../Dev-Data/branches";
+import { showSnackBar } from "../../../../next-utils/helper_functions";
+import { enqueueSnackbar } from "notistack";
+import Router from "next/router";
 const Model_Edit_Service = (props) => {
-  const [name, setName] = useState(props.name || "");
+  const [title, setTitle] = useState(props.title || "");
   const [heading, setHeading] = useState(props.heading || "");
   const [description, setDescription] = useState(props.description || "");
   const [type, setType] = useState(props.type || "");
@@ -30,10 +33,35 @@ const Model_Edit_Service = (props) => {
   const detailImage3 = useRef(null);
 
   const onSubmit = async (e) => {
-    e.preventDefautl();
+    e.preventDefault();
+    const data = {
+      title,
+      heading,
+      type,
+      description,
+      details: [
+        { heading: detailHeading1, description: detailText1 },
+        { heading: detailHeading2, description: detailText2 },
+        { heading: detailHeading3, description: detailText3 },
+      ],
+    };
     try {
-      const results = await edit_service_request({});
-    } catch (error) {}
+      const results = await service_request(data, props.id, "PATCH");
+      if (results.status === "success") {
+        showSnackBar(
+          enqueueSnackbar,
+          "Successfully updated the service!",
+          "success"
+        );
+        Router.reload();
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.status === "error") {
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      }
+      showSnackBar(enqueueSnackbar, "Failed to update the service.", "error");
+    }
   };
   return (
     <form className={classes["Form"]} onSubmit={onSubmit}>
@@ -62,10 +90,10 @@ const Model_Edit_Service = (props) => {
         type="text"
         required
         variant="standard"
-        placeholder="Enter the name of your service"
-        label={"Name"}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        placeholder="Enter the title for your service"
+        label={"Title"}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
       />
       <TextField
         type="text"
@@ -107,7 +135,6 @@ const Model_Edit_Service = (props) => {
       </Button>
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Heading"}
@@ -116,7 +143,6 @@ const Model_Edit_Service = (props) => {
       />
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Description"}
@@ -144,7 +170,6 @@ const Model_Edit_Service = (props) => {
       </Button>
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Heading"}
@@ -153,7 +178,6 @@ const Model_Edit_Service = (props) => {
       />
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Description"}
@@ -181,7 +205,6 @@ const Model_Edit_Service = (props) => {
       </Button>
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Heading"}
@@ -190,7 +213,6 @@ const Model_Edit_Service = (props) => {
       />
       <TextField
         type="text"
-        required
         variant="standard"
         placeholder="Enter the heading for the feature"
         label={"Description"}
