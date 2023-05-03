@@ -5,7 +5,7 @@
   "scripts": {
     "dev:api": "nodemon server.js",
     "dev": "next dev",
-    "build": "next build",
+    "build_backup": "next build",
     "start": "next start",
     "lint": "next lint",
     "dev:front": "node server.js"

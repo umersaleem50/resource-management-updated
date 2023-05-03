@@ -51,7 +51,7 @@ app
   });
 
 mongoose
-  .connect(process.env.DATABASE_URL_LOCAL)
+  .connect(process.env.DATABASE_URL)
   .then(() => {
     console.log("Database Connected Successfully!");
   })
