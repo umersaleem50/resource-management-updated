@@ -5,6 +5,7 @@
   "scripts": {
     "dev:api": "nodemon server.js",
     "dev": "next dev",
+    "build": "node server.js PORT=3000",
     "build_backup": "next build",
     "start": "next start",
     "lint": "next lint",
