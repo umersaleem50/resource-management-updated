@@ -9,6 +9,8 @@ import { useState } from "react";
 import Router from "next/router";
 import jwt from "jsonwebtoken";
 import { useJWTToken } from "../../next-utils/login_validation";
+import { useEffect } from "react";
+import axios from "axios";
 const { promisify } = require("util");
 
 const Login = (props) => {

@@ -8,7 +8,7 @@ const {
   uploadProfileImages,
   resizeGallery,
 } = require("../Controller/imageController");
-const { defaultFields } = require("../Controller/services");
+const { defaultFields } = require("../Util/services");
 
 const Router = require("express").Router();
 

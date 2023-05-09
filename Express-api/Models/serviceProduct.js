@@ -32,17 +32,20 @@ const serviceProductSchema = new Schema({
     type: String,
     default: "default-coverPicture.jpg",
   },
-  // ratingAverage: {
-  //   type: Number,
-  //   default: 4.5,
-  //   min: [1, "A product or service must have rating equal or greater than 1"],
-  //   max: [5, "A product or service must have rating equal or less than 5"],
-  //   set: (val) => Math.round(val * 10) / 10,
-  // },
-  // ratingQuantity: {
-  //   type: Number,
-  //   default: 0,
-  // },
+  tags: {
+    type: [String],
+  },
+  ratingAverage: {
+    type: Number,
+    default: 4.5,
+    min: [1, "A product or service must have rating equal or greater than 1"],
+    max: [5, "A product or service must have rating equal or less than 5"],
+    set: (val) => Math.round(val * 10) / 10,
+  },
+  ratingQuantity: {
+    type: Number,
+    default: 0,
+  },
 
   provider: {
     type: mongoose.Schema.ObjectId,

@@ -43,7 +43,9 @@ exports.removeItfromServices = catchAsync(async (req, res, next) => {
 
 exports.updateService = updateOne(Service_Product_Model);
 exports.deleteOneService = deleteOne(Service_Product_Model);
-exports.getAllServices = getAll(Service_Product_Model);
+exports.getAllServices = getAll(Service_Product_Model, [
+  { path: "provider", select: "profilePicture fullName lastName firstName" },
+]);
 exports.getOneService = getOne(Service_Product_Model, [
   { path: "provider", select: REQUIRED_FIELDS },
 ]);

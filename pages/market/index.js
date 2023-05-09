@@ -9,13 +9,15 @@ import Service_Market from "../../Components/stateless/Service_Market/Service_Ma
 import { useEffect, useState } from "react";
 import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import { fetch_latest_services } from "../../services/pages/service";
 const Market = (props) => {
   const [services, setServices] = useState([]);
   const [result, setResults] = useState(0);
-  const fetch_latest_services = async () => {
+  const [searchTags, setSearchTags] = useState({});
+  const fetch_services = async () => {
     try {
-      const results = await fetch_latest_services();
-      console.log(results);
+      const results = await fetch_latest_services(searchTags);
+
       if (results.status === "success") {
         setServices(results.data);
         setResults(results.results);
@@ -32,10 +34,27 @@ const Market = (props) => {
     }
   };
 
-  const generateServices = (services) => {};
+  const generateServices = (services) => {
+    return services.map((service, i) => {
+      return (
+        <Service_Market
+          key={i}
+          type={service.type}
+          heading={service.heading}
+          description={service.description}
+          fullName={service.provider.fullName}
+          profilPicture={service.provider.profilePicture}
+          provider_id={service.provider._id}
+          coverPicture={service.coverPicture}
+          service_id={service._id}
+        />
+      );
+    });
+  };
 
   useEffect(() => {
     // fetch_latest_services();
+    fetch_services();
   }, []);
 
   return (
@@ -55,12 +74,12 @@ const Market = (props) => {
           <Button sx={{ mb: 2 }} variant="contained">
             Market Place
           </Button>
-          <Button sx={{ mb: 2 }} variant="text">
+          {/* <Button sx={{ mb: 2 }} variant="text">
             Your Products & Services
           </Button>
           <Button sx={{ mb: 2 }} variant="text">
             Your Orders
-          </Button>
+          </Button> */}
         </div>
         <div className={classes["Right"]}>
           <div className={classes["Left__Top"]}>
@@ -79,12 +98,18 @@ const Market = (props) => {
                 id="input-with-icon-textfield"
                 placeholder="Search product or service"
                 sx={{ width: 300 }}
-                onChange={(e) => {
-                  if (e.target.value === "") this.fetchLatestTasks();
+                onChange={async (e) => {
+                  if (e.target.value === "") {
+                    setSearchTags({});
+                    await fetch_services();
+                  }
                 }}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter")
-                    this.searchTaskHandler(e.target.value);
+                onKeyDown={async (e) => {
+                  if (e.code === "Enter") {
+                    setSearchTags({ tags: e.target.value });
+
+                    await fetch_services();
+                  }
                 }}
                 InputProps={{
                   endAdornment: (
@@ -97,19 +122,12 @@ const Market = (props) => {
               />
             </div>
             <Typography variant="body1" component={"p"}>
-              Total Results: {0}
+              Total Results: {result || 0}
             </Typography>
           </div>
 
           <div className={classes["Right__Results"]}>
-            <Service_Market
-              type={"Product"}
-              heading={"This is dummy heading"}
-              description={"This is dummy description"}
-              fullName={"This is dummy fullName"}
-              profilPicture={"default-profilePicture.jpeg"}
-              provider_id={""}
-            />
+            {generateServices(services)}
           </div>
         </div>
       </div>

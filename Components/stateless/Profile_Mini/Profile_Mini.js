@@ -7,7 +7,7 @@ const Profile_Mini = (props) => {
     <div className={classes["Profile"]}>
       <Avatar
         src={`/storage/images/profilePicture/${props.profilePicture}`}
-        onClick={() => Router.push("/profile/" + props._id)}
+        onClick={() => Router.push("/profile/" + props.id)}
         alt="profile picture"
       ></Avatar>
       <div>

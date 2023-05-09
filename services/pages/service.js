@@ -20,8 +20,14 @@ export const delete_service_request = async (id) =>
     method: "DELETE",
   });
 
-export const fetch_latest_services = async () =>
+export const fetch_latest_services = async (search) =>
   await request_function_test({
-    url: `/service?fields=heading,description,type,provider`,
+    url: `/service`,
     method: "GET",
+    data: {},
+    token: null,
+    params: {
+      fields: `heading,description,type,provider,coverPicture`,
+      ...search,
+    },
   });

@@ -61,7 +61,15 @@ const resizeGalleryImages = (field, sizes, path = "") =>
         .resize(sizes[0], sizes[1])
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`public/storage/images${path}/${field}/${filename}`);
+        .toFile(`public/storage/images/${path}/${field}/${filename}`)
+        .catch((err) =>
+          next(
+            new apiError(
+              `Failed to write the ${field}, Please make sure you have the folder in your file system`,
+              500
+            )
+          )
+        );
     });
 
     req.body[field] = arrayOfFileName;
@@ -110,22 +118,26 @@ const resizeServiceDetail = (totalField = 3, sizes) =>
  * @returns Return next() middleware
  */
 
-const deletePreviousImage = (field, dirLocation) => {
+const deletePreviousImage = (field, dirLocation, Model) => {
   return catchAsync(async (req, res, next) => {
-    const { id } = (req.params.id && req.params) || req.user;
-    const user = await Member.findById(id).select(`${field}`);
+    const id = req.params.id || req.user.id;
+    const doc = await Model.findById(id).select(`${field}`);
 
-    fs.unlink(
-      path.join(
-        __dirname,
-        "..",
-        "..",
-        `/public/storage/images/${dirLocation}/${user[field]}`
-      ),
-      (err) => {
-        return next();
-      }
-    );
+    if (Array.isArray(doc[field])) {
+      doc[field].map((file, i) => {
+        fs.unlink(
+          path.join(
+            __dirname,
+            "..",
+            "..",
+            `/public/storage/images/${dirLocation}/${user[field]}`
+          ),
+          (err) => {
+            return next();
+          }
+        );
+      });
+    }
   });
 };
 
@@ -181,10 +193,19 @@ exports.uploadServiceImages = uploadImage.fields([
   },
 ]);
 
+exports.uploadNewPostImages = uploadImage.fields([
+  { name: "images", maxCount: 10 },
+]);
+
 // exports.uploadCoverImage = uploadImage.single("coverPicture");
 // exports.uploadGalleryImage = uploadImage.single("gallery");
 
 exports.resizeGallery = resizeGalleryImages("gallery", [700, 500]);
+exports.resizeNewPostImages = resizeGalleryImages(
+  "images",
+  [700, 600],
+  "new-post"
+);
 // exports.resizeServiceGalleryImage = resizeOneImage("gallery", [500, 340]);
 exports.resizeProfilePicture = resizeOneImage("profilePicture", [500, 500]);
 exports.resizeCoverImage = resizeOneImage("coverPicture", [1420, 275]);

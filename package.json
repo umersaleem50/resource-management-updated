@@ -30,8 +30,10 @@
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
+    "react-id-swiper": "^4.0.0",
     "sass": "^1.56.2",
     "socket.io-client": "^4.6.1",
+    "swiper": "^9.2.4",
     "validator": "^13.7.0"
   },
   "author": "Umar Saleem (umersaleem50@gmail.com)",

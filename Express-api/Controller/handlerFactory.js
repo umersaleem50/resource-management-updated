@@ -88,9 +88,17 @@ exports.getOne = (Model, populateOptions) => {
 @return Return a response with valid data
 */
 
-exports.getAll = (Model) => {
+exports.getAll = (Model, populateOptions) => {
   return catchAsync(async (req, res, next) => {
-    const feature = new ApiFeature(Model.find(), req.query)
+    let query = Model.find();
+    if (populateOptions && Array.isArray(populateOptions)) {
+      populateOptions.forEach((el, i) => {
+        query.populate(el);
+      });
+    } else {
+      query.populate(populateOptions);
+    }
+    const feature = new ApiFeature(query, req.query)
       .filter()
       .sort()
       .limit()

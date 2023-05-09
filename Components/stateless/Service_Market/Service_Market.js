@@ -5,6 +5,8 @@ import classes from "./Service_Market.module.scss";
 import { Save } from "@mui/icons-material";
 import PropTypes from "prop-types";
 import { grey } from "@mui/material/colors";
+import Image from "next/image";
+import Router from "next/router";
 const settings_options = [
   {
     text: "Save to favourite",
@@ -19,6 +21,12 @@ const Service_Market = (props) => {
       className={classes["Container"]}
       style={{ backgroundColor: grey["A200"] }}
     >
+      <Image
+        className={classes["Container__Image"]}
+        src={`/storage/images/coverPicture/${props.coverPicture}`}
+        fill
+        alt="cover-picture"
+      />
       <div className={classes["Left"]}>
         <Typography variant="h6" component={"h6"} sx={{ marginBottom: 2 }}>
           {props.heading}
@@ -36,7 +44,12 @@ const Service_Market = (props) => {
           id={props.provider_id}
         />
         <div className={classes["Right__Bottom"]}>
-          <Button variant="contained">Show Details</Button>
+          <Button
+            variant="contained"
+            onClick={() => Router.push("/service/" + props.service_id)}
+          >
+            Show Details
+          </Button>
           <MenuOptions settings={settings_options} />
         </div>
       </div>

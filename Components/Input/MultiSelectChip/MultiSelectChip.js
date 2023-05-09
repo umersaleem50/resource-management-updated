@@ -7,8 +7,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import permissions from "../../../Dev-Data/permissions";
-import { array } from "prop-types";
+import { array, string } from "prop-types";
 import { any } from "prop-types";
+import { useState } from "react";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -22,7 +23,7 @@ const MenuProps = {
 };
 
 export default function MultipleSelectCheckmarks(props) {
-  const names = props.options || permissions;
+  const [names, setNames] = useState(props.options || permissions);
 
   const handleChange = (event) => {
     const {
@@ -38,7 +39,7 @@ export default function MultipleSelectCheckmarks(props) {
     <div>
       <FormControl sx={{ mt: 1, width: "100%" }}>
         <InputLabel id="demo-multiple-checkbox-label">
-          {props.label || Permissons}
+          {props.label || "Permissons"}
         </InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
@@ -46,16 +47,26 @@ export default function MultipleSelectCheckmarks(props) {
           multiple
           value={props.value}
           onChange={handleChange}
-          input={<OutlinedInput label="Tag" />}
+          input={
+            <OutlinedInput
+              value={names}
+              onChange={() => {
+                setNames(["test"]);
+              }}
+              label={"Tag"}
+              onKeyDown={() => {}}
+            />
+          }
           renderValue={(selected) => selected.join(", ")}
           MenuProps={MenuProps}
         >
-          {names.map((name) => (
-            <MenuItem key={name} value={name}>
-              <Checkbox checked={props.value.indexOf(name) > -1} />
-              <ListItemText primary={name} />
-            </MenuItem>
-          ))}
+          {names &&
+            names.map((name) => (
+              <MenuItem key={name} value={name}>
+                <Checkbox checked={props.value.indexOf(name) > -1} />
+                <ListItemText primary={name} />
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
     </div>
@@ -66,4 +77,5 @@ MultipleSelectCheckmarks.propTypes = {
   options: array,
   value: any,
   setValue: any,
+  label: string,
 };
