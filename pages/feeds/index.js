@@ -9,9 +9,10 @@ import Model_Add_Post from "../../Components/AllModels/Feeds/Model_Add_Post/Mode
 
 const Feeds = (props) => {
   const [result, setResult] = useState(0);
+  const [isToggle, setToggle] = useState(false);
   return (
     <>
-      <Model toggle={true}>
+      <Model toggle={isToggle} onClose={() => setToggle(false)}>
         <Model_Add_Post />
       </Model>
       <MainContainer navbar>
@@ -35,6 +36,7 @@ const Feeds = (props) => {
               variant="outlined"
               color="success"
               startIcon={<PostAdd />}
+              onClick={(e) => setToggle(true)}
             >
               Create a Post
             </Button>

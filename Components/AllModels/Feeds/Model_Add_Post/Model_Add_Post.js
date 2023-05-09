@@ -18,21 +18,32 @@ const Model_Add_Post = (props) => {
         "Please selete atleast 1 image for the post",
         "error"
       );
+    const formData = new FormData();
 
     const tagsArr = tags
       .split("#")
       .filter((el) => el !== "")
-      .map((el) => el.replace(/#/g, ""));
-    console.log(tagsArr);
-    try {
-      const results = await send_new_post_request({
-        caption,
-        tags: tagsArr,
-        images,
+      .map((el) => {
+        formData.append("tags", el.replace(/#/g, ""));
+        return el.replace(/#/g, "");
       });
-      console.log(results, tagsArr);
+
+    Object.values(images).map((img) => formData.append("images", img));
+
+    formData.append("caption", caption);
+
+    try {
+      const results = await send_new_post_request(formData);
+      if (results.status === "success")
+        return showSnackBar(
+          enqueueSnackbar,
+          "Successfully uploaded the post.",
+          "success"
+        );
     } catch (error) {
-      console.log(error);
+      if (error.status === "error")
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      showSnackBar(enqueueSnackbar, "Failed to upload the post", "error");
     }
   };
   return (
