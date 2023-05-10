@@ -63,7 +63,7 @@ const Feeds = (props) => {
               <div>
                 <TextField
                   id="input-with-icon-textfield"
-                  placeholder="Search for the post"
+                  placeholder="Search for the posts using tags"
                   sx={{ width: 300 }}
                   onChange={(e) => {
                     if (e.target.value === "") this.fetchLatestTasks();
