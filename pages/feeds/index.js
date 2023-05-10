@@ -6,6 +6,7 @@ import { useState } from "react";
 import { grey } from "@mui/material/colors";
 import classes from "./feeds.module.scss";
 import Model_Add_Post from "../../Components/AllModels/Feeds/Model_Add_Post/Model_Add_Post";
+import Feed_Post from "../../Components/stateless/Feed_Post/Feed_Post";
 
 const Feeds = (props) => {
   const [result, setResult] = useState(0);
@@ -86,7 +87,7 @@ const Feeds = (props) => {
             </div>
 
             <div className={classes["Right__Results"]}>
-              <p>put your feeds here</p>
+              <Feed_Post id={`645a7cedeea9ab2d287fe257`} />
             </div>
           </div>
         </div>
