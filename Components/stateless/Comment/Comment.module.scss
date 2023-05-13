@@ -1,7 +1,19 @@
 .Comment {
   display: flex;
   padding: 0.5rem 1rem;
+  position: relative;
+  cursor: pointer;
+  &:hover &__IconDelete {
+    visibility: visible;
+  }
   &__Left {
     margin-left: 1rem;
+  }
+
+  &__IconDelete {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    visibility: hidden;
   }
 }

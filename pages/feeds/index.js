@@ -7,7 +7,8 @@ import { grey } from "@mui/material/colors";
 import classes from "./feeds.module.scss";
 import Model_Add_Post from "../../Components/AllModels/Feeds/Model_Add_Post/Model_Add_Post";
 import Feed_Post from "../../Components/stateless/Feed_Post/Feed_Post";
-
+import { protected_route_next } from "../../next-utils/login_validation";
+import { useJWTToken } from "../../next-utils/login_validation";
 const Feeds = (props) => {
   const [result, setResult] = useState(0);
   const [isToggle, setToggle] = useState(false);
@@ -87,7 +88,10 @@ const Feeds = (props) => {
             </div>
 
             <div className={classes["Right__Results"]}>
-              <Feed_Post id={`645a7cedeea9ab2d287fe257`} />
+              <Feed_Post
+                id={`645a7cedeea9ab2d287fe257`}
+                user_id={props.user_id}
+              />
             </div>
           </div>
         </div>
@@ -99,19 +103,18 @@ const Feeds = (props) => {
 export async function getServerSideProps(context) {
   try {
     const { token } = useJWTToken(context);
-    const id = await protected_route_next(context);
+    const id = await protected_route_next(context, false);
 
     return {
       props: {
-        user: user.data,
-        page_data,
+        user_id: id,
       },
     };
   } catch (error) {
     return {
       redirect: {
         permanent: true,
-        destination: "/404",
+        destination: "/auth/login",
       },
     };
   }

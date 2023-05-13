@@ -1,6 +1,9 @@
 import { Component } from "react";
 import Carousel from "nuka-carousel";
-import { showSnackBar } from "../../../next-utils/helper_functions";
+import {
+  generateDateFromString,
+  showSnackBar,
+} from "../../../next-utils/helper_functions";
 import classes from "./Feed_Post.module.scss";
 import Image from "next/image";
 import axios from "axios";
@@ -13,17 +16,30 @@ import Scrollbars from "react-custom-scrollbars-2";
 import Router from "next/router";
 
 class Feed_Post extends Component {
-  state = { data: {} };
+  state = { data: {}, comments: [], comment: "" };
+
+  onCommentDelete(id) {
+    const comments = [...this.state.comments];
+
+    comments.splice(
+      comments.findIndex((val) => val._id === id),
+      1
+    );
+    this.setState({ comments });
+  }
+
   componentDidMount() {
     fetch_one_post_data(this.props.id)
       .then((result) => {
-        console.log(result);
-        this.setState({ data: result.data });
+        this.setState({
+          data: result.data,
+          comments: result.data.comments,
+        });
       })
       .catch((err) => {
         if (err.status === "error")
           return showSnackBar(enqueueSnackbar, err.message, "error");
-        showSnackBar(enqueueSnackbar, "Failed to fetch post data");
+        showSnackBar(enqueueSnackbar, "Failed to fetch post data", "error");
       });
   }
 
@@ -48,12 +64,15 @@ class Feed_Post extends Component {
     return (
       <Scrollbars autoHeight autoHeightMax={250}>
         {comments
-          .map(({ comment, member }, i) => {
+          .map(({ comment, member, _id }, i) => {
             return (
               <Comment
                 fullName={member.fullName}
                 profilePicture={member.profilePicture}
                 comment={comment}
+                isDeletable={member._id === this.props.user_id}
+                id={_id}
+                onCommentDelete={this.onCommentDelete.bind(this)}
               />
             );
           })
@@ -73,7 +92,7 @@ class Feed_Post extends Component {
         <div className={classes["Post__Right"]}>
           <div className={classes["Post__Profile"]}>
             <Avatar
-              src={this.props?.member?.profilePicture}
+              src={`/storage/images/profilePicture/${this.state.data?.member?.profilePicture}`}
               onClick={(e) => Router.push(`/profile/${this.props?.member?.id}`)}
             />
             <div className={classes["Post__Profile__Details"]}>
@@ -83,15 +102,16 @@ class Feed_Post extends Component {
                 color={grey[800]}
                 sx={{ fontWeight: "600", marginBottom: ".5rem" }}
               >
-                Muhammad Bilal
+                {this.state.data?.member?.fullName}
               </Typography>
               <Typography variant="body1" component={"p"} color={grey[600]}>
-                7:33 Am, 12 oct
+                {this.state.data?.createdOn &&
+                  generateDateFromString(this.state.data.createdOn)}
               </Typography>
             </div>
           </div>
           <div className={classes["Post__Caption"]}>
-            <Typography>this is the test paragraph</Typography>
+            <Typography>{this.state.data?.caption}</Typography>
           </div>
           <div className={classes["Post__Comments"]}>
             <Divider sx={{ marginBottom: "1rem" }}></Divider>
@@ -101,10 +121,10 @@ class Feed_Post extends Component {
               color={grey[800]}
               sx={{ fontWeight: "600", marginBottom: ".5rem" }}
             >
-              Comments (20)
+              Comments ({this.state.comments.length})
             </Typography>
             {this.state.data.comments &&
-              this.generateComments(this.state.data.comments)}
+              this.generateComments(this.state.comments)}
           </div>
           <Divider sx={{ margin: "1rem 0" }}></Divider>
           <TextField
@@ -112,6 +132,8 @@ class Feed_Post extends Component {
             multiline
             fullWidth
             placeholder="Place a comment"
+            value={this.state.comment}
+            onChange={(e) => this.state({ comment: e.target.value })}
           ></TextField>
         </div>
       </div>
