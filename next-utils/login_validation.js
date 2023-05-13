@@ -30,6 +30,15 @@ export const use_Login_validation = async (context, redirect = true) => {
   };
 };
 
+/**
+ * Use this promise base funtion to check if the user is logged in or not,
+ * if not I will throw an error otherwise redirect you to '/' homepage or give you the id
+ * of currenly loggined account
+ * @param {Object} context Argument of getServerSideProps
+ * @param {Boolean} redirect Boolean if true it will redirect you to homepage, ie. /
+ * @returns returns the id of user currently logged in
+ */
+
 export const protected_route_next = (context, redirect = false) =>
   new Promise(async (resolve, rejects) => {
     const errorMessage = `Invalid or Expired token, Please login again to claim new one.`;
@@ -59,11 +68,11 @@ export const protected_route_next = (context, redirect = false) =>
 
       return resolve(validId.id);
     } catch (error) {
-      return rejects(
-        new Error(
-          `Invalid or Expired token, Please login again to claim new one.`
-        )
+      const new_error = new Error(
+        `Invalid or Expired token, Please login again to claim new one.`
       );
+      new_error.code = 403;
+      return rejects(new_error);
     }
   });
 

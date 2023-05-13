@@ -82,7 +82,7 @@ const Model_Edit_Service = (props) => {
         variant="h5"
         component={"h5"}
       >
-        Create Sub Account
+        {props.requestType === "POST" ? "Create" : "Edit"} Services
       </Typography>
       <Typography
         className={classes["Form__Heading"]}

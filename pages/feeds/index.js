@@ -96,4 +96,25 @@ const Feeds = (props) => {
   );
 };
 
+export async function getServerSideProps(context) {
+  try {
+    const { token } = useJWTToken(context);
+    const id = await protected_route_next(context);
+
+    return {
+      props: {
+        user: user.data,
+        page_data,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: true,
+        destination: "/404",
+      },
+    };
+  }
+}
+
 export default Feeds;

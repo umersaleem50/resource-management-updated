@@ -47,7 +47,7 @@ const Profile = (props) => {
   const [toggleTaskModel, setToggleTaskModel] = useState(false);
   const [changePasswordModel, setChangePasswordModel] = useState(false);
   const galleryInputRef = useRef(null);
-  const [toggleAddServiceModel, setToggleAddServiceModel] = useState(true);
+  const [toggleAddServiceModel, setToggleAddServiceModel] = useState(false);
   const settings_options = [
     {
       text: "Message",
@@ -295,7 +295,7 @@ const Profile = (props) => {
             </Typography>
             <Button
               variant="contained"
-              onClick={() => setWannaAddServiceModel((prev) => !prev)}
+              onClick={() => setToggleAddServiceModel((prev) => !prev)}
             >
               Add Service
             </Button>
