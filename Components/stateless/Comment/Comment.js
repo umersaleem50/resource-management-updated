@@ -6,6 +6,7 @@ import { Delete } from "@mui/icons-material";
 import { delete_comment_request } from "../../../services/pages/feeds";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import Router from "next/router";
 const Comment = ({
   fullName,
   profilePicture,
@@ -13,6 +14,7 @@ const Comment = ({
   id,
   onCommentDelete,
   isDeletable,
+  member_id,
 }) => {
   const delete_comment = async (comment_id) => {
     try {
@@ -29,7 +31,10 @@ const Comment = ({
   };
   return (
     <div className={classes["Comment"]}>
-      <Avatar src={`/storage/images/profilePicture/${profilePicture}`}></Avatar>
+      <Avatar
+        src={`/storage/images/profilePicture/${profilePicture}`}
+        onClick={() => Router.push(`/profile/${member_id}`)}
+      ></Avatar>
       <div className={classes["Comment__Left"]}>
         <Typography
           color={blue[600]}

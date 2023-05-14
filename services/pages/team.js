@@ -8,7 +8,7 @@ export const get_team_request = (token = null) =>
   });
 
 export const post_create_sub_account = (data, token = null) => {
-  return request_function_test({
+  return request_function({
     url: "/auth/sub-account",
     method: "POST",
     data,

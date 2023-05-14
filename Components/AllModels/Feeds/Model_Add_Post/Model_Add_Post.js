@@ -34,6 +34,7 @@ const Model_Add_Post = (props) => {
 
     try {
       const results = await send_new_post_request(formData);
+      console.log(results);
       if (results.status === "success")
         return showSnackBar(
           enqueueSnackbar,

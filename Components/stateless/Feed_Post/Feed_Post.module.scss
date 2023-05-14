@@ -38,4 +38,8 @@
   &__Comments {
     margin-top: 2rem;
   }
+
+  &:not(:last-of-type) {
+    margin-bottom: 10rem;
+  }
 }

@@ -10,13 +10,54 @@ import axios from "axios";
 import { fetch_one_post_data } from "../../../services/pages/feeds";
 import { enqueueSnackbar } from "notistack";
 import { grey } from "@mui/material/colors";
-import { Avatar, Divider, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Divider,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Comment from "../Comment/Comment";
 import Scrollbars from "react-custom-scrollbars-2";
 import Router from "next/router";
+import { post_new_comment } from "../../../services/pages/feeds";
 
 class Feed_Post extends Component {
-  state = { data: {}, comments: [], comment: "" };
+  constructor(props) {
+    super(props);
+
+    this.state = { data: props.data, comments: props.comments, comment: "" };
+  }
+
+  async post_comment() {
+    const formData = new FormData();
+    formData.append("comment", formData);
+    try {
+      const result = await post_new_comment(this.state.data._id, {
+        comment: this.state.comment,
+      });
+      if (result.status === "success")
+        showSnackBar(
+          enqueueSnackbar,
+          "Successfully Created a comment",
+          "success"
+        );
+      const my_comment = result.data;
+      my_comment.member = this.state.data.member;
+      const comments = [...this.state.comments];
+      comments.push(my_comment);
+      this.setState({ comments: comments, comment: "" });
+    } catch (error) {
+      if (error.status === "error")
+        return showSnackBar(enqueueSnackbar, error.message, "error");
+      return showSnackBar(
+        enqueueSnackbar,
+        "Failed to post a comment.",
+        "error"
+      );
+    }
+  }
 
   onCommentDelete(id) {
     const comments = [...this.state.comments];
@@ -29,18 +70,18 @@ class Feed_Post extends Component {
   }
 
   componentDidMount() {
-    fetch_one_post_data(this.props.id)
-      .then((result) => {
-        this.setState({
-          data: result.data,
-          comments: result.data.comments,
-        });
-      })
-      .catch((err) => {
-        if (err.status === "error")
-          return showSnackBar(enqueueSnackbar, err.message, "error");
-        showSnackBar(enqueueSnackbar, "Failed to fetch post data", "error");
-      });
+    // fetch_one_post_data(this.props.id)
+    //   .then((result) => {
+    //     this.setState({
+    //       data: result.data,
+    //       comments: result.data.comments,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err.status === "error")
+    //       return showSnackBar(enqueueSnackbar, err.message, "error");
+    //     showSnackBar(enqueueSnackbar, "Failed to fetch post data", "error");
+    //   });
   }
 
   async post_new_comment() {
@@ -51,19 +92,23 @@ class Feed_Post extends Component {
 
   generateImages(images) {
     if (!images || !images.length) return;
-    return images.map((img) => {
+    return images.map((img, i) => {
       return (
         <div className={classes["Post__Div"]}>
-          <Image src={`/storage/images/new-post/images/${img}`} fill></Image>
+          <Image
+            src={`/storage/images/new-post/images/${img}`}
+            fill
+            alt={`post-image-${i + 1}`}
+          ></Image>
         </div>
       );
     });
   }
 
-  generateComments(comments) {
+  generateComments() {
     return (
-      <Scrollbars autoHeight autoHeightMax={250}>
-        {comments
+      <Scrollbars autoHeight autoHeightMax={230}>
+        {this.state.comments
           .map(({ comment, member, _id }, i) => {
             return (
               <Comment
@@ -73,6 +118,7 @@ class Feed_Post extends Component {
                 isDeletable={member._id === this.props.user_id}
                 id={_id}
                 onCommentDelete={this.onCommentDelete.bind(this)}
+                member_id={member._id}
               />
             );
           })
@@ -133,8 +179,20 @@ class Feed_Post extends Component {
             fullWidth
             placeholder="Place a comment"
             value={this.state.comment}
-            onChange={(e) => this.state({ comment: e.target.value })}
+            onChange={(e) => this.setState({ comment: e.target.value })}
+            onKeyDown={async (e) => {
+              if (e.key === "Enter") await this.post_comment();
+            }}
           ></TextField>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mt: 1 }}
+            disabled={this.state.comment === ""}
+            onClick={async () => await this.post_comment()}
+          >
+            Send Comment
+          </Button>
         </div>
       </div>
     );
