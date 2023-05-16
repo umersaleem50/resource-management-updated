@@ -34,3 +34,6 @@ export const post_create_note_callback = async (data) =>
 
 export const delete_note_request = async (id) =>
   await request_function({ url: `/notes/${id}`, method: "DELETE" });
+
+export const create_report_request = async (id, data) =>
+  await request_function({ url: `/reports/${id}`, method: "POST", data });

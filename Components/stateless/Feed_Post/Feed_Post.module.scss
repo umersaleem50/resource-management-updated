@@ -1,7 +1,13 @@
+@import "../../../styles/mixin";
+
 .Post {
   display: flex;
 
   width: 100%;
+
+  @include respond(phone-l) {
+    flex-direction: column;
+  }
 
   &__Div {
     width: 100%;
