@@ -25,17 +25,23 @@ const Login = (props) => {
   };
 
   const onSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
     closeSnackbar();
-    const results = await login_callback({ email, password });
+
+    const results = await login_callback({ email, password }, false);
+
     if (results.status === "success")
       showSnackBar("Login Successfully! You're redirecting...", "success");
     Router.push("/team");
     setLoading(false);
+
     if (results.status === "failed") {
       showSnackBar(results.message, "error");
-      setLoading(false);
+      return setLoading(false);
     }
+    showSnackBar("Something went wrong, Try again later...", "error");
+    return setLoading(false);
   };
 
   return (
@@ -57,7 +63,7 @@ const Login = (props) => {
           />
         </div>
         <div className={classes["Container__Right"]}>
-          <form className={classes["Form"]}>
+          <form className={classes["Form"]} onSubmit={onSubmit}>
             <Typography
               variant="h3"
               component={"h4"}
@@ -105,13 +111,13 @@ const Login = (props) => {
               fullWidth
               size="large"
               className={classes["Form__Button"]}
-              onClick={onSubmit}
               loading={isLoading}
               // loadingPosition="start"
               type="submit"
             >
               <Typography
                 // variant="button"
+
                 style={{ color: "var(--color-white)" }}
               >
                 Login
@@ -149,11 +155,7 @@ const Login = (props) => {
               className={classes["Form__forgetPassword"]}
             >
               Forget your password:{" "}
-              <span
-                onClick={() => {
-                  enqueueSnackbar("Forget", { variant: "warning" });
-                }}
-              >
+              <span onClick={() => Router.push("/auth/forget-password")}>
                 Click here!
               </span>
             </Typography>

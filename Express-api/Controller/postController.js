@@ -9,7 +9,10 @@ exports.createOnePost = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: "success", data: post });
 });
 
-exports.getAllPost = getAll(New_Post);
+exports.getAllPost = getAll(New_Post, [
+  { path: "comments" },
+  { path: "member" },
+]);
 exports.getOnePost = getOne(New_Post, [
   { path: "member", select: "firstName lastName fullName profilePicture" },
   {

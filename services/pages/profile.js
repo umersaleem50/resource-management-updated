@@ -9,7 +9,7 @@ export const update_profile_request = async (data, id = null, token = null) =>
   });
 
 export const assign_task_request = async (data, id = null, token = null) => {
-  return await request_function_test({
+  return await request_function({
     url: `/tasks/${id}`,
     method: "POST",
     data,

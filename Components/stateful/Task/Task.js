@@ -40,7 +40,11 @@ const Task = (props) => {
     return new Date(date).toLocaleString();
   };
   return (
-    <div className={classes.Task} onClick={() => setToggle(true)}>
+    <div
+      className={classes.Task}
+      onClick={() => setToggle(true)}
+      style={{ backgroundColor: grey[200] }}
+    >
       {!isToggle && (
         <div className={classes.Task__Small}>
           <div className={classes.Task__Small__Image}>
@@ -133,10 +137,10 @@ const Task = (props) => {
             variant="contained"
             startIcon={<SendOutlined />}
             onClick={() => {
-              props.sendReport(true);
+              // props.sendReport(true);
 
-              props.setTaskAdminId(props.assignBy.id);
-              props.setTaskId(props.id);
+              // props.setTaskAdminId(props.assignBy.id);
+              props.setTaskId();
             }}
           >
             Send Report

@@ -1,5 +1,5 @@
 const Member = require("../Models/member");
-const { Report, Reports } = require("../Models/report");
+const { mainReport, Reports } = require("../Models/report");
 const { Tasks } = require("../Models/task");
 const apiError = require("../Util/apiError");
 const catchAsync = require("../Util/catchAsync");
@@ -25,7 +25,7 @@ exports.createOneReport = catchAsync(async (req, res, next) => {
   }
 
   // CREATE A REPORT
-  const report = await Report.create({
+  const report = await mainReport.create({
     ...req.body,
   });
 
@@ -53,7 +53,7 @@ exports.createOneReport = catchAsync(async (req, res, next) => {
     await newReports.save();
   }
 
-  res.status(201).json({ status: "success", data: mainReport });
+  res.status(201).json({ status: "success", data: newReports });
 });
 
 exports.getAllReports = catchAsync(async (req, res, next) => {
@@ -84,4 +84,4 @@ exports.getOneReport = getOne(Reports, [
   { path: "reportBy", select: "firstName lastName profilePicture" },
 ]);
 exports.deleteOneReport = deleteOne(Reports);
-exports.updateOneReport = updateOne(Report);
+exports.updateOneReport = updateOne(mainReport);

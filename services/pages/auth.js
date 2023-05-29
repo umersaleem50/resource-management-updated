@@ -1,4 +1,4 @@
-import { request_function } from "../request_function";
+import { request_function, request_function_test } from "../request_function";
 
 export const login_callback = (data) =>
   request_function({ url: "/auth/login", method: "POST", data });

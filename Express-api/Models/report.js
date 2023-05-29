@@ -20,7 +20,7 @@ const ReportsSchema = new Schema({
   reports: [
     {
       type: Schema.ObjectId,
-      ref: "reports",
+      ref: "mainReport",
     },
   ],
 });
@@ -59,7 +59,7 @@ const ReportSchema = new Schema({
   },
 });
 
-const Report = models.report || model("report", ReportSchema);
-const Reports = models.reports || model("reports", ReportsSchema);
+const mainReport = model("mainReport", ReportSchema);
+const Reports = model("reports", ReportsSchema);
 
-module.exports = { Report, Reports };
+module.exports = { mainReport, Reports };

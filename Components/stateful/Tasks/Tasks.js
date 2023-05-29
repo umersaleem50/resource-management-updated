@@ -6,7 +6,7 @@ import axios from "axios";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { io } from "socket.io-client";
 import { Component } from "react";
-
+import Model from "../../stateless/Model/Model";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
@@ -14,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import { Search } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { all_tasks_callback } from "../../../services/pages/index_requests";
+import Model_Create_Report from "../../AllModels/General/Model_Create_Report/Model_Create_Report";
 
 class Tasks extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Tasks extends Component {
       selectedTaskId: "",
       selectedTaskAdminId: "",
       updatedTask: "",
+      isToggle: false,
     };
 
     // this.socket = io("http://localhost:3000");
@@ -36,6 +38,10 @@ class Tasks extends Component {
     //     this.fetchLatestTasks();
     //   }
     // });
+  }
+
+  setNewTaskIdForReport(id) {
+    this.setState({ currentTaskId: id });
   }
 
   /**
@@ -128,7 +134,9 @@ class Tasks extends Component {
               setTaskAdminId={(id) =>
                 this.setState({ selectedTaskAdminId: id })
               }
-              setTaskId={() => this.setState({ selectedTaskId: el._id })}
+              setTaskId={() =>
+                this.setState({ selectedTaskId: el._id, isToggle: true })
+              }
             ></Task>
           );
         })}
@@ -138,53 +146,61 @@ class Tasks extends Component {
 
   render() {
     return (
-      <div className={classes.Tasks}>
-        <div className={classes.Tasks__Top}>
-          <Typography
-            variant="h6"
-            component={"h6"}
-            color={grey[700]}
-            style={{ textTransform: "uppercase" }}
-          >
-            Your Tasks
-          </Typography>
-
-          <TextField
-            id="input-with-icon-textfield"
-            placeholder="Search task"
-            sx={{ width: 250 }}
-            onChange={(e) => {
-              if (e.target.value === "") this.fetchLatestTasks();
-            }}
-            onKeyDown={(e) => {
-              if (e.code === "Enter") this.searchTaskHandler(e.target.value);
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-            variant="standard"
-          />
-        </div>
-
-        <div
-          className={classes.Tasks__Container}
-          // style={{ backgroundColor: blue[50] }}
+      <>
+        <Model
+          toggle={this.state.isToggle}
+          onClose={() => this.setState({ isToggle: false })}
         >
-          <div className={classes.Tasks__Titles}>
-            <Typography color={grey[500]}>Admin</Typography>
-            <Typography color={grey[500]}>Description</Typography>
-            <Typography color={grey[500]}>Assigned On</Typography>
-            <Typography color={grey[500]}>Deadline</Typography>
-            <Typography color={grey[500]}>Level</Typography>
+          <Model_Create_Report taskId={this.state.selectedTaskId} />
+        </Model>
+        <div className={classes.Tasks}>
+          <div className={classes.Tasks__Top}>
+            <Typography
+              variant="h6"
+              component={"h6"}
+              color={grey[700]}
+              style={{ textTransform: "uppercase" }}
+            >
+              Your Tasks
+            </Typography>
+
+            <TextField
+              id="input-with-icon-textfield"
+              placeholder="Search task"
+              sx={{ width: 250 }}
+              onChange={(e) => {
+                if (e.target.value === "") this.fetchLatestTasks();
+              }}
+              onKeyDown={(e) => {
+                if (e.code === "Enter") this.searchTaskHandler(e.target.value);
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              variant="standard"
+            />
           </div>
 
-          {this.generateTasks(this.state.fetchTask, this.state.updatedTask)}
+          <div
+            className={classes.Tasks__Container}
+            // style={{ backgroundColor: blue[50] }}
+          >
+            <div className={classes.Tasks__Titles}>
+              <Typography color={grey[500]}>Admin</Typography>
+              <Typography color={grey[500]}>Description</Typography>
+              <Typography color={grey[500]}>Assigned On</Typography>
+              <Typography color={grey[500]}>Deadline</Typography>
+              <Typography color={grey[500]}>Level</Typography>
+            </div>
+
+            {this.generateTasks(this.state.fetchTask, this.state.updatedTask)}
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 }
