@@ -23,8 +23,8 @@ class ImageBox extends Component {
     // formData.append("profile_name", this.props.otherData);
     try {
       const updateUser = await axios.patch(this.props.requesturl, formData, {
-        headers: {
-          "Content-type": "multipart/form-data",
+         headers: {
+         "Content-type": "multipart/form-data",
         },
       });
 
