@@ -8,14 +8,17 @@
     "build": "next build",
     "build_backup": "next build",
     "start": "node server.js",
-    "start_backup": "next start",
+    "start:seperate": "next start",
     "lint": "next lint",
-    "dev:front": "node server.js"
+    "dev:front": "node server.js",
+    "express:dev": "node ./Express-api/app.js"
   },
   "dependencies": {
     "@fancyapps/ui": "^5.0.16",
     "axios": "^1.2.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
     "express": "^4.18.2",

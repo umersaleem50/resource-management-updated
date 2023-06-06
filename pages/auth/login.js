@@ -26,22 +26,43 @@ const Login = (props) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    // setLoading(true);
     closeSnackbar();
 
-    const results = await login_callback({ email, password }, false);
-
-    if (results.status === "success")
-      showSnackBar("Login Successfully! You're redirecting...", "success");
-    Router.push("/team");
-    setLoading(false);
-
-    if (results.status === "failed") {
-      showSnackBar(results.message, "error");
+    try {
+      const results = await login_callback({ email, password });
+      console.log(results);
+      if (results.status === "success") {
+        Router.push("/team");
+        // showSnackBar("Login Successfully! You're redirecting...", "success");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.status === "failed") {
+        showSnackBar(results.message, "error");
+        return setLoading(false);
+      }
+      showSnackBar("Something went wrong, Try again later...", "error");
       return setLoading(false);
     }
-    showSnackBar("Something went wrong, Try again later...", "error");
-    return setLoading(false);
+
+    // if (results.status === "success") {
+    //   Router.push("/team");
+    //   setLoading(false);
+    //   return showSnackBar(
+    //     "Login Successfully! You're redirecting...",
+    //     "success"
+    //   );
+    // }
+
+    // if (results.status === "failed") {
+    //   showSnackBar(results.message, "error");
+    //   return setLoading(false);
+    // }
+    // console.log("this is result", results);
+    // showSnackBar("Something went wrong, Try again later...", "error");
+    // return setLoading(false);
   };
 
   return (

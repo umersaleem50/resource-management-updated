@@ -1,7 +1,6 @@
 import axios from "axios";
-import { resolve } from "styled-jsx/css";
 
-const HOSTNAME = `http://localhost:${3000}/api/v1`;
+const HOSTNAME = `http://localhost:${55660}/api/v1`;
 /**
  * Function to send request to api routes
  * @param {String} url End point of the api
@@ -25,12 +24,37 @@ const HOSTNAME = `http://localhost:${3000}/api/v1`;
 
 export const request_function = async ({ url, method, data, token = null }) => {
   try {
+    // const results = await axios({
+    //   url: HOSTNAME + url,
+    //   method,
+    //   data,
+    //   headers: { Authorization: `Bearer ${token}` },
+    // });
+
+    console.log(data);
+
+    // const response = await fetch(url, {
+    //   method: "POST", // *GET, POST, PUT, DELETE, etc.
+    //   mode: "cors", // no-cors, *cors, same-origin
+    //   credentials: "include", // include, *same-origin, omit
+
+    //   referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    //   body: JSON.stringify(data), // body data type must match "Content-Type" header
+    // });
+
     const results = await axios({
-      url: HOSTNAME + url,
+      url,
       method,
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      // method: "POST", // *GET, POST, PUT, DELETE, etc.
+      // mode: "cors", // no-cors, *cors, same-origin
+      // credentials: "include", // include, *same-origin, omit
+      // referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     });
+
+    console.log(results);
+
+    // const results = await response.json();
     if (results) return results.data;
   } catch (error) {
     // RETURN API ERROR
@@ -53,15 +77,25 @@ export const request_function_test = ({
         url: HOSTNAME + url,
         method,
         data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-type": "multipart/form-data",
-        },
+        mode: "cors", // no-cors, *cors, same-origin
+
+        credentials: "include", // include, *same-origin, omit
+
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+
+        // withCredentials: true,
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        //   "Content-type": "multipart/form-data",
+        // },
         params,
       });
+      console.log("this is results", results);
+
       if (results) resolve(results.data);
     } catch (error) {
       // RETURN API ERROR
+      console.log(error);
       if (error.response) reject(error.response.data);
       // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
       reject(error);

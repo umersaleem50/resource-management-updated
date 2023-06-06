@@ -1,8 +1,7 @@
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import Router from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import React from "react";
 // import OptionModel from "../../Input/OptionModel/OptionModel";
 
@@ -23,8 +22,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import classes from "./Navbar.module.scss";
 import { blue, grey, red } from "@mui/material/colors";
 import { useSnackbar } from "notistack";
-import { logout_callback } from "../../../services/request_function";
+import { logout_callback } from "../../../services/pages/auth";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+
 const Navbar = (props) => {
   const [user, setUser] = useState();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -34,12 +34,14 @@ const Navbar = (props) => {
     closeSnackbar();
     const results = await logout_callback();
 
-    if (results.status === "success")
+    if (results.status === "success") {
       showSnackBar(enqueueSnackbar, `Logging out profile!`, "warning");
+    }
 
     if (results.status === "failed") {
       showSnackBar(enqueueSnackbar, results.message, "error");
     }
+    Router.replace("/auth/login");
   };
 
   const settings = [
@@ -65,22 +67,6 @@ const Navbar = (props) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  useEffect(() => {
-    // const navRequest = async () => {
-    //   try {
-    //     const profile = await axios({
-    //       url: "/api/profile",
-    //     });
-    //     if (profile) {
-    //       setUser(profile.data.data);
-    //     }
-    //   } catch (error) {
-    //     // console.log("error", error);
-    //   }
-    // };
-    // navRequest();
-  }, []);
 
   return (
     <div className={classes.main} style={{ backgroundColor: blue[600] }}>

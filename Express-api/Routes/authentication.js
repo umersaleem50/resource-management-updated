@@ -2,9 +2,10 @@ const express = require("express");
 const authController = require("../Controller/authController");
 const profileController = require("../Controller/profileController");
 const authRouter = new express.Router();
+const limiter = require("../Util/rateLimiter");
 
-authRouter.post("/login", authController.login);
-authRouter.post("/signup", authController.signup);
+authRouter.post("/login", limiter(10), authController.login);
+authRouter.post("/signup", limiter(5), authController.signup);
 
 authRouter.post("/forget-password", authController.forgetPassword);
 authRouter.post("/reset-password/:token", authController.resetPassword);
@@ -12,7 +13,11 @@ authRouter.post("/reset-password/:token", authController.resetPassword);
 // PROTECTED ROUTES, ONLY WORKS IF THE USER IS LOGGED-IN
 authRouter.use(authController.protectedRoute);
 
-authRouter.post("/sub-account", profileController.createSubAccounts);
+authRouter.post(
+  "/sub-account",
+  limiter(20),
+  profileController.createSubAccounts
+);
 
 authRouter.use(authController.protectedRoute);
 authRouter
