@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOSTNAME = `http://localhost:${55660}/api/v1`;
+const HOSTNAME = process.env.API_ROUTE || `http://localhost:${5566}/api/v1`;
 /**
  * Function to send request to api routes
  * @param {String} url End point of the api
@@ -77,25 +77,17 @@ export const request_function_test = ({
         url: HOSTNAME + url,
         method,
         data,
-        mode: "cors", // no-cors, *cors, same-origin
-
-        credentials: "include", // include, *same-origin, omit
-
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-
         // withCredentials: true,
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        //   "Content-type": "multipart/form-data",
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-type": "multipart/form-data",
+        },
         params,
       });
-      console.log("this is results", results);
 
-      if (results) resolve(results.data);
+      if (results) resolve(results.data.data);
     } catch (error) {
       // RETURN API ERROR
-      console.log(error);
       if (error.response) reject(error.response.data);
       // IF IT'S NOT API ERROR IT WILL LOG AND SEND THE ERROR OBJECT
       reject(error);

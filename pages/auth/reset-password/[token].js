@@ -11,6 +11,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import Member from "../../../Express-api/Models/member";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+import default_redirect from "../../../next-utils/default_redirect";
+import { getSession } from "next-auth/react";
 const { promisify } = require("util");
 const ResetPassword = (props) => {
   const [password, setPassword] = useState("");
@@ -180,20 +182,14 @@ const ResetPassword = (props) => {
 };
 
 export async function getServerSideProps(context) {
-  const cookie = context && context?.req?.cookies?.jwt;
-  if (cookie) {
-    const validId = await promisify(jwt.verify)(
-      cookie,
-      process.env.JWT_SECERT_KEY
-    );
-    if (validId.id)
-      return {
-        redirect: {
-          destination: "/",
-          permanent: false,
-        },
-      };
-  }
+  const session = await getSession(context);
+  if (session || session?.token_detail?.exp > Date.now())
+    return {
+      redirect: {
+        permanent: true,
+        destination: "/test",
+      },
+    };
   //--------------
   const { token } = context.params;
 
@@ -206,11 +202,17 @@ export async function getServerSideProps(context) {
 
   const decryptToken = crypto.createHash("sha256").update(token).digest("hex");
 
-  const member = await Member.findOne({
-    passwordResetToken: decryptToken,
-  }).select("+passwordResetToken +passwordResetExpire");
+  try {
+    const member = await Member.findOne({
+      passwordResetToken: decryptToken,
+    }).select("+passwordResetToken +passwordResetExpire");
 
-  if (!member) {
+    if (!member) {
+      return {
+        props: { error: "Invalid reset token, Please check your mail again." },
+      };
+    }
+  } catch (error) {
     return {
       props: { error: "Invalid reset token, Please check your mail again." },
     };
@@ -230,38 +232,5 @@ export async function getServerSideProps(context) {
 
   return { props: { token } };
 }
-
-// export async function getServerSideProps(context) {
-//   const redirectObj = verify_already_login(context, "/", false);
-//   if (redirectObj) return redirectObj;
-//   const { token } = context.params;
-
-//   if (!token)
-//     return {
-//       props: { error: "Please check your mail you will receive a token." },
-//     };
-
-//   const decryptToken = crypto.createHash("sha256").update(token).digest("hex");
-//   console.log("decrypt token token.js:51", decryptToken);
-//   const member = await Member.findOne({
-//     passwordResetToken: decryptToken,
-//   }).select("+passwordResetToken +passwordResetExpire");
-
-//   if (!member) {
-//     return {
-//       props: { error: "Invalid reset token, Please check your mail again." },
-//     };
-//   }
-
-//   if (
-//     !member.passwordResetToken ||
-//     (member.passwordResetExpire &&
-//       member.passwordResetExpire.getTime() < Date.now())
-//   ) {
-//     return { props: { error: "Reset token expired." } };
-//   }
-
-//   return { props: { token } };
-// }
 
 export default ResetPassword;

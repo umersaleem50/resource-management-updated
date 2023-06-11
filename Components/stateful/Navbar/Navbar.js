@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Router from "next/router";
-import { useState } from "react";
+
 import React from "react";
 // import OptionModel from "../../Input/OptionModel/OptionModel";
 
@@ -21,31 +20,30 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 
 import classes from "./Navbar.module.scss";
 import { blue, grey, red } from "@mui/material/colors";
-import { useSnackbar } from "notistack";
-import { logout_callback } from "../../../services/pages/auth";
+import { enqueueSnackbar, useSnackbar } from "notistack";
 import { showSnackBar } from "../../../next-utils/helper_functions";
+import { signOut, useSession } from "next-auth/react";
+import Router from "next/router";
 
 const Navbar = (props) => {
-  const [user, setUser] = useState();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { closeSnackbar } = useSnackbar();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const { data: session } = useSession();
 
   const logoutProfile = async (e) => {
     closeSnackbar();
-    const results = await logout_callback();
-
-    if (results.status === "success") {
-      showSnackBar(enqueueSnackbar, `Logging out profile!`, "warning");
-    }
-
-    if (results.status === "failed") {
-      showSnackBar(enqueueSnackbar, results.message, "error");
-    }
-    Router.replace("/auth/login");
+    showSnackBar(enqueueSnackbar, "Signing out your account...", "success");
+    signOut();
   };
 
   const settings = [
-    { text: "Profile", color: grey[700], onClick: () => {} },
+    {
+      text: session?.user?.fullName,
+      color: grey[700],
+      onClick: () => {
+        Router.push(`/profile/${session?.user?._id}`);
+      },
+    },
     {
       text: "Settings",
       color: grey[700],
@@ -135,9 +133,7 @@ const Navbar = (props) => {
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
                 alt="Remy Sharp"
-                src={
-                  "/storage/images/profilePicture/Sadeem 2-972393.1975688296-1671391613915-profilePicture.jpeg"
-                }
+                src={`/storage/images/profilePicture/${session?.user?.profilePicture}`}
               />
             </IconButton>
           </Tooltip>

@@ -39,9 +39,11 @@ import { enqueueSnackbar } from "notistack";
 import Router from "next/router";
 import Head from "next/head";
 import Model_Edit_Service from "../../Components/AllModels/Services/Model_Edit_Service/Model_Edit_Service";
+import { getSession } from "next-auth/react";
 // COMPONENT JSX
 const Profile = (props) => {
   // const [isEditProfileModel, setEditProfileModel] = useState(false);
+
   const [toggleUpdateProfileModel, setToggleUpdateProfileModel] =
     useState(false);
   const [toggleTaskModel, setToggleTaskModel] = useState(false);
@@ -159,6 +161,7 @@ const Profile = (props) => {
               src={`/storage/images/coverPicture/${props.user?.coverPicture}`}
               alt="coverPicture"
               htmlFor="coverPicture"
+              token={props.token}
               requesturl={`/api/v1/profile${
                 props.page_data.type === "team-page" ? "/" + props.user.id : ""
               }`}
@@ -370,17 +373,17 @@ export async function getServerSideProps(context) {
 
   let user;
   try {
-    const { token } = useJWTToken(context);
-    const id = await protected_route_next(context);
-    const current_user_data = await get_profile_request(token);
+    const session = await getSession(context);
 
-    // if the user is accessing it own profile page
-    if (PAGE_ID === id) {
+    // const { token } = useJWTToken(context);
+    const token = session.token;
+
+    if (PAGE_ID === session.user._id) {
       page_data.type = "own-page";
-      user = current_user_data;
+      user = session.user;
     } else if (
-      current_user_data.data &&
-      current_user_data.data.team.map((el) => el.id).includes(PAGE_ID)
+      session.user &&
+      session.user?.team.map((el) => el.id).includes(PAGE_ID)
     ) {
       user = await get_profile_request(token, PAGE_ID);
       page_data.type = "team-page";
@@ -391,8 +394,9 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        user: user.data,
+        user,
         page_data,
+        token,
       },
     };
   } catch (error) {

@@ -9,6 +9,7 @@ import Router from "next/router";
 import { Button } from "@mui/material";
 import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import { useSession } from "next-auth/react";
 
 class ImageBox extends Component {
   constructor(props) {
@@ -17,14 +18,16 @@ class ImageBox extends Component {
   }
 
   async submitImage(e) {
+    console.log(this.props.token);
     if (!this.props.canupdate) return;
     const formData = new FormData();
     formData.append(this.props.htmlFor, e.target.files[0]);
     // formData.append("profile_name", this.props.otherData);
     try {
       const updateUser = await axios.patch(this.props.requesturl, formData, {
-         headers: {
-         "Content-type": "multipart/form-data",
+        headers: {
+          "Content-type": "multipart/form-data",
+          Authorization: `Bearer ${this.props.token}`,
         },
       });
 
@@ -36,6 +39,7 @@ class ImageBox extends Component {
         );
       Router.reload();
     } catch (err) {
+      console.log(err);
       showSnackBar(
         enqueueSnackbar,
         `Failed to change ${this.props.htmlFor}`,

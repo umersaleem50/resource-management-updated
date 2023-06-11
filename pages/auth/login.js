@@ -1,17 +1,15 @@
 import classes from "./login.module.scss";
 import Image from "next/image";
 import Head from "next/head";
-import { Button, TextField, Typography, colors } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useSnackbar } from "notistack";
-import { login_callback } from "../../services/pages/auth";
+
 import { useState } from "react";
 import Router from "next/router";
-import jwt from "jsonwebtoken";
-import { useJWTToken } from "../../next-utils/login_validation";
-import { useEffect } from "react";
-import axios from "axios";
-const { promisify } = require("util");
+
+import { signIn } from "next-auth/react";
+import default_redirect from "../../next-utils/default_redirect";
 
 const Login = (props) => {
   const [isLoading, setLoading] = useState(false);
@@ -30,21 +28,17 @@ const Login = (props) => {
     closeSnackbar();
 
     try {
-      const results = await login_callback({ email, password });
-      console.log(results);
-      if (results.status === "success") {
-        Router.push("/team");
-        // showSnackBar("Login Successfully! You're redirecting...", "success");
-        setLoading(false);
-      }
+      // const results = await login_callback({ email, password });
+      const results = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/",
+      });
+      if (!results.error) return Router.replace("/test");
+      if (results.error) throw new Error(results.error);
     } catch (error) {
-      console.log(error);
-      if (error.status === "failed") {
-        showSnackBar(results.message, "error");
-        return setLoading(false);
-      }
-      showSnackBar("Something went wrong, Try again later...", "error");
-      return setLoading(false);
+      showSnackBar(error.message, "error");
     }
 
     // if (results.status === "success") {
@@ -189,25 +183,19 @@ const Login = (props) => {
 
 export async function getServerSideProps(context) {
   // const cookie = context && context?.req?.cookies?.jwt;
-  const { token } = useJWTToken(context);
-  if (!token) {
-    return { props: {} };
-  }
-  const validId = await promisify(jwt.verify)(
-    token,
-    process.env.JWT_SECERT_KEY
-  );
-  if (!validId.id)
-    return {
-      props: {},
-    };
-
-  return {
-    redirect: {
-      permanent: true,
-      destination: "/",
-    },
-  };
+  // const { token } = useJWTToken(context);
+  // if (!token) {
+  //   return { props: {} };
+  // }
+  // const validId = await promisify(jwt.verify)(
+  //   token,
+  //   process.env.JWT_SECERT_KEY
+  // );
+  // if (!validId.id)
+  //   return {
+  //     props: {},
+  //   };
+  return default_redirect(context);
 }
 
 export default Login;

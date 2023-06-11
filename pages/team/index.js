@@ -12,7 +12,9 @@ import { Button, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import Model from "../../Components/stateless/Model/Model";
 import { useState } from "react";
+import { getSession } from "next-auth/react";
 import Form_Create_New_Account from "../../Components/AllModels/team/Form_Create_New_Account";
+import { red } from "@mui/material/colors";
 const generate_braches_data = (team) => {
   const branchesArray = team
     .map((el, i) => el.category)
@@ -29,64 +31,66 @@ const generate_braches_data = (team) => {
 };
 
 const Team = (props) => {
-  const branches = generate_braches_data(props.data.team);
+  console.log(props);
+  const branches = !props.isError && generate_braches_data(props.data.team);
   const [isModelOpen, setIsModelOpen] = useState(false);
 
   return (
-    <MainContainer navbar title="Resource Management - My Team">
-      <Model toggle={isModelOpen} onClose={() => setIsModelOpen(false)}>
-        <Form_Create_New_Account
-          closeModel={() => setIsModelOpen(false)}
-          token={props.token}
-          otherData={{ permissions: props.data.permissions }}
-        />
-      </Model>
-      <Section>
-        <div className={classes.Top}>
-          <Typography variant="h6" component={"h6"}>
-            My Team
-          </Typography>
-          {props.data.permissions.includes("have-team") && (
-            <div className={classes.Top__right}>
-              <Button
-                variant="contained"
-                startIcon={<Add></Add>}
-                onClick={() => {
-                  setIsModelOpen(true);
-                }}
-              >
-                Create sub account
-              </Button>
-            </div>
-          )}
-        </div>
-        <div className={classes.Container}>
-          {branches.map((el, i) => {
-            return <Branch key={i} branch={el.branch} team={el.team}></Branch>;
-          })}
-        </div>
-      </Section>
-    </MainContainer>
+    <>
+      <MainContainer navbar title="Resource Management - My Team">
+        <Model toggle={isModelOpen} onClose={() => setIsModelOpen(false)}>
+          <Form_Create_New_Account
+            closeModel={() => setIsModelOpen(false)}
+            token={props.token}
+            otherData={{ permissions: props.data.permissions }}
+          />
+        </Model>
+        <Section>
+          <div className={classes.Top}>
+            <Typography variant="h6" component={"h6"}>
+              My Team
+            </Typography>
+            {props.data.permissions.includes("have-team") && (
+              <div className={classes.Top__right}>
+                <Button
+                  variant="contained"
+                  startIcon={<Add></Add>}
+                  onClick={() => {
+                    setIsModelOpen(true);
+                  }}
+                >
+                  Create sub account
+                </Button>
+              </div>
+            )}
+          </div>
+          <div className={classes.Container}>
+            {branches.map((el, i) => {
+              return (
+                <Branch key={i} branch={el.branch} team={el.team}></Branch>
+              );
+            })}
+          </div>
+        </Section>
+      </MainContainer>
+    </>
   );
 };
 
 export async function getServerSideProps(context) {
-  const { token } = useJWTToken(context);
   try {
-    await protected_route_next(context);
-    const requestObj = await get_team_request(token);
-
+    const session = await getSession(context);
+    const requestObj = await get_team_request(session.token);
     return {
       props: {
-        data: requestObj.data,
-        token,
+        data: requestObj,
       },
     };
   } catch (error) {
     return {
-      redirect: {
-        destination: "/auth/login",
-        permanent: false,
+      props: {
+        isError: true,
+        errorMessage: error.message,
       },
     };
   }

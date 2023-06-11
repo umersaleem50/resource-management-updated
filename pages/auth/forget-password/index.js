@@ -10,6 +10,7 @@ import Router from "next/router";
 import jwt from "jsonwebtoken";
 
 import { showSnackBar } from "../../../next-utils/helper_functions";
+import default_redirect from "../../../next-utils/default_redirect";
 const { promisify } = require("util");
 
 const ForgetPassword = (props) => {
@@ -145,21 +146,7 @@ const ForgetPassword = (props) => {
 };
 
 export async function getServerSideProps(context) {
-  const cookie = context && context?.req?.cookies?.jwt;
-  if (!cookie) {
-    return { props: {} };
-  }
-  const validId = await promisify(jwt.verify)(
-    cookie,
-    process.env.JWT_SECERT_KEY
-  );
-  if (validId.id)
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
+  return default_redirect(context);
 
   // CHECKS IF THE USER IS LOGGED IN
 }
