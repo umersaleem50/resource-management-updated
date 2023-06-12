@@ -6,6 +6,7 @@ import { Delete } from "@mui/icons-material";
 import { delete_comment_request } from "../../../services/pages/feeds";
 import { showSnackBar } from "../../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import { useSession } from "next-auth/react";
 import Router from "next/router";
 const Comment = ({
   fullName,
@@ -16,9 +17,11 @@ const Comment = ({
   isDeletable,
   member_id,
 }) => {
+  const { data: session } = useSession();
+  console.log(session);
   const delete_comment = async (comment_id) => {
     try {
-      const results = await delete_comment_request(comment_id);
+      const results = await delete_comment_request(session.token, comment_id);
       onCommentDelete(comment_id);
       showSnackBar(enqueueSnackbar, "Comment delete successfully!", "success");
     } catch (error) {

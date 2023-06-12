@@ -31,8 +31,6 @@ export const request_function = async ({ url, method, data, token = null }) => {
     //   headers: { Authorization: `Bearer ${token}` },
     // });
 
-    console.log(data);
-
     // const response = await fetch(url, {
     //   method: "POST", // *GET, POST, PUT, DELETE, etc.
     //   mode: "cors", // no-cors, *cors, same-origin
@@ -43,16 +41,17 @@ export const request_function = async ({ url, method, data, token = null }) => {
     // });
 
     const results = await axios({
-      url,
+      url: HOSTNAME + url,
       method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       data,
       // method: "POST", // *GET, POST, PUT, DELETE, etc.
       // mode: "cors", // no-cors, *cors, same-origin
       // credentials: "include", // include, *same-origin, omit
       // referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     });
-
-    console.log(results);
 
     // const results = await response.json();
     if (results) return results.data;

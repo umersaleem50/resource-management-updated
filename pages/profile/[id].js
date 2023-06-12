@@ -69,7 +69,7 @@ const Profile = (props) => {
   settings_options.push({
     text: "Update Password",
     onClick: () => {
-      alert("working");
+      setChangePasswordModel(true);
     },
     icon: <Lock fontSize="small" />,
   });
@@ -113,7 +113,11 @@ const Profile = (props) => {
         toggle={toggleAddServiceModel}
         onClose={() => setToggleAddServiceModel(false)}
       >
-        <Model_Edit_Service requestType="POST" />
+        <Model_Edit_Service
+          id={props.user._id}
+          requestType="POST"
+          token={props.token}
+        />
       </Model>
       <Model
         toggle={changePasswordModel}
@@ -380,7 +384,7 @@ export async function getServerSideProps(context) {
 
     if (PAGE_ID === session.user._id) {
       page_data.type = "own-page";
-      user = session.user;
+      user = await get_profile_request(token);
     } else if (
       session.user &&
       session.user?.team.map((el) => el.id).includes(PAGE_ID)

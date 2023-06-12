@@ -26,6 +26,8 @@ import Model from "../../Components/stateless/Model/Model";
 import Model_Edit_Service from "../../Components/AllModels/Services/Model_Edit_Service/Model_Edit_Service";
 import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import { useEffect } from "react";
+import { getSession, useSession } from "next-auth/react";
 const Service = (props) => {
   const galleryInputRef = useRef(null);
   const [toggle_model_edit_service, setToggle_model_edit_service] =
@@ -39,9 +41,16 @@ const Service = (props) => {
     });
 
     try {
-      const results = await service_request(formData, props.data._id, "PATCH");
+      const results = await service_request(
+        props.token,
+        formData,
+        props.data._id,
+        "PATCH"
+      );
 
-      if (results.status === "success") {
+      console.log(results);
+
+      if (results) {
         showSnackBar(
           enqueueSnackbar,
           "Successfully uploaded the gallery images",
@@ -50,6 +59,7 @@ const Service = (props) => {
         Router.reload();
       }
     } catch (error) {
+      console.log(error);
       if (error.status === "error") {
         return showSnackBar(enqueueSnackbar, error.message, "error");
       }
@@ -60,6 +70,8 @@ const Service = (props) => {
       );
     }
   };
+
+  useEffect(() => {}, []);
 
   const delete_service = async (id) => {
     try {
@@ -117,6 +129,7 @@ const Service = (props) => {
         onClose={() => setToggle_model_edit_service(false)}
       >
         <Model_Edit_Service
+          token={props.token}
           title={props.data.title}
           heading={props.data.heading}
           description={props.data.description}
@@ -299,17 +312,21 @@ export async function getServerSideProps(context) {
   const PAGE_ID = context.params.id;
 
   try {
-    const { token } = useJWTToken(context);
-    await protected_route_next(context);
+    const session = await getSession(context);
+    const token = session.token;
+
+    // const current_user_data = await get_profile_request(token, null, [
+    //   "service",
+    //   "team",
+    // ]);
     const current_user_data = await get_profile_request(token, null, [
       "service",
-      "team",
     ]);
     const requestObj = await get_one_service(token, PAGE_ID);
 
     if (
-      current_user_data.data.service &&
-      current_user_data.data.service.map((el) => el._id).includes(PAGE_ID)
+      current_user_data.service &&
+      current_user_data.service.map((el) => el._id).includes(PAGE_ID)
     ) {
       page_data.type = "own-page";
     } else {
@@ -319,9 +336,9 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        data: requestObj.data,
+        data: requestObj,
         page_data,
-        // token,
+        token,
       },
     };
   } catch (error) {

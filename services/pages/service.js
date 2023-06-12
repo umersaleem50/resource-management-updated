@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import { request_function_test } from "../request_function";
 
 export const get_one_service = async (token, id) =>
@@ -8,13 +7,12 @@ export const get_one_service = async (token, id) =>
     token,
   });
 
-export const service_request = async (data, id, method = "POST") => {
-  const session = useSession();
+export const service_request = async (token, data, id, method = "POST") => {
   return await request_function_test({
     url: `/service/${method !== "POST" ? id : ""}`,
     method,
     data,
-    token: session.token,
+    token,
   });
 };
 

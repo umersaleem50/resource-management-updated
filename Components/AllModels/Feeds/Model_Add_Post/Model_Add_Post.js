@@ -33,9 +33,9 @@ const Model_Add_Post = (props) => {
     formData.append("caption", caption);
 
     try {
-      const results = await send_new_post_request(formData);
-      console.log(results);
-      if (results.status === "success")
+      const results = await send_new_post_request(props.token, formData);
+
+      if (results)
         return showSnackBar(
           enqueueSnackbar,
           "Successfully uploaded the post.",

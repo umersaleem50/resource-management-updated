@@ -34,10 +34,14 @@ class Feed_Post extends Component {
     const formData = new FormData();
     formData.append("comment", formData);
     try {
-      const result = await post_new_comment(this.state.data._id, {
-        comment: this.state.comment,
-      });
-      if (result.status === "success")
+      const result = await post_new_comment(
+        this.props.token,
+        this.state.data._id,
+        {
+          comment: this.state.comment,
+        }
+      );
+      if (result)
         showSnackBar(
           enqueueSnackbar,
           "Successfully Created a comment",
@@ -69,20 +73,7 @@ class Feed_Post extends Component {
     this.setState({ comments });
   }
 
-  componentDidMount() {
-    // fetch_one_post_data(this.props.id)
-    //   .then((result) => {
-    //     this.setState({
-    //       data: result.data,
-    //       comments: result.data.comments,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.status === "error")
-    //       return showSnackBar(enqueueSnackbar, err.message, "error");
-    //     showSnackBar(enqueueSnackbar, "Failed to fetch post data", "error");
-    //   });
-  }
+  componentDidMount() {}
 
   async post_new_comment() {
     try {
@@ -115,7 +106,7 @@ class Feed_Post extends Component {
                 fullName={member.fullName}
                 profilePicture={member.profilePicture}
                 comment={comment}
-                isDeletable={member._id === this.props.user_id}
+                isDeletable={member._id === this.props.id}
                 id={_id}
                 onCommentDelete={this.onCommentDelete.bind(this)}
                 member_id={member._id}

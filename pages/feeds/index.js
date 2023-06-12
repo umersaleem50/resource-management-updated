@@ -13,17 +13,18 @@ import { fetch_new_posts } from "../../services/pages/feeds";
 import { func } from "prop-types";
 import { showSnackBar } from "../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
+import { getSession } from "next-auth/react";
 const Feeds = (props) => {
   const [result, setResult] = useState(0);
   const [isToggle, setToggle] = useState(false);
   const [feeds, setFeeds] = useState([]);
-  const [tags, setTags] = useState("");
   const fetchLatestFeeds = async (tag) => {
     try {
-      const new_feeds = await fetch_new_posts(tag);
-      if (new_feeds.status === "success") {
+      const new_feeds = await fetch_new_posts(props.token, tag);
+      console.log("this is working", new_feeds);
+      if (new_feeds) {
         setResult(new_feeds.results);
-        setFeeds(new_feeds.data);
+        setFeeds(new_feeds);
       }
     } catch (error) {
       if (error.status === "error") {
@@ -42,9 +43,10 @@ const Feeds = (props) => {
       return (
         <Feed_Post
           key={i}
-          id={`645a7cedeea9ab2d287fe257`}
+          id={props.user_id}
           data={el}
           comments={el.comments}
+          token={props.token}
         />
       );
     });
@@ -57,7 +59,7 @@ const Feeds = (props) => {
   return (
     <>
       <Model toggle={isToggle} onClose={() => setToggle(false)}>
-        <Model_Add_Post />
+        <Model_Add_Post token={props.token} />
       </Model>
       <MainContainer navbar>
         <div className={classes["Container"]}>
@@ -135,12 +137,15 @@ const Feeds = (props) => {
 
 export async function getServerSideProps(context) {
   try {
-    const { token } = useJWTToken(context);
-    const id = await protected_route_next(context, false);
+    // const { token } = useJWTToken(context);
+    // const id = await protected_route_next(context, false);
+
+    const session = await getSession(context);
 
     return {
       props: {
-        user_id: id,
+        user_id: session.user._id,
+        token: session.token,
       },
     };
   } catch (error) {

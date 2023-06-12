@@ -8,6 +8,7 @@ import { serviceType } from "../../../../Dev-Data/branches";
 import { showSnackBar } from "../../../../next-utils/helper_functions";
 import { enqueueSnackbar } from "notistack";
 import Router from "next/router";
+
 const Model_Edit_Service = (props) => {
   const [title, setTitle] = useState(props.title || "");
   const [heading, setHeading] = useState(props.heading || "");
@@ -55,11 +56,13 @@ const Model_Edit_Service = (props) => {
 
     try {
       const results = await service_request(
+        props.token,
         formDate,
         props.id,
         props.requestType || "PATCH"
       );
-      if (results.status === "success") {
+      console.log(results);
+      if (results) {
         showSnackBar(
           enqueueSnackbar,
           "Successfully updated the service!",

@@ -101,7 +101,7 @@ const Navbar = (props) => {
             </Link>
           </li>
           <li>
-            <Link href="/feeds-news" passHref legacyBehavior>
+            <Link href="/feeds" passHref legacyBehavior>
               <a className={classes.navbar__item}>
                 <Typography
                   variant="body1"
